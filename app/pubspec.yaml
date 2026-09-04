@@ -1,5 +1,5 @@
-name: lxbox
-description: L×Box — Android VPN client (sing-box / libbox CommandClient).
+name: dark
+description: DARK — Android VPN client (sing-box / libbox CommandClient).
 publish_to: 'none'
 
 version: 2.21.0-dev.1+22100502
