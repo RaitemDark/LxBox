@@ -1015,9 +1015,6 @@
   "Check for updates": {
     "value": "Проверять обновления"
   },
-  "Check for updates on launch": {
-    "value": "Проверять обновления при запуске"
-  },
   "Check for updates?": {
     "value": "Проверять обновления?"
   },
@@ -3082,9 +3079,6 @@
   "Ping target": {
     "value": "Цель пинга"
   },
-  "Pings *** once a day to check for new releases. \"View\" opens the release page in browser; install is manual.": {
-    "value": "Раз в день обращается к *** за новыми релизами. «Открыть» открывает страницу релиза в браузере; установка вручную."
-  },
   "Pinned. UI actions skip config rebuild — useful when testing PUT /config overrides.": {
     "value": "Закреплён. Действия в UI не пересобирают конфиг — удобно при тестировании override через PUT /config."
   },
@@ -4352,9 +4346,6 @@
   "Updated %s": {
     "value": "Обновлено %s"
   },
-  "Updates": {
-    "value": "Обновления"
-  },
   "Upload": {
     "value": "Отдача"
   },
@@ -4840,9 +4831,6 @@
   },
   "Whitelists": {
     "value": "Белые списки"
-  },
-  "All configs": {
-    "value": "Все конфиги"
   },
   "Folder \"%s\" has not been created yet — add it on the Servers screen": {
     "value": "Папка «%s» ещё не создана — добавьте её на экране Servers"
