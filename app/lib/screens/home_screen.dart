@@ -6,6 +6,7 @@ import '../controllers/home_controller.dart';
 import '../controllers/subscription_controller.dart';
 import '../models/home_state.dart';
 import '../models/validation.dart';
+import '../models/server_list.dart';
 import '../services/app_log.dart';
 import '../services/error_humanize.dart';
 import '../services/support/active_time_tracker.dart';
@@ -17,6 +18,7 @@ import 'app_settings_screen.dart';
 import 'config_screen.dart';
 import 'debug_screen.dart';
 import 'dns_settings_screen.dart';
+import 'folder_detail_screen.dart';
 import 'home/support_message_screen.dart';
 import 'routing_screen.dart';
 import 'settings_screen.dart';
@@ -169,7 +171,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
     _subController = SubscriptionController();
     _autoUpdater = AutoUpdater(_subController);
     _subController.bindAutoUpdater(_autoUpdater);
-    // §366 — авто-обновление rule-set'ов. Создаём до HomeController: он
+    // §366 — авто-обновление кэшированных rule-set'ов. Создаём до HomeController: он
     // держит ссылку и дёргает `onVpnConnected` на transition.
     _ruleSetAutoUpdater = RuleSetAutoUpdater();
     _controller = HomeController(
@@ -734,11 +736,36 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
         );
         return Scaffold(
           // l10n-exempt: brand name, идентичен во всех локалях
-          appBar: AppBar(title: const Text('L×Box')),
+          appBar: AppBar(title: const Text('DARK Raitem')),
           drawer: HomeDrawer(
             controller: _controller,
             subController: _subController,
             autoUpdater: _autoUpdater,
+          ),
+          bottomNavigationBar: NavigationBar(
+            selectedIndex: 0,
+            onDestinationSelected: (index) {
+              switch (index) {
+                case 1:
+                  _openFolderByName('Избранное');
+                case 2:
+                  _openFolderByName('Белые списки');
+                case 3:
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (_) => SubscriptionsScreen(
+                      subController: _subController,
+                      homeController: _controller,
+                      autoUpdater: _autoUpdater,
+                    ),
+                  ));
+              }
+            },
+            destinations: const [
+              NavigationDestination(icon: Icon(Icons.home), label: 'Главная'),
+              NavigationDestination(icon: Icon(Icons.star), label: 'Избранное'),
+              NavigationDestination(icon: Icon(Icons.shield_outlined), label: 'Белые списки'),
+              NavigationDestination(icon: Icon(Icons.dns), label: 'Все конфиги'),
+            ],
           ),
           body: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -819,6 +846,31 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
         );
       },
     );
+  }
+
+  /// Открывает папку серверов по точному имени (используется нижней панелью
+  /// для "Избранное"/"Белые списки"). Если папки с таким именем ещё нет —
+  /// подсказывает создать её на экране Servers.
+  void _openFolderByName(String name) {
+    SubscriptionEntry? found;
+    for (final e in _subController.entries) {
+      if (e.list is FolderServers && e.name == name) {
+        found = e;
+        break;
+      }
+    }
+    if (found == null) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Папка "$name" ещё не создана — добавьте её на экране Servers'),
+      ));
+      return;
+    }
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (_) => FolderDetailScreen(
+        entry: found!,
+        controller: _subController,
+      ),
+    ));
   }
 
   /// Rebuild config → reconnect (если up) или start (если down). §107:

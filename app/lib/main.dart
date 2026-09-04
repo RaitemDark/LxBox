@@ -215,7 +215,7 @@ class ThemeNotifier extends ChangeNotifier {
     _load();
   }
 
-  ThemeMode _mode = ThemeMode.system;
+  ThemeMode _mode = ThemeMode.dark;
   ThemeMode get mode => _mode;
 
   static const _key = 'app_theme_mode';
@@ -248,7 +248,7 @@ final themeNotifier = ThemeNotifier();
 class LxBoxApp extends StatelessWidget {
   const LxBoxApp({super.key});
 
-  static const _seed = Colors.indigo;
+  static const _seed = Color(0xFF2DE0C4);
 
   @override
   Widget build(BuildContext context) {
@@ -261,7 +261,7 @@ class LxBoxApp extends StatelessWidget {
         // LocaleController._applyLocale (dict-reload на каждую смену); отдельного
         // per-build присваивания активного локализатора не требуется.
         return MaterialApp(
-          title: 'L×Box',
+          title: 'DARK',
           theme: ThemeData(
             colorScheme: ColorScheme.fromSeed(seedColor: _seed),
             useMaterial3: true,
