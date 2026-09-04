@@ -1,10 +1,7 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
-import 'package:http/http.dart' as http;
 
-import 'app_log.dart';
 import 'project_links.dart';
 import 'settings_storage.dart';
 
