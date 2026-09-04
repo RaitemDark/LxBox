@@ -6,7 +6,6 @@ import 'package:http/http.dart' as http;
 
 import 'app_log.dart';
 import 'project_links.dart';
-import 'automation/event_emitter.dart';
 import 'settings_storage.dart';
 
 /// Light-weight GitHub Releases polling. Pings `/releases/latest` once a day
@@ -18,17 +17,6 @@ import 'settings_storage.dart';
 class UpdateChecker {
   UpdateChecker._();
   static final UpdateChecker I = UpdateChecker._();
-
-  static const _repoApi =
-      'https://api.***/repos/Leadaxe/DARK/releases/latest';
-  /// Fallback — own manifest, committed to repo on every release by CI.
-  /// Используется когда api.*** даёт 403/429/5xx/timeout (типичный
-  /// сценарий — shared VPN exit IP исчерпал anonymous 60 req/h cap).
-  /// Schema контролируем сами; raw-endpoint cdn-cached, anti-abuse лояльнее.
-  static const _repoFallback =
-      'https://***/Leadaxe/DARK/main/docs/latest.json';
-  static const _userAgent = 'DARK';
-  static const _httpTimeout = Duration(seconds: 10);
 
   /// Latest release info, populated after [maybeCheck] / [forceCheck] success.
   /// Null until first successful check; null after dismiss (per spec — banner
@@ -74,94 +62,6 @@ class UpdateChecker {
   Future<UpdateCheckResult> forceCheck({required String localVersion}) async {
     // Disabled: no GitHub mentions
     return UpdateCheckResult.skipped('Update check disabled');
-  }
-
-  /// Primary source: api.***. Возвращает [UpdateInfo] на 200,
-  /// `null` на любую ошибку — caller тогда пробует fallback.
-  Future<UpdateInfo?> _fetchPrimary(String source) async {
-    try {
-      final resp = await http
-          .get(Uri.parse(_repoApi), headers: {
-            'User-Agent': '$_userAgent/${_userAgentSafeVersion()}',
-            'Accept': 'application/vnd.github+json',
-          })
-          .timeout(_httpTimeout);
-      if (resp.statusCode != 200) {
-        AppLog.I.warning(
-            'UpdateChecker[$source]: api.*** HTTP ${resp.statusCode} — '
-            'will try fallback');
-        return null;
-      }
-      final json = jsonDecode(resp.body);
-      if (json is! Map<String, dynamic>) {
-        AppLog.I.warning('UpdateChecker[$source]: malformed primary JSON');
-        return null;
-      }
-      final tag = (json['tag_name'] as String?) ?? '';
-      if (tag.isEmpty) return null;
-      final name = (json['name'] as String?) ?? tag;
-      final htmlUrl = (json['html_url'] as String?) ??
-          ProjectLinks.releaseTag(tag);
-      final publishedRaw = json['published_at'] as String?;
-      final publishedAt =
-          publishedRaw != null ? DateTime.tryParse(publishedRaw) : null;
-      return UpdateInfo(
-        tag: tag,
-        name: name,
-        htmlUrl: htmlUrl,
-        publishedAt: publishedAt,
-      );
-    } catch (e) {
-      AppLog.I.warning('UpdateChecker[$source]: api.*** $e');
-      return null;
-    }
-  }
-
-  /// Fallback source: own manifest at ***.
-  /// Schema мы контролируем (см. docs/latest.json в repo). Этот endpoint
-  /// CDN-кэширован GitHub'ом — anti-abuse намного лояльнее API.
-  Future<UpdateInfo?> _fetchFallback(String source) async {
-    try {
-      final resp = await http
-          .get(Uri.parse(_repoFallback), headers: {
-            'User-Agent': '$_userAgent/${_userAgentSafeVersion()}',
-          })
-          .timeout(_httpTimeout);
-      if (resp.statusCode != 200) {
-        AppLog.I.warning(
-            'UpdateChecker[$source]: fallback HTTP ${resp.statusCode}');
-        return null;
-      }
-      final json = jsonDecode(resp.body);
-      if (json is! Map<String, dynamic>) {
-        AppLog.I.warning('UpdateChecker[$source]: malformed fallback JSON');
-        return null;
-      }
-      final tag = (json['tag'] as String?) ?? '';
-      if (tag.isEmpty) return null;
-      final name = (json['name'] as String?) ?? tag;
-      final htmlUrl = (json['html_url'] as String?) ??
-          ProjectLinks.releaseTag(tag);
-      final publishedRaw = json['published_at'] as String?;
-      final publishedAt =
-          publishedRaw != null ? DateTime.tryParse(publishedRaw) : null;
-      AppLog.I.info('UpdateChecker[$source]: fallback hit tag=$tag');
-      return UpdateInfo(
-        tag: tag,
-        name: name,
-        htmlUrl: htmlUrl,
-        publishedAt: publishedAt,
-      );
-    } catch (e) {
-      AppLog.I.warning('UpdateChecker[$source]: fallback $e');
-      return null;
-    }
-  }
-
-  /// §219 — возвращает фиксированный `'1.x'` для User-Agent: точную версию не
-  /// утекаем (privacy). Параметр не принимается, ничего не «strips».
-  String _userAgentSafeVersion() {
-    return '1.x'; // stable UA, не утекаем точную версию (privacy chrome)
   }
 
   /// Persist «не показывать этот релиз» + clear notifier. Read-guard
