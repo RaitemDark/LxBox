@@ -98,7 +98,7 @@ void main() {
 
   group('label', () {
     test('имена каналов', () {
-      expect(InstallSource.github.label, 'GitHub');
+      expect(InstallSource.github.label, 'Direct');
       expect(InstallSource.play.label, 'Google Play');
       expect(InstallSource.fdroid.label, 'F-Droid');
     });

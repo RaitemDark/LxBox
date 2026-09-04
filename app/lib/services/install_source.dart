@@ -120,7 +120,7 @@ extension InstallSourceX on InstallSource {
   /// Человекочитаемое имя канала — About + дамп версии (§378). Не переводится:
   /// это имена собственные.
   String get label => switch (this) {
-        InstallSource.github => 'GitHub',
+        InstallSource.github => 'Direct',
         InstallSource.play => 'Google Play',
         InstallSource.fdroid => 'F-Droid',
       };
