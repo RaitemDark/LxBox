@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../../main.dart';
 import '../../../services/l10n/locale_controller.dart';
-import 'update_status_row.dart';
 
 /// General tab для App Settings.
 ///

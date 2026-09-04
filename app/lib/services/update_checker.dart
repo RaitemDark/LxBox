@@ -29,14 +29,11 @@ class UpdateChecker {
       'https://***/Leadaxe/DARK/main/docs/latest.json';
   static const _userAgent = 'DARK';
   static const _httpTimeout = Duration(seconds: 10);
-  static const _minCheckInterval = Duration(hours: 24);
 
   /// Latest release info, populated after [maybeCheck] / [forceCheck] success.
   /// Null until first successful check; null after dismiss (per spec — banner
   /// hides only for the dismissed tag, not forever).
   final ValueNotifier<UpdateInfo?> latest = ValueNotifier<UpdateInfo?>(null);
-
-  bool _inFlight = false;
 
   /// Гидратирует [latest] из cached `last_known_version` (если он newer
   /// чем [localVersion] и не dismissed). Вызывается одноразово при старте,
@@ -77,47 +74,6 @@ class UpdateChecker {
   Future<UpdateCheckResult> forceCheck({required String localVersion}) async {
     // Disabled: no GitHub mentions
     return UpdateCheckResult.skipped('Update check disabled');
-  }
-
-  Future<UpdateCheckResult> _check({
-    required String localVersion,
-    required String source,
-  }) async {
-    _inFlight = true;
-    try {
-      // 1. Primary — api.*** (canonical, full meta).
-      var info = await _fetchPrimary(source);
-      // 2. Fallback — raw манифест (избегает 403 при shared VPN exit IP).
-      info ??= await _fetchFallback(source);
-      if (info == null) {
-        // Friendly message — оба источника недоступны. Конкретный HTTP/network
-        // error логирован в подметодах.
-        return UpdateCheckResult.failed(
-            "Couldn't reach GitHub — check network or try later");
-      }
-
-      // Persist throttle / cache regardless of newer-or-not.
-      await SettingsStorage.setLastUpdateCheck(DateTime.now().toUtc());
-      if (info.tag.isNotEmpty) {
-        await SettingsStorage.setLastKnownVersion(info.tag);
-      }
-
-      AppLog.I.info(
-          'UpdateChecker[$source]: latest=${info.tag} local=$localVersion');
-
-      if (!isNewer(info.tag, localVersion)) {
-        latest.value = null;
-        return UpdateCheckResult.upToDate(localVersion);
-      }
-
-      final dismissed = await SettingsStorage.getDismissedUpdateVersion();
-      latest.value = info;
-      // §047 — outgoing lifecycle event (gated, default OFF).
-      AutomationEventEmitter.I.emitUpdateAvailable(info.tag, info.htmlUrl);
-      return UpdateCheckResult.newer(info, dismissed: dismissed == info.tag);
-    } finally {
-      _inFlight = false;
-    }
   }
 
   /// Primary source: api.***. Возвращает [UpdateInfo] на 200,

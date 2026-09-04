@@ -1,4 +1,4 @@
-import 'dart:async';
+import 'dart:async'; 
 
 import 'package:flutter/material.dart';
 
@@ -808,7 +808,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
               NavigationDestination(icon: const Icon(Icons.home), label: getLocalText.s('Home')),
               NavigationDestination(icon: const Icon(Icons.star), label: getLocalText.s('Favorites')),
               NavigationDestination(icon: const Icon(Icons.shield_outlined), label: getLocalText.s('Whitelists')),
-              NavigationDestination(icon: const Icon(Icons.dns), label: getLocalText.s('All configs')),
+              NavigationDestination(icon: const Icon(Icons.dns), label: getLocalText.s('Servers')),
             ],
           ),
           body: Column(
@@ -993,7 +993,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
   Widget _buildServerCard(HomeState state) {
     final activeTag = state.activeInGroup;
     final node = activeTag != null ? state.activeModel[activeTag] : null;
-    final label = node?.label ?? activeTag ?? getLocalText.s('Unknown');
+    final label = node?.tag ?? activeTag ?? getLocalText.s('Unknown');
     final latency = activeTag != null ? state.delayOf(activeTag) : null;
 
     return Container(
@@ -1083,7 +1083,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
           Switch(
             value: value,
             onChanged: onChanged,
-            activeColor: const Color(0xFF2DE0C4),
+            activeThumbColor: const Color(0xFF2DE0C4),
           ),
         ],
       ),
@@ -1091,15 +1091,11 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
   }
 
   String _formatDuration(Duration d) {
-    String twoDigits(int n) => n.toString().padLeft(2, '0');
-    final hours = twoDigits(d.inHours);
-    final minutes = twoDigits(d.inMinutes.remainder(60));
-    final seconds = twoDigits(d.inSeconds.remainder(60));
+    String pad(int n) => n.toString().padLeft(2, '0');
+    final hours = pad(d.inHours);
+    final minutes = pad(d.inMinutes.remainder(60));
+    final seconds = pad(d.inSeconds.remainder(60));
     return '$hours:$minutes:$seconds';
-  }
-        );
-      },
-    );
   }
 
   /// Открывает папку серверов по точному имени (используется нижней панелью

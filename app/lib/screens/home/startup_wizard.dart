@@ -1,7 +1,6 @@
 import 'package:flutter/widgets.dart';
 
 import '../../vpn/box_vpn_client.dart';
-import 'home_dialogs.dart';
 
 /// Единый last-mile движок first-run-онбординга. Прогоняет шаги
 /// **последовательно** (await каждый) — следующий показывается только после
