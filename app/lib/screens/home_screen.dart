@@ -735,7 +735,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
               .any((e) => e.nodeCount > 0 || e.list.nodes.isNotEmpty),
         );
         return Scaffold(
-          // l10n-exempt: brand name, идентичен во всех локалях
+          // l10n-exempt: brand name
           appBar: AppBar(title: const Text('DARK Raitem')),
           drawer: HomeDrawer(
             controller: _controller,
@@ -747,9 +747,11 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
             onDestinationSelected: (index) {
               switch (index) {
                 case 1:
-                  _openFolderByName('Избранное');
+                  _openFolderByName('Избранное'); // l10n-exempt: folder name identifier
+                  break;
                 case 2:
-                  _openFolderByName('Белые списки');
+                  _openFolderByName('Белые списки'); // l10n-exempt: folder name identifier
+                  break;
                 case 3:
                   Navigator.of(context).push(MaterialPageRoute(
                     builder: (_) => SubscriptionsScreen(
@@ -758,13 +760,14 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
                       autoUpdater: _autoUpdater,
                     ),
                   ));
+                  break;
               }
             },
-            destinations: const [
-              NavigationDestination(icon: Icon(Icons.home), label: 'Главная'),
-              NavigationDestination(icon: Icon(Icons.star), label: 'Избранное'),
-              NavigationDestination(icon: Icon(Icons.shield_outlined), label: 'Белые списки'),
-              NavigationDestination(icon: Icon(Icons.dns), label: 'Все конфиги'),
+            destinations: [
+              NavigationDestination(icon: const Icon(Icons.home), label: getLocalText.s('Home')),
+              NavigationDestination(icon: const Icon(Icons.star), label: getLocalText.s('Favorites')),
+              NavigationDestination(icon: const Icon(Icons.shield_outlined), label: getLocalText.s('Whitelists')),
+              NavigationDestination(icon: const Icon(Icons.dns), label: getLocalText.s('All configs')),
             ],
           ),
           body: Column(
@@ -861,7 +864,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
     }
     if (found == null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Папка "$name" ещё не создана — добавьте её на экране Servers'),
+        content: Text(getLocalText.s('Folder "%s" has not been created yet — add it on the Servers screen', name)),
       ));
       return;
     }

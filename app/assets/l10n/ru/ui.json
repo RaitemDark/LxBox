@@ -4831,5 +4831,20 @@
   },
   "✳ Resolve only%s": {
     "value": "✳ Только резолв%s"
+  },
+  "Home": {
+    "value": "Главная"
+  },
+  "Favorites": {
+    "value": "Избранное"
+  },
+  "Whitelists": {
+    "value": "Белые списки"
+  },
+  "All configs": {
+    "value": "Все конфиги"
+  },
+  "Folder \"%s\" has not been created yet — add it on the Servers screen": {
+    "value": "Папка «%s» ещё не создана — добавьте её на экране Servers"
   }
 }

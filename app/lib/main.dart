@@ -261,7 +261,7 @@ class LxBoxApp extends StatelessWidget {
         // LocaleController._applyLocale (dict-reload на каждую смену); отдельного
         // per-build присваивания активного локализатора не требуется.
         return MaterialApp(
-          title: 'DARK',
+          title: 'DARK', // l10n-exempt: brand name
           theme: ThemeData(
             colorScheme: ColorScheme.fromSeed(seedColor: _seed),
             useMaterial3: true,
