@@ -24,21 +24,21 @@ class StartupWizard {
   Future<void> run() async {
     // 1. Notification permission (Android 13+ runtime perm) — сам гейтит
     //    по persist-флагу и наличию разрешения.
-    if (!context.mounted) return;
-    await maybeShowNotificationPermissionDialog(context);
+    // if (!context.mounted) return;
+    // await maybeShowNotificationPermissionDialog(context);
 
     // 2. Battery optimization — сам гейтит по whitelist + persist-флагу.
-    if (!context.mounted) return;
-    await maybeShowBatteryOptimizationDialog(context, vpn);
+    // if (!context.mounted) return;
+    // await maybeShowBatteryOptimizationDialog(context, vpn);
 
     // 3. Add QS tile — на API 33+ системный промпт, на старых тихо no-op.
-    if (!context.mounted) return;
-    await maybeShowAddTilePrompt(context, vpn);
+    // if (!context.mounted) return;
+    // await maybeShowAddTilePrompt(context, vpn);
 
     // 4. §395 — автопроверка обновлений: спрашиваем явно, потому что фоновый
     //    запрос к *** без согласия — anti-feature Tracking у F-Droid.
     //    Последним: работе не мешает, в отличие от шагов выше.
-    if (!context.mounted) return;
-    await maybeShowUpdateCheckPrompt(context);
+    // if (!context.mounted) return;
+    // await maybeShowUpdateCheckPrompt(context);
   }
 }
