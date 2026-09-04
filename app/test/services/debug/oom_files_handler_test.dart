@@ -5,13 +5,13 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/services/debug/context.dart';
-import 'package:lxbox/services/debug/contract/errors.dart';
-import 'package:lxbox/services/debug/debug_registry.dart';
-import 'package:lxbox/services/debug/handlers/files.dart';
-import 'package:lxbox/services/debug/transport/request.dart';
-import 'package:lxbox/services/debug/transport/response.dart';
-import 'package:lxbox/services/oom_reports.dart' show kOomArchiveDir;
+import 'package:dark/services/debug/context.dart';
+import 'package:dark/services/debug/contract/errors.dart';
+import 'package:dark/services/debug/debug_registry.dart';
+import 'package:dark/services/debug/handlers/files.dart';
+import 'package:dark/services/debug/transport/request.dart';
+import 'package:dark/services/debug/transport/response.dart';
+import 'package:dark/services/oom_reports.dart' show kOomArchiveDir;
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 

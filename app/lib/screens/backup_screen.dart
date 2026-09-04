@@ -155,7 +155,7 @@ class _BackupScreenState extends State<BackupScreen> with SnackHelper {
           await File(path).writeAsString(json);
           await Share.shareXFiles(
             [XFile(path, mimeType: 'application/json', name: filename)],
-            subject: 'LxBox backup',
+            subject: 'DARK backup',
           );
           if (!mounted) return;
           showSnack(getLocalText.s("Backup exported (%d bytes)", bytes));
@@ -712,7 +712,7 @@ class _BackupScreenState extends State<BackupScreen> with SnackHelper {
     }
 
     // §393 B7 — блобы чужих приложений ложатся на диск. Без этого шага круг
-    // launcher→LxBox→launcher терял бы `extensions.launcher` целиком: следующий
+    // launcher→DARK→launcher терял бы `extensions.launcher` целиком: следующий
     // экспорт с телефона восстанавливать было бы неоткуда.
     await SettingsStorage.setLxBackupExtensions(parsed.foreignExtensions,
         flush: false);

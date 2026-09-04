@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/services/donate_methods.dart';
+import 'package:dark/services/donate_methods.dart';
 
 /// §362 — разбор способов поддержки (`docs/donate.json` / bundled-копия).
 void main() {
@@ -22,7 +22,7 @@ void main() {
         'id': 'boosty',
         'kind': 'link',
         'title': 'Boosty',
-        'url': 'https://boosty.to/lxbox/donate',
+        'url': 'https://boosty.to/dark/donate',
         'note': 'Карты, СБП',
       })!;
       expect(m.isCrypto, false);

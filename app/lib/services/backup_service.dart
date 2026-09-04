@@ -73,7 +73,7 @@ const _topLevelAppKeys = {
 const _varDebugKeys = {'debug_enabled', 'debug_token', 'debug_port'};
 
 /// Container распарсенного backup-файла. `storage` — содержимое
-/// `lxbox_settings.json` целиком; `vpnSettings` — native-side VPN toggles.
+/// `dark_settings.json` целиком; `vpnSettings` — native-side VPN toggles.
 class BackupContents {
   const BackupContents({
     this.createdAt,
@@ -85,7 +85,7 @@ class BackupContents {
   final DateTime? createdAt;
   final String? sourceAppVersion;
 
-  /// Содержимое `lxbox_settings.json` (top-level keys: vars, server_lists,
+  /// Содержимое `dark_settings.json` (top-level keys: vars, server_lists,
   /// custom_rules, tun_apps, и т.д.). null если в файле нет блока `storage`.
   final Map<String, dynamic>? storage;
 
@@ -229,11 +229,11 @@ class BackupApplyResult {
 /// Wire-format:
 /// ```json
 /// {
-///   "app": "lxbox",
+///   "app": "dark",
 ///   "kind": "backup",
 ///   "created_at": "...",
 ///   "source_app_version": "...",
-///   "storage": { ...lxbox_settings.json целиком... },
+///   "storage": { ...dark_settings.json целиком... },
 ///   "vpn_settings": { auto_start, keep_on_exit, background_mode,
 ///                     core_logs_enabled, allow_bypass, auto_redirect,
 ///                     memory_limit }
@@ -254,7 +254,7 @@ class BackupService {
   /// Build JSON-string для export'а согласно [include]'у.
   Future<String> buildExport({required Set<BackupCategory> include}) async {
     final out = <String, dynamic>{
-      'app': 'lxbox',
+      'app': 'dark',
       'kind': 'backup',
       'created_at': DateTime.now().toUtc().toIso8601String(),
     };
@@ -286,7 +286,7 @@ class BackupService {
       decoded = jsonDecode(raw);
     } catch (e) {
       throw const FormatException(
-          'Not a valid JSON file. Make sure you picked a LxBox backup file.');
+          'Not a valid JSON file. Make sure you picked a DARK backup file.');
     }
 
     if (decoded is! Map<String, dynamic>) {
@@ -295,9 +295,9 @@ class BackupService {
 
     final app = decoded['app']?.toString();
     final kind = decoded['kind']?.toString();
-    if (app != 'lxbox' || kind != 'backup') {
+    if (app != 'dark' || kind != 'backup') {
       throw const FormatException(
-          'Not a LxBox backup file (missing or invalid app/kind markers).');
+          'Not a DARK backup file (missing or invalid app/kind markers).');
     }
 
     final storage = decoded['storage'];
@@ -452,7 +452,7 @@ class BackupService {
       SettingsStorage.applyNativePrefsBackup(data,
           onError: (key, e) => errors.add('vpn_settings.$key: $e'));
 
-  /// Suggested filename для export'а: `lxbox-backup-v{appver}-{YYYYMMDD-HHMM}.json`.
+  /// Suggested filename для export'а: `dark-backup-v{appver}-{YYYYMMDD-HHMM}.json`.
   ///
   /// §279 Phase 5 — timestamp в ИМЕНИ ФАЙЛА сознательно locale-invariant
   /// (machine-поверхность, спека §5): ручная композиция, не intl DateFormat.
@@ -466,7 +466,7 @@ class BackupService {
     String pad(int n) => n.toString().padLeft(2, '0');
     final date =
         '${now.year}${pad(now.month)}${pad(now.day)}-${pad(now.hour)}${pad(now.minute)}';
-    return 'lxbox-backup-v$appVersion-$date.json';
+    return 'dark-backup-v$appVersion-$date.json';
   }
 
   /// Filter storage map по category-toggles для ЗАПИСИ в архив. Visible for tests.

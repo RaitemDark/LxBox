@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/models/custom_rule.dart';
-import 'package:lxbox/models/parser_config.dart';
-import 'package:lxbox/services/rule_name_resolver.dart';
+import 'package:dark/models/custom_rule.dart';
+import 'package:dark/models/parser_config.dart';
+import 'package:dark/services/rule_name_resolver.dart';
 
 /// §279 Phase 2 (§3.5.4) — RuleNameResolver.relocalize: пере-дерайв
 /// preset-label-частей зеркал из custom_rules + свежелокализованного шаблона

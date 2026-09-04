@@ -2,11 +2,11 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/services/debug/context.dart';
-import 'package:lxbox/services/debug/debug_registry.dart';
-import 'package:lxbox/services/debug/handlers/help.dart';
-import 'package:lxbox/services/debug/transport/request.dart';
-import 'package:lxbox/services/debug/transport/response.dart';
+import 'package:dark/services/debug/context.dart';
+import 'package:dark/services/debug/debug_registry.dart';
+import 'package:dark/services/debug/handlers/help.dart';
+import 'package:dark/services/debug/transport/request.dart';
+import 'package:dark/services/debug/transport/response.dart';
 
 /// Репро для бага /help?format=json (HTTP 000, пустой ответ). Проверяем, что
 /// body ответа РЕАЛЬНО сериализуется тем же JsonEncoder, что в

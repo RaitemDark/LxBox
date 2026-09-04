@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/models/node_spec.dart';
-import 'package:lxbox/models/server_list.dart';
-import 'package:lxbox/services/probe/probe_controller.dart';
-import 'package:lxbox/services/probe/probe_runner.dart';
+import 'package:dark/models/node_spec.dart';
+import 'package:dark/models/server_list.dart';
+import 'package:dark/services/probe/probe_controller.dart';
+import 'package:dark/services/probe/probe_runner.dart';
 
 /// §296 — чистые decision-хелперы ProbeController (общие для folder/subs/user).
 void main() {

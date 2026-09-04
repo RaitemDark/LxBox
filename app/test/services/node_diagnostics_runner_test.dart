@@ -1,9 +1,9 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/models/node_spec.dart';
-import 'package:lxbox/models/server_list.dart';
-import 'package:lxbox/services/diagnostics/node_diagnostics_runner.dart';
-import 'package:lxbox/services/platform_channels.dart';
+import 'package:dark/models/node_spec.dart';
+import 'package:dark/models/server_list.dart';
+import 'package:dark/services/diagnostics/node_diagnostics_runner.dart';
+import 'package:dark/services/platform_channels.dart';
 
 /// §392 — раннер диагностики узла: выбор ветки probe/live по состоянию VPN,
 /// probe-сессия поднимается и ГАСИТСЯ, узел-группа отсекается до вызова ядра.

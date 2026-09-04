@@ -1,15 +1,15 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/config/consts.dart';
-import 'package:lxbox/models/emit_context.dart';
-import 'package:lxbox/models/parser_config.dart';
-import 'package:lxbox/models/server_list.dart';
-import 'package:lxbox/models/singbox_entry.dart';
-import 'package:lxbox/models/template_vars.dart';
-import 'package:lxbox/services/builder/build_config.dart';
-import 'package:lxbox/services/builder/rule_set_registry.dart';
-import 'package:lxbox/services/builder/server_list_build.dart';
-import 'package:lxbox/services/node_hash.dart';
-import 'package:lxbox/services/parser/uri_parsers.dart';
+import 'package:dark/config/consts.dart';
+import 'package:dark/models/emit_context.dart';
+import 'package:dark/models/parser_config.dart';
+import 'package:dark/models/server_list.dart';
+import 'package:dark/models/singbox_entry.dart';
+import 'package:dark/models/template_vars.dart';
+import 'package:dark/services/builder/build_config.dart';
+import 'package:dark/services/builder/rule_set_registry.dart';
+import 'package:dark/services/builder/server_list_build.dart';
+import 'package:dark/services/node_hash.dart';
+import 'package:dark/services/parser/uri_parsers.dart';
 
 /// §283 — выключенная нода подписки не эмитится в конфиг (но остаётся в
 /// `nodes` для UI), её warnings не сыпятся в emitWarnings; хеш-фильтр

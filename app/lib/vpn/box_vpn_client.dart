@@ -872,7 +872,7 @@ class BoxVpnClient {
   // Automation API (§047) — public broadcast intents (Tasker / Macrodroid)
   // ---------------------------------------------------------------------------
 
-  /// Incoming-dispatcher: native (`LxBoxIntentReceiver` → `VpnPlugin.
+  /// Incoming-dispatcher: native (`DARKIntentReceiver` → `VpnPlugin.
   /// handleAutomationAction`) зовёт нас через `automationAction` method-call на
   /// `_methods`. Устанавливается лениво один раз. Set извне в bootstrap (после
   /// того как `DebugRegistry` забиндил контроллеры) — см. `main()`.

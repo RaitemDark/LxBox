@@ -23,7 +23,7 @@ import '../models/source_chain.dart';
 /// Три инварианта:
 ///
 ///  1. Lossless round-trip: непереносимое (`packages`, `wifiSsids`, папки)
-///     уезжает в `extensions.lxbox` и обязано пережить чужой импорт
+///     уезжает в `extensions.dark` и обязано пережить чужой импорт
 ///     нетронутым — иначе бэкап, побывавший на десктопе, возвращается
 ///     обеднённым.
 ///  2. Default-deny: неизвестный ключ вне `extensions` не применяется молча.
@@ -32,7 +32,7 @@ import '../models/source_chain.dart';
 /// Мажорная версия формата.
 const int kLxBackupVersion = 1;
 
-const String kLxAppLxBox = 'lxbox';
+const String kLxAppDARK = 'dark';
 const String kLxAppLauncher = 'launcher';
 
 /// Коды предупреждений импорта (общие с Go-стороной).
@@ -64,7 +64,7 @@ const String kWarnChainExists = 'backup_chain_exists';
 
 /// §393 B9 — DNS-запись приехала в виде, которому на этой стороне нет места
 /// (`kind`, которого мобила не знает; тело без опоры на шаблон). Запись едет
-/// в `extensions.lxbox` файла и в применение НЕ идёт — молчать о ней нельзя
+/// в `extensions.dark` файла и в применение НЕ идёт — молчать о ней нельзя
 /// (BACKUP.md §3).
 const String kWarnDnsEntrySkipped = 'backup_dns_entry_skipped';
 
@@ -73,12 +73,12 @@ const String kWarnDnsEntrySkipped = 'backup_dns_entry_skipped';
 /// поэтому применять нечего.
 const String kWarnWarpSkipped = 'backup_warp_skipped';
 
-/// §393 B11 — служебный ключ per-entity `extensions.lxbox`, куда складываются
+/// §393 B11 — служебный ключ per-entity `extensions.dark`, куда складываются
 /// поля записи, которых эта сторона не понимает (`skip`/`max_nodes` лаунчера
 /// у подписки и т.п.).
 ///
 /// Эталон — `core/backup/import.go:backupFieldsKey`. Имя общее с лаунчером
-/// намеренно: круг launcher→LxBox→launcher должен вернуть поля на верхний
+/// намеренно: круг launcher→DARK→launcher должен вернуть поля на верхний
 /// уровень записи, а не спрятать их навсегда в чужом блобе.
 const String kLxBackupFieldsKey = '_backup_fields';
 
@@ -174,7 +174,7 @@ class LxSubscription {
   /// Политика detour другой стороны: структура чужая, применять нечем.
   final Map<String, dynamic>? detour;
 
-  /// `extensions.lxbox` записи — наше, применяется полями.
+  /// `extensions.dark` записи — наше, применяется полями.
   final Map<String, dynamic> ownExtensions;
 
   /// `extensions.<чужое>` записи — хранить нетронутым до re-export.
@@ -213,7 +213,7 @@ class LxServer {
 ///
 /// Мобильные имена другие (`inline` вместо `user`, плюс `srs` у правил, места
 /// которому в схеме v1 нет), поэтому маппинг явный, а непоместившееся едет в
-/// `extensions.lxbox` — см. [LxDns.foreignEntries].
+/// `extensions.dark` — см. [LxDns.foreignEntries].
 class LxDnsRef {
   const LxDnsRef({
     required this.kind,
@@ -342,13 +342,13 @@ class LxBackupFile {
   final List<LxBackupWarning> warnings;
 }
 
-/// Собирает LX Backup из настроек LxBox.
+/// Собирает LX Backup из настроек DARK.
 ///
 /// [directions] — Направления в порядке списка (§393 B2): они цели правил, и
 /// без них правило приезжало бы на чужую машину выключенным.
 ///
 /// [foreignExtensions] — сохранённые блобы других приложений; возвращаются
-/// в файл как есть (§393 B7). Ключ `lxbox` отсюда игнорируется: своё
+/// в файл как есть (§393 B7). Ключ `dark` отсюда игнорируется: своё
 /// приложение применяет данные полями, и вернуть их вторым экземпляром
 /// значило бы поспорить с самим собой.
 ///
@@ -390,18 +390,18 @@ Future<String> buildLxBackup({
       if (kLxPortableVars.contains(e.key)) e.key: e.value,
   };
 
-  // §393 B7 — свой ключ из чужих блобов не возвращаем: `extensions.lxbox`
+  // §393 B7 — свой ключ из чужих блобов не возвращаем: `extensions.dark`
   // верхнего уровня — это НАШЕ поле, и оно наполняется своими данными, а не
   // копией того, что когда-то приехало.
   final foreign = <String, dynamic>{
     for (final e in foreignExtensions.entries)
-      if (e.key != kLxAppLxBox) e.key: e.value,
+      if (e.key != kLxAppDARK) e.key: e.value,
   };
 
   final out = <String, dynamic>{
     'lx_backup': kLxBackupVersion,
     'exported_by': {
-      'app': kLxAppLxBox,
+      'app': kLxAppDARK,
       'version': appVersion,
       'platform': 'android',
     },
@@ -413,9 +413,9 @@ Future<String> buildLxBackup({
     if (directions.isNotEmpty)
       'directions': [for (final d in directions) _directionToJson(d)],
     // §393 C9 — цепочки хопов (SPEC 110, схема v1.2): корневая секция
-    // рядом с directions[], а НЕ блоб `extensions.lxbox`. Цепочка описана
+    // рядом с directions[], а НЕ блоб `extensions.dark`. Цепочка описана
     // каноном ИСТОЧНИКА (`source_chain.schema.json`) — общей моделью обеих
-    // сторон, и односторонний блоб сделал бы круг launcher→LxBox→launcher
+    // сторон, и односторонний блоб сделал бы круг launcher→DARK→launcher
     // лживым.
     //
     // Едут ПОСЛЕ directions[] (позиция может ссылаться на Направление) и ДО
@@ -443,8 +443,8 @@ Future<String> buildLxBackup({
 /// §393 B10 — подписка → запись схемы.
 ///
 /// Возвращаются на место и поля, которых мобила не понимает: они лежат в
-/// `extensions.lxbox._backup_fields` с прошлого импорта, и молча съесть их
-/// значило бы обеднить круг launcher→LxBox→launcher (§1 BACKUP.md).
+/// `extensions.dark._backup_fields` с прошлого импорта, и молча съесть их
+/// значило бы обеднить круг launcher→DARK→launcher (§1 BACKUP.md).
 Map<String, dynamic> _subscriptionToJson(SubscriptionServers list) {
   final own = <String, dynamic>{
     'id': list.id,
@@ -491,7 +491,7 @@ Map<String, dynamic> _subscriptionToJson(SubscriptionServers list) {
     // Поля, которых мобила не понимает, — обратно на верхний уровень записи.
     for (final e in restored.entries)
       if (e.key != 'tag' && e.key != 'update') e.key: e.value,
-    'extensions': {kLxAppLxBox: own},
+    'extensions': {kLxAppDARK: own},
   };
 }
 
@@ -500,7 +500,7 @@ Map<String, dynamic> _subscriptionToJson(SubscriptionServers list) {
 ///
 /// §393 B10 — оболочка перестала быть пустой: `uri`/`config_json` схемы
 /// заполняются телом одиночного сервера. У папки одного тела нет (она
-/// контейнер), поэтому её состав едет в `extensions.lxbox` — иначе N членов
+/// контейнер), поэтому её состав едет в `extensions.dark` — иначе N членов
 /// пришлось бы разложить в N записей `servers[]` и потерять саму папку.
 Map<String, dynamic> _serverListToJson(ServerList list) {
   final own = <String, dynamic>{
@@ -528,7 +528,7 @@ Map<String, dynamic> _serverListToJson(ServerList list) {
     own['created_at'] = list.createdAt.toIso8601String();
   } else if (list is FolderServers) {
     // Папка — контейнер, а не узел: тело в схему не ложится, состав едет
-    // мобильным расширением целиком (§2 BACKUP.md «папки LxBox»).
+    // мобильным расширением целиком (§2 BACKUP.md «папки DARK»).
     own['members'] = [for (final m in list.members) m.toJson()];
     own['created_at'] = list.createdAt.toIso8601String();
     if (list.pingUrl != null) own['ping_url'] = list.pingUrl;
@@ -543,7 +543,7 @@ Map<String, dynamic> _serverListToJson(ServerList list) {
     'label': list.name,
     if (!list.enabled) 'enabled': false,
     ...restored,
-    'extensions': {kLxAppLxBox: own},
+    'extensions': {kLxAppDARK: own},
   };
 }
 
@@ -593,13 +593,13 @@ Map<String, dynamic> _dnsRefToJson(LxDnsRef ref) => {
   // принадлежит шаблону принимающей стороны (`export.go:dnsRefFrom`).
   if (ref.kind == 'user' && ref.value != null) 'value': ref.value,
   if (ref.ownExtensions.isNotEmpty)
-    'extensions': {kLxAppLxBox: ref.ownExtensions},
+    'extensions': {kLxAppDARK: ref.ownExtensions},
 };
 
-/// Правило LxBox → запись схемы.
+/// Правило DARK → запись схемы.
 ///
 /// Матчеры, которых нет на десктопе (`packages`, `wifiSsids`, `wifiBssids`,
-/// `inbounds`), уезжают в `extensions.lxbox`: применить их там нечем, а
+/// `inbounds`), уезжают в `extensions.dark`: применить их там нечем, а
 /// терять при round-trip нельзя.
 Map<String, dynamic> _ruleToJson(CustomRule rule) {
   final out = <String, dynamic>{
@@ -662,7 +662,7 @@ Map<String, dynamic> _ruleToJson(CustomRule rule) {
   // §393 B11 — dns/resolve правила: ключи в схеме есть
   // (`additionalProperties: true`), тело — мобильной формы. Лаунчер их не
   // понимает и провозит через `_backup_fields` нетронутыми, поэтому круг
-  // LxBox→launcher→LxBox возвращает опции на место.
+  // DARK→launcher→DARK возвращает опции на место.
   final dns = raw['dns'];
   if (dns is Map && dns.isNotEmpty) out['dns'] = dns.cast<String, dynamic>();
   final resolve = raw['resolve'];
@@ -674,7 +674,7 @@ Map<String, dynamic> _ruleToJson(CustomRule rule) {
   // `_backup_fields` на свой верхний уровень.
   out.addAll(_restoreBackupFields(own));
 
-  if (own.isNotEmpty) out['extensions'] = {kLxAppLxBox: own};
+  if (own.isNotEmpty) out['extensions'] = {kLxAppDARK: own};
 
   return out;
 }
@@ -825,7 +825,7 @@ LxBackupFile parseLxBackup(
   final foreign = <String, dynamic>{};
   final ext = (decoded['extensions'] as Map?)?.cast<String, dynamic>() ?? {};
   for (final entry in ext.entries) {
-    if (entry.key == kLxAppLxBox) continue; // своё применяется полями выше
+    if (entry.key == kLxAppDARK) continue; // своё применяется полями выше
     foreign[entry.key] = entry.value;
   }
 
@@ -991,7 +991,7 @@ _splitEntityExtensions(Object? raw) {
   final own = <String, dynamic>{};
   final foreign = <String, dynamic>{};
   raw.forEach((k, v) {
-    if ('$k' == kLxAppLxBox) {
+    if ('$k' == kLxAppDARK) {
       if (v is Map) own.addAll(v.cast<String, dynamic>());
     } else {
       foreign['$k'] = v;
@@ -1070,7 +1070,7 @@ LxDns? _dnsFromJson(Map<String, dynamic>? j, List<LxBackupWarning> warnings) {
 /// «не применилось» был бы прямой ложью.
 bool _isOwnDnsEntry(Map<String, dynamic> j) {
   final ext = j['extensions'];
-  return ext is Map && ext[kLxAppLxBox] is Map;
+  return ext is Map && ext[kLxAppDARK] is Map;
 }
 
 /// Запись `dns.servers[]` / `dns.rules[]` → [LxDnsRef]; `null` = kind вне
@@ -1338,7 +1338,7 @@ bool _isKnownOutbound(String tag, Set<String> known) {
       known.map((e) => e.trim().toLowerCase()).contains(t);
 }
 
-/// Запись схемы → правило LxBox.
+/// Запись схемы → правило DARK.
 ///
 /// Ссылка в никуда не повод терять правило: оно приезжает ВЫКЛЮЧЕННЫМ.
 /// Включённое правило с несуществующей целью роняет конфиг ядра целиком.
@@ -1368,7 +1368,7 @@ CustomRule? _ruleFromJson(
   }
 
   final ext =
-      ((j['extensions'] as Map?)?[kLxAppLxBox] as Map?)
+      ((j['extensions'] as Map?)?[kLxAppDARK] as Map?)
           ?.cast<String, dynamic>() ??
       const {};
 

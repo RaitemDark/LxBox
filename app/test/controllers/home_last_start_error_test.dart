@@ -4,10 +4,10 @@ import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/controllers/home_controller.dart';
-import 'package:lxbox/models/home_state.dart';
-import 'package:lxbox/services/debug/serializers/home_state.dart';
-import 'package:lxbox/services/haptic_service.dart';
+import 'package:dark/controllers/home_controller.dart';
+import 'package:dark/models/home_state.dart';
+import 'package:dark/services/debug/serializers/home_state.dart';
+import 'package:dark/services/haptic_service.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
@@ -31,12 +31,12 @@ void main() {
 
   // Основной native-канал: connected-ветка асинхронно дёргает uptime/CC-методы.
   // Default null достаточно (getTunnelUptimeMs → 0, cc* → no-op).
-  const methods = MethodChannel('com.leadaxe.lxbox/methods');
+  const methods = MethodChannel('com.leadaxe.dark/methods');
   // Control-каналы EventChannel'ов CommandClient: `_startCcStreams` вешает
   // подписки → EventChannel шлёт 'listen'; мокаем, чтобы не сыпать
   // MissingPluginException в консоль.
-  const ccStatus = MethodChannel('lxbox/cc/status');
-  const ccGroups = MethodChannel('lxbox/cc/groups');
+  const ccStatus = MethodChannel('dark/cc/status');
+  const ccGroups = MethodChannel('dark/cc/groups');
 
   final messenger =
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;

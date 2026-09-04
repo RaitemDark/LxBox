@@ -3,10 +3,10 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:lxbox/models/parser_config.dart';
-import 'package:lxbox/services/l10n/locale_controller.dart';
-import 'package:lxbox/services/l10n/template_overlay.dart';
-import 'package:lxbox/services/template_loader.dart';
+import 'package:dark/models/parser_config.dart';
+import 'package:dark/services/l10n/locale_controller.dart';
+import 'package:dark/services/l10n/template_overlay.dart';
+import 'package:dark/services/template_loader.dart';
 
 /// §279 — TemplateLoader: кэш по тегу локали, mid-flight смена локали не
 /// отравляет кэш, overlay-ассеты бандлятся и парсятся.

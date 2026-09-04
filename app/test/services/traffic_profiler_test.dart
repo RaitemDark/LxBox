@@ -2,8 +2,8 @@
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:lxbox/services/traffic_profiler.dart';
-import 'package:lxbox/vpn/cc_channel.dart';
+import 'package:dark/services/traffic_profiler.dart';
+import 'package:dark/vpn/cc_channel.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -102,7 +102,7 @@ void main() {
       TrafficProfiler.I.startGlobalRecording();
       TrafficProfiler.I.ingestDnsForTest([
         const CcDnsQuery(
-          domain: 'github.com',
+          domain: '***',
           queryType: 1,
           rcode: 0,
           packageName: 'ru.tinkoff.investing',
@@ -110,7 +110,7 @@ void main() {
           dnsServerType: 'https',
           outbound: ['🇫🇮Финляндия (vpn-1)'],
           answers: [
-            CcDnsAnswer(name: 'github.com', type: 1, rdata: '140.82.121.3'),
+            CcDnsAnswer(name: '***', type: 1, rdata: '140.82.121.3'),
           ],
         ),
       ]);

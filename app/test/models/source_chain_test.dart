@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/models/source_chain.dart';
+import 'package:dark/models/source_chain.dart';
 
 // §393 C1 — модель источника-цепочки (SPEC 110), канон
 // `contract/schema/source_chain.schema.json`.

@@ -1,10 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/models/template_vars.dart';
-import 'package:lxbox/services/parser/uri_parsers/wireguard_parser.dart';
-import 'package:lxbox/services/warp/masque_account.dart';
-import 'package:lxbox/services/warp/scan/scan_models.dart';
-import 'package:lxbox/services/warp/scan/scan_node_builder.dart';
-import 'package:lxbox/services/warp/warp_account.dart';
+import 'package:dark/models/template_vars.dart';
+import 'package:dark/services/parser/uri_parsers/wireguard_parser.dart';
+import 'package:dark/services/warp/masque_account.dart';
+import 'package:dark/services/warp/scan/scan_models.dart';
+import 'package:dark/services/warp/scan/scan_node_builder.dart';
+import 'package:dark/services/warp/warp_account.dart';
 
 /// §284 — сборка URI-узла кандидата из WARP-аккаунта (переиспользование кредов
 /// одной регистрации на любом IP:port).

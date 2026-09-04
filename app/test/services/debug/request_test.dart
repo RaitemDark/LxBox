@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/services/debug/contract/errors.dart';
-import 'package:lxbox/services/debug/transport/request.dart';
+import 'package:dark/services/debug/contract/errors.dart';
+import 'package:dark/services/debug/transport/request.dart';
 
 void main() {
   group('DebugRequest.forTest', () {

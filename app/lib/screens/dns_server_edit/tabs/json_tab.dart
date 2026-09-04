@@ -109,7 +109,7 @@ class _ReadOnlyPreview extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: Text(getLocalText.s("storage shape (lxbox_settings.json)"),
+                child: Text(getLocalText.s("storage shape (dark_settings.json)"),
                     style: theme.textTheme.labelSmall?.copyWith(
                         color: theme.colorScheme.onSurfaceVariant)),
               ),

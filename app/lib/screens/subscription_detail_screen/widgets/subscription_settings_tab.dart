@@ -346,7 +346,7 @@ class SubscriptionSettingsTab extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
           child: Text(
-            getLocalText.s("Some panels return the config by a substring in the User-Agent — a custom UA without the \"LxBox\" token may yield an unsupported format and break the update. Change only if you know why."),
+            getLocalText.s("Some panels return the config by a substring in the User-Agent — a custom UA without the \"DARK\" token may yield an unsupported format and break the update. Change only if you know why."),
             style: TextStyle(fontSize: 11, color: cs.onSurfaceVariant),
           ),
         ),

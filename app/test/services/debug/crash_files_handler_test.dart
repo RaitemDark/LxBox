@@ -4,13 +4,13 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/services/debug/context.dart';
-import 'package:lxbox/services/debug/contract/errors.dart';
-import 'package:lxbox/services/debug/debug_registry.dart';
-import 'package:lxbox/services/debug/handlers/files.dart';
-import 'package:lxbox/services/stderr_reader.dart' show kCrashReportBaseName;
-import 'package:lxbox/services/debug/transport/request.dart';
-import 'package:lxbox/services/debug/transport/response.dart';
+import 'package:dark/services/debug/context.dart';
+import 'package:dark/services/debug/contract/errors.dart';
+import 'package:dark/services/debug/debug_registry.dart';
+import 'package:dark/services/debug/handlers/files.dart';
+import 'package:dark/services/stderr_reader.dart' show kCrashReportBaseName;
+import 'package:dark/services/debug/transport/request.dart';
+import 'package:dark/services/debug/transport/response.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
@@ -59,7 +59,7 @@ void main() {
   }
 
   group('§316 — текущий краш-репорт через /files/local', () {
-    test('CrashReport-lxbox.log отдаётся (был не в whitelist — корень §316)',
+    test('CrashReport-dark.log отдаётся (был не в whitelist — корень §316)',
         () async {
       await writeFile(kCrashReportBaseName,
           'panic: runtime error: index out of range [3]');

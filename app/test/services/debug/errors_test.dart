@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/services/debug/contract/errors.dart';
+import 'package:dark/services/debug/contract/errors.dart';
 
 void main() {
   group('DebugError.toJson', () {

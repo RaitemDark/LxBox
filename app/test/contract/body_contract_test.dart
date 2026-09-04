@@ -2,13 +2,13 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/models/node_spec.dart';
-import 'package:lxbox/models/singbox_entry.dart';
-import 'package:lxbox/models/template_vars.dart';
-import 'package:lxbox/services/parser/body_decoder.dart';
-import 'package:lxbox/services/parser/parse_all.dart';
+import 'package:dark/models/node_spec.dart';
+import 'package:dark/models/singbox_entry.dart';
+import 'package:dark/models/template_vars.dart';
+import 'package:dark/services/parser/body_decoder.dart';
+import 'package:dark/services/parser/parse_all.dart';
 
-// Конформанс-раннер корпуса ТЕЛ подписки (SPEC 103, фаза 2), сторона LxBox.
+// Конформанс-раннер корпуса ТЕЛ подписки (SPEC 103, фаза 2), сторона DARK.
 // Аналог core/config/contract_body_test.go — гоняет тот же
 // contract/corpus/body/**/*.body через decode() → parseAll() и сравнивает
 // состав узлов с ожиданиями лаунчера.

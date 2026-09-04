@@ -2,20 +2,20 @@ import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/services/settings_storage.dart';
-import 'package:lxbox/services/vpn_settings/vpn_settings_facade.dart';
+import 'package:dark/services/settings_storage.dart';
+import 'package:dark/services/vpn_settings/vpn_settings_facade.dart';
 
 /// §293 — VpnSettingsFacade.applyVpnMode: три инварианта, которые раньше нёс
 /// только UI, а Debug пропускал (реальная дивергенция stale has_tun).
 void main() {
   late Directory tmp;
   const pathChannel = MethodChannel('plugins.flutter.io/path_provider');
-  const methodsChannel = MethodChannel('com.leadaxe.lxbox/methods');
+  const methodsChannel = MethodChannel('com.leadaxe.dark/methods');
   final hasTunCalls = <bool>[];
 
   setUp(() async {
     TestWidgetsFlutterBinding.ensureInitialized();
-    tmp = await Directory.systemTemp.createTemp('lxbox_vpnfacade_');
+    tmp = await Directory.systemTemp.createTemp('dark_vpnfacade_');
     hasTunCalls.clear();
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(pathChannel, (call) async {

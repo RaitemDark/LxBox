@@ -15,7 +15,7 @@ import '../../services/url_launcher.dart' as ul;
 /// en — кэш один на все языки). Кнопки:
 /// - https-ссылки — открывают браузер, экран НЕ закрывают (юзер может
 ///   пройтись по нескольким);
-/// - `lxbox://<action>:<payload>` (§357) — резолвятся через [buildScreen];
+/// - `dark://<action>:<payload>` (§357) — резолвятся через [buildScreen];
 ///   нерезолвящиеся (незнакомое действие/экран у старой версии) скрываются;
 ///   тап = пометить прочитанным (если `mark_read` не false) + pushReplacement
 ///   целевого экрана;
@@ -35,7 +35,7 @@ class SupportMessageScreen extends StatefulWidget {
   final SupportFeed feed;
   final SupportMessage message;
 
-  /// Резолв lxbox-действия в экран (контроллеры живут у home_screen).
+  /// Резолв dark-действия в экран (контроллеры живут у home_screen).
   /// null → кнопка скрывается (forward-compat).
   final Widget? Function(SupportLinkAction action) buildScreen;
 
@@ -82,7 +82,7 @@ class _SupportMessageScreenState extends State<SupportMessageScreen> {
     }
   }
 
-  /// lxbox-кнопка: пометить (по флагу) и ЗАМЕНИТЬ этот экран целевым.
+  /// dark-кнопка: пометить (по флагу) и ЗАМЕНИТЬ этот экран целевым.
   void _openInternal(SupportLinkSpec spec, Widget target) {
     if (spec.markRead && !widget.dryRun) {
       unawaited(SupportMessageService.I.markRead(widget.message));
@@ -99,7 +99,7 @@ class _SupportMessageScreenState extends State<SupportMessageScreen> {
     final c = raw.expandLinks();
     final theme = Theme.of(context);
 
-    // Кнопки: внешние — как есть; lxbox — только резолвящиеся (§357).
+    // Кнопки: внешние — как есть; dark — только резолвящиеся (§357).
     final buttons = <Widget>[];
     for (final spec in c.links) {
       final action = SupportLinkAction.parse(spec.url);

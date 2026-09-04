@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/services/warp/warp_endpoint_picker.dart';
+import 'package:dark/services/warp/warp_endpoint_picker.dart';
 
 /// §136 — рандом WARP-endpoint из asset (формат ip:port, диапазоны, SNI-пул).
 void main() {

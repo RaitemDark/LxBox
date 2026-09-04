@@ -3,8 +3,8 @@ import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/services/dns/dns_controller.dart';
-import 'package:lxbox/services/settings_storage.dart';
+import 'package:dark/services/dns/dns_controller.dart';
+import 'package:dark/services/settings_storage.dart';
 
 /// §300 — DnsController.stage(): byte-identical staged-запись DNS-секции
 /// (замена stageChanges). Пишет dns_servers/dns_rules/dns-vars c flush:false;
@@ -15,7 +15,7 @@ void main() {
 
   setUp(() async {
     TestWidgetsFlutterBinding.ensureInitialized();
-    tmp = await Directory.systemTemp.createTemp('lxbox_dnsctl_');
+    tmp = await Directory.systemTemp.createTemp('dark_dnsctl_');
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(pathChannel, (call) async {
       if (call.method.startsWith('getApplicationDocuments')) return tmp.path;

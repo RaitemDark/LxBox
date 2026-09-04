@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/models/direction.dart';
-import 'package:lxbox/models/parser_config.dart';
+import 'package:dark/models/direction.dart';
+import 'package:dark/models/parser_config.dart';
 
 void main() {
   group('Direction JSON round-trip', () {

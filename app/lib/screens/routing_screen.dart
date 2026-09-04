@@ -676,7 +676,7 @@ class _RoutingScreenState extends State<RoutingScreen>
           await File(path).writeAsString(json);
           await Share.shareXFiles([
             XFile(path, mimeType: 'application/json', name: filename),
-          ], subject: 'LxBox rules');
+          ], subject: 'DARK rules');
           showSnack(getLocalText.s("Rules exported"));
           return;
       }

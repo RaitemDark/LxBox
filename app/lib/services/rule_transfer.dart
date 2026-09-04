@@ -14,7 +14,7 @@ import 'parser/uri_utils.dart' show newUuidV4;
 ///
 /// ```json
 /// {
-///   "app": "lxbox",
+///   "app": "dark",
 ///   "kind": "rules",
 ///   "format": 1,
 ///   "created_at": "<ISO8601 UTC>",
@@ -44,7 +44,7 @@ String buildRulesExport(
   List<Map<String, dynamic>> dnsRules = const [],
 }) {
   final out = <String, dynamic>{
-    'app': 'lxbox',
+    'app': 'dark',
     'kind': 'rules',
     'format': kRulesExportFormatVersion,
     'created_at': DateTime.now().toUtc().toIso8601String(),
@@ -57,14 +57,14 @@ String buildRulesExport(
   return const JsonEncoder.withIndent('  ').convert(out);
 }
 
-/// Suggested filename экспорта: `lxbox-rules-{YYYYMMDD-HHMM}.json`
+/// Suggested filename экспорта: `dark-rules-{YYYYMMDD-HHMM}.json`
 /// (образец — `BackupService.suggestedFilename`).
 String suggestedRulesFilename() {
   final now = DateTime.now();
   String two(int v) => v.toString().padLeft(2, '0');
   final date = '${now.year}${two(now.month)}${two(now.day)}'
       '-${two(now.hour)}${two(now.minute)}';
-  return 'lxbox-rules-$date.json';
+  return 'dark-rules-$date.json';
 }
 
 /// Распарсенный конверт импорта. Элементы [rawRules] намеренно dynamic —
@@ -97,7 +97,7 @@ RulesImportContents parseRulesImport(String raw) {
     decoded = jsonDecode(raw);
   } catch (_) {
     throw const FormatException(
-        'Not a valid JSON file. Make sure you picked a LxBox rules file.');
+        'Not a valid JSON file. Make sure you picked a DARK rules file.');
   }
 
   if (decoded is! Map<String, dynamic>) {
@@ -106,14 +106,14 @@ RulesImportContents parseRulesImport(String raw) {
 
   final app = decoded['app']?.toString();
   final kind = decoded['kind']?.toString();
-  if (app != 'lxbox' || kind != 'rules') {
+  if (app != 'dark' || kind != 'rules') {
     // kind: backup — самая вероятная путаница: подсказываем, куда его нести.
-    if (app == 'lxbox' && kind == 'backup') {
+    if (app == 'dark' && kind == 'backup') {
       throw const FormatException(
-          'This is a LxBox backup file — restore it via Settings → Backup.');
+          'This is a DARK backup file — restore it via Settings → Backup.');
     }
     throw const FormatException(
-        'Not a LxBox rules file (missing or invalid app/kind markers).');
+        'Not a DARK rules file (missing or invalid app/kind markers).');
   }
 
   final format = decoded['format'];
@@ -122,7 +122,7 @@ RulesImportContents parseRulesImport(String raw) {
   }
   if (format > kRulesExportFormatVersion) {
     throw const FormatException(
-        'Rules file is from a newer app version. Update LxBox and retry.');
+        'Rules file is from a newer app version. Update DARK and retry.');
   }
 
   final rules = decoded['rules'];

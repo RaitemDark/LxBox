@@ -3,11 +3,11 @@ import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
-import 'package:lxbox/models/node_spec.dart' show Awg;
-import 'package:lxbox/services/parser/ini_parser.dart';
-import 'package:lxbox/services/parser/uri_parsers/wireguard_parser.dart';
-import 'package:lxbox/services/warp/warp_account.dart';
-import 'package:lxbox/services/warp/warp_client.dart';
+import 'package:dark/models/node_spec.dart' show Awg;
+import 'package:dark/services/parser/ini_parser.dart';
+import 'package:dark/services/parser/uri_parsers/wireguard_parser.dart';
+import 'package:dark/services/warp/warp_account.dart';
+import 'package:dark/services/warp/warp_client.dart';
 
 /// §025 — WarpClient: keygen, register, license. HTTP замокан.
 void main() {

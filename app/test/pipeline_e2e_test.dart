@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/config/consts.dart';
-import 'package:lxbox/models/parser_config.dart';
-import 'package:lxbox/models/server_list.dart';
-import 'package:lxbox/services/builder/build_config.dart';
-import 'package:lxbox/services/subscription/sources.dart';
+import 'package:dark/config/consts.dart';
+import 'package:dark/models/parser_config.dart';
+import 'package:dark/models/server_list.dart';
+import 'package:dark/services/builder/build_config.dart';
+import 'package:dark/services/subscription/sources.dart';
 
 /// E2E: тело подписки → parseFromSource → UserServer → ServerRegistry →
 /// buildConfig → валидный sing-box config без fatal issues.

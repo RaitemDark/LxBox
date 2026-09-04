@@ -17,7 +17,7 @@ import '_shared.dart';
 /// - `DELETE /wifi_history/all`        → clear all
 ///
 /// Кеп 50 записей (LRU evict by `last_seen`) — общий для UI и API. Storage
-/// path тот же `wifi_history` var в `lxbox_settings.json`.
+/// path тот же `wifi_history` var в `dark_settings.json`.
 Future<DebugResponse> wifiHistoryHandler(
     DebugRequest req, DebugContext ctx) async {
   final path = req.path;

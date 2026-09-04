@@ -13,7 +13,7 @@ import '../../../services/l10n/locale_controller.dart';
 /// §053 Stage 3 — View tab: showcase storage JSON + sing-box config preview.
 ///
 /// Подписан на `CustomRuleEditController`. Storage shape = raw `initial`
-/// JSON (то что лежит в `lxbox_settings.json`). Sing-box preview =
+/// JSON (то что лежит в `dark_settings.json`). Sing-box preview =
 /// результат `applyCustomRules` или `expandPreset` от `snapshot()`.
 class ViewTab extends StatelessWidget {
   const ViewTab({super.key});
@@ -89,7 +89,7 @@ class ViewTab extends StatelessWidget {
       json = '// error: $e';
     }
 
-    // Storage shape — raw JSON как лежит в lxbox_settings.json для этого
+    // Storage shape — raw JSON как лежит в dark_settings.json для этого
     // правила (поля initial, не snapshot). Полезно когда юзер хочет
     // видеть что реально сохранено — все поля включая wifi_ssids /
     // wifi_bssids которые могут быть только partially exposed в Params
@@ -107,7 +107,7 @@ class ViewTab extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: Text(getLocalText.s("storage shape (lxbox_settings.json)"),
+                child: Text(getLocalText.s("storage shape (dark_settings.json)"),
                     style: theme.textTheme.labelSmall?.copyWith(
                         color: theme.colorScheme.onSurfaceVariant)),
               ),

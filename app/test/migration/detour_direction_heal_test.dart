@@ -4,10 +4,10 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:lxbox/models/direction.dart';
-import 'package:lxbox/models/custom_rule.dart';
-import 'package:lxbox/models/server_list.dart';
-import 'package:lxbox/services/settings_storage.dart';
+import 'package:dark/models/direction.dart';
+import 'package:dark/models/custom_rule.dart';
+import 'package:dark/models/server_list.dart';
+import 'package:dark/services/settings_storage.dart';
 
 /// §248/§274 — storage-heal ссылок при смене detour-роли Направления (Решение B
 /// §202, необратимо): flag-unset/disable/delete → detour-ссылки
@@ -21,11 +21,11 @@ void main() {
   late Directory tmp;
   const channel = MethodChannel('plugins.flutter.io/path_provider');
 
-  String mainPath() => '${tmp.path}/lxbox_settings.json';
+  String mainPath() => '${tmp.path}/dark_settings.json';
 
   setUp(() async {
     TestWidgetsFlutterBinding.ensureInitialized();
-    tmp = await Directory.systemTemp.createTemp('lxbox_detour_heal_');
+    tmp = await Directory.systemTemp.createTemp('dark_detour_heal_');
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(channel, (call) async {
       if (call.method == 'getApplicationDocumentsDirectory' ||

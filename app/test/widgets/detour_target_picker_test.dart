@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/models/direction.dart';
-import 'package:lxbox/models/server_list.dart';
-import 'package:lxbox/widgets/detour_target_picker.dart';
+import 'package:dark/models/direction.dart';
+import 'package:dark/models/server_list.dart';
+import 'package:dark/widgets/detour_target_picker.dart';
 
 /// §248 — фильтрация Направления секции пикера цели detour
 /// (pure-хелпер [visibleDetourDirections]): только enabled detour-Направления,

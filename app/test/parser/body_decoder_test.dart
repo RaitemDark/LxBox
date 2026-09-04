@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/services/parser/body_decoder.dart';
+import 'package:dark/services/parser/body_decoder.dart';
 
 void main() {
   group('decode', () {

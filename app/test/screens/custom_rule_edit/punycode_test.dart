@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/screens/custom_rule_edit/punycode.dart';
+import 'package:dark/screens/custom_rule_edit/punycode.dart';
 
 /// §144 — Punycode (RFC 3492) + per-label IDNA ToASCII.
 void main() {

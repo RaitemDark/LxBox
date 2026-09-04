@@ -740,7 +740,7 @@
         {
           "name": "tun_name",
           "type": "text",
-          "default_value": "lxbox",
+          "default_value": "dark",
           "wizard_ui": "edit",
           "title": "TUN interface",
           "tooltip": "system name"
@@ -1219,7 +1219,7 @@
           "type": "remote",
           "format": "binary",
           "update_interval": "168h",
-          "url": "https://raw.githubusercontent.com/runetfreedom/russia-v2ray-rules-dat/release/sing-box/rule-set-geosite/geosite-category-ads-all.srs"
+          "url": "https://***/runetfreedom/russia-v2ray-rules-dat/release/sing-box/rule-set-geosite/geosite-category-ads-all.srs"
         }
       ],
       "rule": {
@@ -1375,7 +1375,7 @@
           "type": "remote",
           "format": "binary",
           "update_interval": "168h",
-          "url": "https://raw.githubusercontent.com/runetfreedom/russia-v2ray-rules-dat/release/sing-box/rule-set-geoip/geoip-ru.srs"
+          "url": "https://***/runetfreedom/russia-v2ray-rules-dat/release/sing-box/rule-set-geoip/geoip-ru.srs"
         }
       ],
       "rules": [
@@ -1610,7 +1610,7 @@
           "type": "remote",
           "format": "binary",
           "update_interval": "168h",
-          "url": "https://raw.githubusercontent.com/runetfreedom/russia-v2ray-rules-dat/release/sing-box/rule-set-geosite/geosite-ru-available-only-inside.srs"
+          "url": "https://***/runetfreedom/russia-v2ray-rules-dat/release/sing-box/rule-set-geosite/geosite-ru-available-only-inside.srs"
         }
       ],
       "rules": [

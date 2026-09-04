@@ -4,9 +4,9 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:lxbox/models/direction.dart';
-import 'package:lxbox/models/parser_config.dart';
-import 'package:lxbox/services/settings_storage.dart';
+import 'package:dark/models/direction.dart';
+import 'package:dark/models/parser_config.dart';
+import 'package:dark/services/settings_storage.dart';
 
 /// §125 F0.3 / §393 A2 — one-shot миграция состава Направлений:
 /// легаси `channels`/`channels_migrated` → `directions`/`directions_migrated`
@@ -19,7 +19,7 @@ void main() {
   late Directory tmp;
   const channel = MethodChannel('plugins.flutter.io/path_provider');
 
-  String mainPath() => '${tmp.path}/lxbox_settings.json';
+  String mainPath() => '${tmp.path}/dark_settings.json';
 
   // §267 — group_templates: общий шаблон `direction` (direct+auto) для всех Направлений
   // + default_directions vpn-1/vpn-2/vpn-3 + auto-подгруппа. Все Направления одинаковы
@@ -45,7 +45,7 @@ void main() {
 
   setUp(() async {
     TestWidgetsFlutterBinding.ensureInitialized();
-    tmp = await Directory.systemTemp.createTemp('lxbox_directions_mig_');
+    tmp = await Directory.systemTemp.createTemp('dark_directions_mig_');
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(channel, (call) async {
       if (call.method == 'getApplicationDocumentsDirectory' ||
@@ -65,7 +65,7 @@ void main() {
     } catch (_) {}
   });
 
-  /// Сырой `lxbox_settings.json` с диска — миграция §393 A2 проверяется по
+  /// Сырой `dark_settings.json` с диска — миграция §393 A2 проверяется по
   /// НАЛИЧИЮ/ОТСУТСТВИЮ ключей, а не только по видимым Направлениям.
   Future<Map<String, dynamic>> readFile() async =>
       jsonDecode(await File(mainPath()).readAsString()) as Map<String, dynamic>;

@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/models/config_node.dart';
+import 'package:dark/models/config_node.dart';
 
 /// §091 — unit tests for ConfigNode / ParsedConfig (structural per-node meta).
 void main() {

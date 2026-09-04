@@ -62,7 +62,7 @@ const Map<String, bool> kChainStripDefault = {
 /// Источник-цепочка: маршрут через несколько позиций подряд.
 ///
 /// Неизменяемая модель, как [Direction]: мутации идут через [copyWith], а
-/// хранение — списком `chains[]` в `lxbox_settings.json` (§393 C2).
+/// хранение — списком `chains[]` в `dark_settings.json` (§393 C2).
 class SourceChain {
   const SourceChain({
     required this.tag,

@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/models/custom_rule.dart';
-import 'package:lxbox/models/parser_config.dart';
-import 'package:lxbox/models/preset_rule_set.dart';
-import 'package:lxbox/services/rule_set_auto_updater.dart';
-import 'package:lxbox/services/rule_set_downloader.dart';
+import 'package:dark/models/custom_rule.dart';
+import 'package:dark/models/parser_config.dart';
+import 'package:dark/models/preset_rule_set.dart';
+import 'package:dark/services/rule_set_auto_updater.dart';
+import 'package:dark/services/rule_set_downloader.dart';
 
 void main() {
   final now = DateTime(2026, 8, 3, 12);

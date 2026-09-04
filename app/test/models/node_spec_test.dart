@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/models/node_spec.dart';
-import 'package:lxbox/models/node_warning.dart';
-import 'package:lxbox/models/template_vars.dart';
-import 'package:lxbox/models/tls_spec.dart';
-import 'package:lxbox/models/transport_spec.dart';
+import 'package:dark/models/node_spec.dart';
+import 'package:dark/models/node_warning.dart';
+import 'package:dark/models/template_vars.dart';
+import 'package:dark/models/tls_spec.dart';
+import 'package:dark/models/transport_spec.dart';
 
 void main() {
   group('NodeSpec construction + exhaustive switch', () {

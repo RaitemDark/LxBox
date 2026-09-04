@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/services/parser/uri_parsers.dart';
-import 'package:lxbox/services/parser/uri_utils.dart';
+import 'package:dark/services/parser/uri_parsers.dart';
+import 'package:dark/services/parser/uri_utils.dart';
 
 // §169 — валидный X25519 public key (43-симв base64url = 32 байта).
 const _validPbk = 'AwoRGB8mLTQ7QklQV15lbHN6gYiPlp2kq7K5wMfO1dw';

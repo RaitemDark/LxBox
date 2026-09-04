@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/controllers/subscription_controller.dart';
-import 'package:lxbox/models/direction.dart';
-import 'package:lxbox/models/server_list.dart';
-import 'package:lxbox/services/selector_info.dart';
-import 'package:lxbox/widgets/detour_target_picker.dart';
+import 'package:dark/controllers/subscription_controller.dart';
+import 'package:dark/models/direction.dart';
+import 'package:dark/models/server_list.dart';
+import 'package:dark/services/selector_info.dart';
+import 'package:dark/widgets/detour_target_picker.dart';
 
 /// §252 — detourPathHops: разворот сохранённого detour-значения в цепочку
 /// «как пакет пойдёт» — В ПОРЯДКЕ ПАКЕТА (глубочайший транспорт первым,

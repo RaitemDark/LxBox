@@ -3,10 +3,10 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:lxbox/services/l10n/get_local_text.dart';
-import 'package:lxbox/services/l10n/locale_controller.dart';
-import 'package:lxbox/services/settings_storage.dart';
-import 'package:lxbox/services/template_loader.dart';
+import 'package:dark/services/l10n/get_local_text.dart';
+import 'package:dark/services/l10n/locale_controller.dart';
+import 'package:dark/services/settings_storage.dart';
+import 'package:dark/services/template_loader.dart';
 
 /// §279 — LocaleController: set() персистит + нотифицирует; невалидное
 /// хранимое значение → 'system'; reloadFromStorage идемпотентен.
@@ -20,7 +20,7 @@ void main() {
 
   setUp(() async {
     TestWidgetsFlutterBinding.ensureInitialized();
-    tmp = await Directory.systemTemp.createTemp('lxbox_locale_ctrl_');
+    tmp = await Directory.systemTemp.createTemp('dark_locale_ctrl_');
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(channel, (call) async {
       if (call.method == 'getApplicationDocumentsDirectory' ||

@@ -2,8 +2,8 @@
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:lxbox/models/debug_entry.dart';
-import 'package:lxbox/services/app_log.dart';
+import 'package:dark/models/debug_entry.dart';
+import 'package:dark/services/app_log.dart';
 
 void main() {
   setUp(() {

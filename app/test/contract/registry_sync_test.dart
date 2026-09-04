@@ -2,10 +2,10 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/services/parser/hysteria2_obfs.dart';
-import 'package:lxbox/services/parser/utls_fingerprint.dart';
+import 'package:dark/services/parser/hysteria2_obfs.dart';
+import 'package:dark/services/parser/utls_fingerprint.dart';
 
-// Sync-тесты реестра контракта (SPEC 103, фаза 2), сторона LxBox.
+// Sync-тесты реестра контракта (SPEC 103, фаза 2), сторона DARK.
 // Парные к core/config/subscription/registry_sync_test.go.
 //
 // Реестр объявлен нормативным источником словарей (D-020), но нормативность

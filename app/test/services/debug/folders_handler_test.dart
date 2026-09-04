@@ -4,15 +4,15 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/controllers/subscription_controller.dart';
-import 'package:lxbox/models/server_list.dart';
-import 'package:lxbox/services/debug/context.dart';
-import 'package:lxbox/services/debug/contract/errors.dart';
-import 'package:lxbox/services/debug/debug_registry.dart';
-import 'package:lxbox/services/debug/handlers/folders.dart';
-import 'package:lxbox/services/debug/transport/request.dart';
-import 'package:lxbox/services/debug/transport/response.dart';
-import 'package:lxbox/services/settings_storage.dart';
+import 'package:dark/controllers/subscription_controller.dart';
+import 'package:dark/models/server_list.dart';
+import 'package:dark/services/debug/context.dart';
+import 'package:dark/services/debug/contract/errors.dart';
+import 'package:dark/services/debug/debug_registry.dart';
+import 'package:dark/services/debug/handlers/folders.dart';
+import 'package:dark/services/debug/transport/request.dart';
+import 'package:dark/services/debug/transport/response.dart';
+import 'package:dark/services/settings_storage.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 

@@ -11,8 +11,8 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:lxbox/services/builder/post_steps.dart';
-import 'package:lxbox/services/settings_storage.dart';
+import 'package:dark/services/builder/post_steps.dart';
+import 'package:dark/services/settings_storage.dart';
 
 void main() {
   late Directory tmp;
@@ -20,7 +20,7 @@ void main() {
 
   setUp(() async {
     TestWidgetsFlutterBinding.ensureInitialized();
-    tmp = await Directory.systemTemp.createTemp('lxbox_dns_test_');
+    tmp = await Directory.systemTemp.createTemp('dark_dns_test_');
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(channel, (call) async {
       if (call.method == 'getApplicationDocumentsDirectory' ||

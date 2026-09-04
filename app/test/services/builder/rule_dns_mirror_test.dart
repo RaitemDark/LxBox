@@ -3,11 +3,11 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:lxbox/models/custom_rule.dart';
-import 'package:lxbox/models/parser_config.dart';
-import 'package:lxbox/services/builder/post_steps.dart';
-import 'package:lxbox/services/builder/rule_set_registry.dart';
-import 'package:lxbox/services/settings_storage.dart';
+import 'package:dark/models/custom_rule.dart';
+import 'package:dark/models/parser_config.dart';
+import 'package:dark/services/builder/post_steps.dart';
+import 'package:dark/services/builder/rule_set_registry.dart';
+import 'package:dark/services/settings_storage.dart';
 
 /// §117 задача 3 — «Опция DNS у правила (DNS follows the rule)».
 ///
@@ -24,7 +24,7 @@ void main() {
 
   setUp(() async {
     TestWidgetsFlutterBinding.ensureInitialized();
-    tmp = await Directory.systemTemp.createTemp('lxbox_rule_dns_test_');
+    tmp = await Directory.systemTemp.createTemp('dark_rule_dns_test_');
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(channel, (call) async {
       if (call.method == 'getApplicationDocumentsDirectory' ||

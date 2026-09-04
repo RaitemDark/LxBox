@@ -1,14 +1,14 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/models/auto_select.dart';
-import 'package:lxbox/models/direction.dart';
-import 'package:lxbox/models/node_spec.dart';
-import 'package:lxbox/models/template_vars.dart';
-import 'package:lxbox/services/builder/server_list_build.dart';
-import 'package:lxbox/services/parser/body_decoder.dart';
-import 'package:lxbox/services/parser/parse_all.dart';
-import 'package:lxbox/services/parser/uri_parsers.dart';
+import 'package:dark/models/auto_select.dart';
+import 'package:dark/models/direction.dart';
+import 'package:dark/models/node_spec.dart';
+import 'package:dark/models/template_vars.dart';
+import 'package:dark/services/builder/server_list_build.dart';
+import 'package:dark/services/parser/body_decoder.dart';
+import 'package:dark/services/parser/parse_all.dart';
+import 'package:dark/services/parser/uri_parsers.dart';
 
 /// §322 — `routing.balancers` + `burstObservatory` → узел автовыбора.
 ///

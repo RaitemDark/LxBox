@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:lxbox/services/builder/post_steps.dart';
+import 'package:dark/services/builder/post_steps.dart';
 
 /// §393 — глобальный `tls_fragment` и masque-outbound'ы.
 ///

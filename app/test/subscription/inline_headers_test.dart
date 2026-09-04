@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/services/subscription/sources.dart';
+import 'package:dark/services/subscription/sources.dart';
 
 void main() {
   test('inline profile-title from body comments → meta.profileTitle', () async {

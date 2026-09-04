@@ -1,9 +1,9 @@
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/models/node_spec.dart';
-import 'package:lxbox/models/template_vars.dart';
-import 'package:lxbox/services/parser/uri_parsers.dart';
+import 'package:dark/models/node_spec.dart';
+import 'package:dark/models/template_vars.dart';
+import 'package:dark/services/parser/uri_parsers.dart';
 
 /// Smoke-tests: каждая фикстура парсится, emit() даёт валидный map,
 /// round-trip `parseUri(spec.toUri())` возвращает структурно тот же узел.

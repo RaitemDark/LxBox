@@ -1,9 +1,9 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/services/node_hash.dart';
-import 'package:lxbox/services/parser/json_parsers.dart';
-import 'package:lxbox/services/parser/uri_parsers.dart';
+import 'package:dark/services/node_hash.dart';
+import 'package:dark/services/parser/json_parsers.dart';
+import 'package:dark/services/parser/uri_parsers.dart';
 
 /// §283 — identity-хеш ноды: стабилен через reparse и переименования,
 /// меняется при смене сути; TTL-порог и GC отметок disable.

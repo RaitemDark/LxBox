@@ -622,7 +622,7 @@ class HomeController extends ChangeNotifier
   }
 
   /// §123 — собрать и отправить строки foreground-уведомления.
-  ///   title = `L×Box [final = <route.final>]` (сырое route.final)
+  ///   title = `DARK [final = <route.final>]` (сырое route.final)
   ///   text  = `<селектор>: <выбранная нода>`, напр. `vpn-1: L: 🇫🇮⚡Финляндия-2`.
   ///           Селектор = selectedGroup, нода = его `now` (= activeInGroup,
   ///           которое applyGroup заполняет из entry['now'] группы).
@@ -634,8 +634,8 @@ class HomeController extends ChangeNotifier
     // (activeConfigRaw; фоллбэк на файл, если снапшот ещё не подтянут).
     final routeFinal = RouteConfig.finalTag(_state.activeConfigRaw);
     final title = (routeFinal == null || routeFinal.isEmpty)
-        ? 'L×Box'
-        : 'L×Box [final = $routeFinal]';
+        ? 'DARK'
+        : 'DARK [final = $routeFinal]';
 
     // selectedGroup = активный селектор (vpn-1), activeInGroup = его выбранная
     // нода (`now`). Формат подтекста: «<селектор>: <нода>».
@@ -1446,7 +1446,7 @@ class HomeController extends ChangeNotifier
     _persistSort();
   }
 
-  /// §100 — персист текущего режима + manual-порядка в `lxbox_settings.json`.
+  /// §100 — персист текущего режима + manual-порядка в `dark_settings.json`.
   void _persistSort() {
     unawaited(
         SettingsStorage.setNodeSort(_state.sortMode.name, _state.manualOrder));

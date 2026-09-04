@@ -720,7 +720,7 @@ Future<DebugResponse> _putTunApps(DebugRequest req, DebugContext ctx) async {
 }
 
 // ─── §052: VPN Settings → System tab toggles ────────────────────────────────
-// Storage / apply семантика — native (SharedPreferences), не lxbox_settings.json.
+// Storage / apply семантика — native (SharedPreferences), не dark_settings.json.
 // Apply timing: allow_bypass / background_mode → next openTun (start/reload);
 // keep_on_exit → effect at app exit (нет live reload).
 

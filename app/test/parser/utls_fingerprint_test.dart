@@ -1,12 +1,12 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/models/node_spec.dart';
-import 'package:lxbox/models/node_warning.dart';
-import 'package:lxbox/models/template_vars.dart';
-import 'package:lxbox/services/parser/json_parsers.dart';
-import 'package:lxbox/services/parser/uri_parsers.dart';
-import 'package:lxbox/services/parser/utls_fingerprint.dart';
+import 'package:dark/models/node_spec.dart';
+import 'package:dark/models/node_warning.dart';
+import 'package:dark/models/template_vars.dart';
+import 'package:dark/services/parser/json_parsers.dart';
+import 'package:dark/services/parser/uri_parsers.dart';
+import 'package:dark/services/parser/utls_fingerprint.dart';
 
 // §169 — валидный X25519 public key (43-симв base64url = 32 байта).
 const _validPbk = 'AwoRGB8mLTQ7QklQV15lbHN6gYiPlp2kq7K5wMfO1dw';

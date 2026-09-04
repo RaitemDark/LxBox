@@ -536,8 +536,8 @@
   "2. Paste it into the field above, or tap ⋮ → «Paste from clipboard», «Scan QR code».": {
     "value": "2. Вставьте её в поле выше или нажмите ⋮ → «Вставить из буфера обмена», «Сканировать QR-код»."
   },
-  "3. Hit «+». L×Box will fetch, parse and configure — and you can connect from the Home tab.": {
-    "value": "3. Нажмите «+». L×Box загрузит, разберёт и настроит всё сам — подключайтесь с главного экрана."
+  "3. Hit «+». DARK will fetch, parse and configure — and you can connect from the Home tab.": {
+    "value": "3. Нажмите «+». DARK загрузит, разберёт и настроит всё сам — подключайтесь с главного экрана."
   },
   "A chain is a route through several hops in a row. It joins the pool as a node, so directions can pick it like any server.": {
     "value": "Цепочка — это маршрут через несколько хопов подряд. В общий пул она попадает узлом, и Направления отбирают её наравне с обычными серверами."
@@ -764,11 +764,11 @@
   "Android 13+ requires this for SSID. Tap to grant.": {
     "value": "Android 13+ требует это разрешение для SSID. Нажмите, чтобы выдать."
   },
-  "Android restricts background activity to save battery. Without an exception, the VPN tunnel may be killed when the screen turns off — your connection drops until you reopen L×Box.\n\nOpen system settings and choose \"Unrestricted\" / \"Not optimized\".": {
-    "value": "Android ограничивает фоновую активность ради экономии батареи. Без исключения туннель VPN может быть закрыт при выключении экрана — связь пропадёт, пока вы снова не откроете L×Box.\n\nОткройте системные настройки и выберите «Без ограничений» / «Не оптимизировать»."
+  "Android restricts background activity to save battery. Without an exception, the VPN tunnel may be killed when the screen turns off — your connection drops until you reopen DARK.\n\nOpen system settings and choose \"Unrestricted\" / \"Not optimized\".": {
+    "value": "Android ограничивает фоновую активность ради экономии батареи. Без исключения туннель VPN может быть закрыт при выключении экрана — связь пропадёт, пока вы снова не откроете DARK.\n\nОткройте системные настройки и выберите «Без ограничений» / «Не оптимизировать»."
   },
-  "Another VPN app is currently running. Switch to L×Box?\n\nTo see which app it is, open VPN settings — the active VPN is marked as connected.": {
-    "value": "Сейчас работает VPN другого приложения. Переключиться на L×Box?\n\nЧтобы узнать, какое именно, откройте настройки VPN — активный VPN отмечен как подключённый."
+  "Another VPN app is currently running. Switch to DARK?\n\nTo see which app it is, open VPN settings — the active VPN is marked as connected.": {
+    "value": "Сейчас работает VPN другого приложения. Переключиться на DARK?\n\nЧтобы узнать, какое именно, откройте настройки VPN — активный VPN отмечен как подключённый."
   },
   "Another VPN app took the system VPN slot (e.g. an always-on VPN). Start again to reconnect.": {
     "value": "Другое VPN-приложение заняло системный VPN-слот (например, постоянный VPN). Запустите снова, чтобы переподключиться."
@@ -1229,8 +1229,8 @@
   "Continue": {
     "value": "Продолжить"
   },
-  "Control L×Box from Tasker / Macrodroid / Llama and other automation apps via Android broadcast intents.": {
-    "value": "Управляйте L×Box из Tasker / MacroDroid / Llama и других приложений автоматизации через broadcast-интенты Android."
+  "Control DARK from Tasker / Macrodroid / Llama and other automation apps via Android broadcast intents.": {
+    "value": "Управляйте DARK из Tasker / MacroDroid / Llama и других приложений автоматизации через broadcast-интенты Android."
   },
   "Copied": {
     "value": "Скопировано"
@@ -1745,8 +1745,8 @@
   "Enabled directions appear in the selector on the home screen. Tap a direction to edit its nodes, filter and auto twin.": {
     "value": "Включённые Направления появляются в селекторе на главном экране. Нажмите на Направление, чтобы настроить его узлы, фильтр и auto-двойник."
   },
-  "Enabling this category lets other apps receive L×Box events.\n\nEvents do NOT contain subscription / config secrets — only labels (node tags, group names, status).": {
-    "value": "Если включить эту категорию, другие приложения смогут получать события L×Box.\n\nСобытия НЕ содержат секретов подписок и конфига — только метки (теги узлов, имена групп, статус)."
+  "Enabling this category lets other apps receive DARK events.\n\nEvents do NOT contain subscription / config secrets — only labels (node tags, group names, status).": {
+    "value": "Если включить эту категорию, другие приложения смогут получать события DARK.\n\nСобытия НЕ содержат секретов подписок и конфига — только метки (теги узлов, имена групп, статус)."
   },
   "Endpoint": {
     "value": "Адрес"
@@ -2260,8 +2260,8 @@
   "In packet order: the first position is the hop closest to you, the last one is what the destination sees.": {
     "value": "В порядке пакета: первая позиция — ближайший к вам хоп, последнюю видит цель."
   },
-  "In the next screen (system App info) look for:\n\n• Autostart / Startup manager — allow\n• Background activity / Allow in background — allow\n• Battery / Power usage → \"Don't optimize\" or \"No restrictions\"\n• Battery saver exceptions — add L×Box\n\nLocation of these toggles varies by OEM (Xiaomi/MIUI, Samsung/One UI, Oppo/ColorOS, Huawei, Google Pixel). Some are under Battery, others under App permissions.": {
-    "value": "На следующем экране (системный «О приложении») найдите:\n\n• Автозапуск / Startup manager — разрешить\n• Фоновая активность / Разрешить в фоне — разрешить\n• Батарея / Энергопотребление → «Не оптимизировать» или «Без ограничений»\n• Исключения энергосбережения — добавьте L×Box\n\nРасположение зависит от производителя (Xiaomi/MIUI, Samsung/One UI, Oppo/ColorOS, Huawei, Google Pixel): что-то в разделе «Батарея», что-то в «Разрешениях приложений»."
+  "In the next screen (system App info) look for:\n\n• Autostart / Startup manager — allow\n• Background activity / Allow in background — allow\n• Battery / Power usage → \"Don't optimize\" or \"No restrictions\"\n• Battery saver exceptions — add DARK\n\nLocation of these toggles varies by OEM (Xiaomi/MIUI, Samsung/One UI, Oppo/ColorOS, Huawei, Google Pixel). Some are under Battery, others under App permissions.": {
+    "value": "На следующем экране (системный «О приложении») найдите:\n\n• Автозапуск / Startup manager — разрешить\n• Фоновая активность / Разрешить в фоне — разрешить\n• Батарея / Энергопотребление → «Не оптимизировать» или «Без ограничений»\n• Исключения энергосбережения — добавьте DARK\n\nРасположение зависит от производителя (Xiaomi/MIUI, Samsung/One UI, Oppo/ColorOS, Huawei, Google Pixel): что-то в разделе «Батарея», что-то в «Разрешениях приложений»."
   },
   "Include (regex)": {
     "value": "Включить (regex)"
@@ -2480,17 +2480,17 @@
   "Log": {
     "value": "Лог"
   },
-  "Long-press the L×Box icon on your home screen → choose \"Toggle VPN\".": {
-    "value": "Долгое нажатие на иконку L×Box на главном экране → выберите «Toggle VPN»."
+  "Long-press the DARK icon on your home screen → choose \"Toggle VPN\".": {
+    "value": "Долгое нажатие на иконку DARK на главном экране → выберите «Toggle VPN»."
   },
-  "L×Box %1$s available (you have v%2$s)": {
-    "value": "Доступна L×Box %1$s (у вас v%2$s)"
+  "DARK %1$s available (you have v%2$s)": {
+    "value": "Доступна DARK %1$s (у вас v%2$s)"
   },
-  "L×Box can ping github.com once a day to see whether a new version is out. Nothing installs by itself — you get a link to the release page.\n\nIf you installed from an app store, its client already handles updates and you can skip this.": {
-    "value": "L×Box может раз в сутки обращаться к github.com и смотреть, не вышла ли новая версия. Само ничего не устанавливается — вы получите ссылку на страницу релиза.\n\nЕсли приложение установлено из магазина, его клиент уже следит за обновлениями, и этот пункт можно пропустить."
+  "DARK can ping *** once a day to see whether a new version is out. Nothing installs by itself — you get a link to the release page.\n\nIf you installed from an app store, its client already handles updates and you can skip this.": {
+    "value": "DARK может раз в сутки обращаться к *** и смотреть, не вышла ли новая версия. Само ничего не устанавливается — вы получите ссылку на страницу релиза.\n\nЕсли приложение установлено из магазина, его клиент уже следит за обновлениями, и этот пункт можно пропустить."
   },
-  "L×Box runs as a foreground service while VPN is active. A persistent notification is required by Android — it lets you see at a glance that VPN is on, and prevents the system from killing the tunnel in the background.\n\nNo promotional or alert notifications will be sent.": {
-    "value": "Пока VPN активен, L×Box работает как foreground-сервис. Android требует для него постоянное уведомление — по нему видно, что VPN включён, и система не закрывает туннель в фоне.\n\nРекламных и прочих оповещений не будет."
+  "DARK runs as a foreground service while VPN is active. A persistent notification is required by Android — it lets you see at a glance that VPN is on, and prevents the system from killing the tunnel in the background.\n\nNo promotional or alert notifications will be sent.": {
+    "value": "Пока VPN активен, DARK работает как foreground-сервис. Android требует для него постоянное уведомление — по нему видно, что VPN включён, и система не закрывает туннель в фоне.\n\nРекламных и прочих оповещений не будет."
   },
   "MASQUE HTTP version \"%s\" is neither h3 nor h2 — h3 was used instead.": {
     "value": "Версия HTTP «%s» для MASQUE — не h3 и не h2, поэтому использован h3."
@@ -3082,8 +3082,8 @@
   "Ping target": {
     "value": "Цель пинга"
   },
-  "Pings github.com once a day to check for new releases. \"View\" opens the release page in browser; install is manual.": {
-    "value": "Раз в день обращается к github.com за новыми релизами. «Открыть» открывает страницу релиза в браузере; установка вручную."
+  "Pings *** once a day to check for new releases. \"View\" opens the release page in browser; install is manual.": {
+    "value": "Раз в день обращается к *** за новыми релизами. «Открыть» открывает страницу релиза в браузере; установка вручную."
   },
   "Pinned. UI actions skip config rebuild — useful when testing PUT /config overrides.": {
     "value": "Закреплён. Действия в UI не пересобирают конфиг — удобно при тестировании override через PUT /config."
@@ -3836,8 +3836,8 @@
   "Slower than, ms": {
     "value": "Медленнее чем, мс"
   },
-  "Some panels return the config by a substring in the User-Agent — a custom UA without the \"LxBox\" token may yield an unsupported format and break the update. Change only if you know why.": {
-    "value": "Некоторые панели выбирают формат конфига по подстроке в User-Agent — свой UA без токена «LxBox» может вернуть неподдерживаемый формат и сломать обновление. Меняйте, только если понимаете зачем."
+  "Some panels return the config by a substring in the User-Agent — a custom UA without the \"DARK\" token may yield an unsupported format and break the update. Change only if you know why.": {
+    "value": "Некоторые панели выбирают формат конфига по подстроке в User-Agent — свой UA без токена «DARK» может вернуть неподдерживаемый формат и сломать обновление. Меняйте, только если понимаете зачем."
   },
   "Something went wrong in this section.\nCheck Debug → Logs.": {
     "value": "В этом разделе произошла ошибка.\nПодробности: Отладка → Логи."
@@ -3980,8 +3980,8 @@
   "Support": {
     "value": "Поддержка"
   },
-  "Support L×Box": {
-    "value": "Поддержать L×Box"
+  "Support DARK": {
+    "value": "Поддержать DARK"
   },
   "Support the project": {
     "value": "Поддержать проект"
@@ -4226,8 +4226,8 @@
   "Title": {
     "value": "Название"
   },
-  "To keep the VPN running in background, also disable battery restrictions for L×Box. The settings screen will open — find and toggle:\n\n• \"Battery usage\" → \"Don't optimize\" or \"Allow background activity\"\n\n• On OnePlus / OPPO / Realme also:\n  \"Stop activity when idle\" → OFF": {
-    "value": "Чтобы VPN работал в фоне, отключите для L×Box и ограничения батареи. Откроется экран настроек — найдите и переключите:\n\n• «Использование батареи» → «Не оптимизировать» или «Разрешить фоновую активность»\n\n• На OnePlus / OPPO / Realme также:\n  «Останавливать при бездействии» → выкл."
+  "To keep the VPN running in background, also disable battery restrictions for DARK. The settings screen will open — find and toggle:\n\n• \"Battery usage\" → \"Don't optimize\" or \"Allow background activity\"\n\n• On OnePlus / OPPO / Realme also:\n  \"Stop activity when idle\" → OFF": {
+    "value": "Чтобы VPN работал в фоне, отключите для DARK и ограничения батареи. Откроется экран настроек — найдите и переключите:\n\n• «Использование батареи» → «Не оптимизировать» или «Разрешить фоновую активность»\n\n• На OnePlus / OPPO / Realme также:\n  «Останавливать при бездействии» → выкл."
   },
   "Token": {
     "value": "Токен"
@@ -4765,8 +4765,8 @@
   "srs": {
     "value": "srs"
   },
-  "storage shape (lxbox_settings.json)": {
-    "value": "формат хранения (lxbox_settings.json)"
+  "storage shape (dark_settings.json)": {
+    "value": "формат хранения (dark_settings.json)"
   },
   "stripped": {
     "value": "снимается"
@@ -4846,5 +4846,14 @@
   },
   "Folder \"%s\" has not been created yet — add it on the Servers screen": {
     "value": "Папка «%s» ещё не создана — добавьте её на экране Servers"
+  },
+  "Kill Switch": {
+    "value": "Блокировка при обрыве"
+  },
+  "DNS Protection": {
+    "value": "Скрытие DNS-запросов"
+  },
+  "DNS-защита": {
+    "value": "DNS-защита"
   }
 }

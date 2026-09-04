@@ -2,20 +2,20 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/models/node_spec.dart';
-import 'package:lxbox/models/node_warning.dart';
-import 'package:lxbox/models/singbox_entry.dart';
-import 'package:lxbox/models/template_vars.dart';
-import 'package:lxbox/services/parser/uri_parsers.dart';
+import 'package:dark/models/node_spec.dart';
+import 'package:dark/models/node_warning.dart';
+import 'package:dark/models/singbox_entry.dart';
+import 'package:dark/models/template_vars.dart';
+import 'package:dark/services/parser/uri_parsers.dart';
 
 // Конформанс-раннер общего корпуса контракта (SPEC 103, фаза 1), сторона
-// LxBox. Аналог core/config/contract_test.go в singbox-launcher — гоняет тот
+// DARK. Аналог core/config/contract_test.go в singbox-launcher — гоняет тот
 // же корпус contract/corpus/uri/**/*.uri через parseUri() и сравнивает
 // результат с ожиданием корпуса.
 //
 // ИСТОЧНИК ОЖИДАНИЯ — ОБЩИЙ `<case>.expected.json`. Он нормативен для ОБЕИХ
 // сторон (contract/README.md §2): именно поэтому изменение канона у лаунчера
-// обязано доехать до нас красным тестом. `<case>.expected.lxbox.json`
+// обязано доехать до нас красным тестом. `<case>.expected.dark.json`
 // читается ТОЛЬКО если существует, и означает задокументированное by-design
 // различие — три законных класса перечислены в contract/docs/IDENTITY.md §4a.
 //
@@ -24,7 +24,7 @@ import 'package:lxbox/services/parser/uri_parsers.dart';
 // базы, и 257 из 281 override'а были побайтовыми дублями, которые ничего не
 // проверяли и глушили расхождения. Аудит 25.08 (контракт 0.8.0) их снёс.
 //
-// Регенерация ожиданий LxBox:
+// Регенерация ожиданий DARK:
 //
 //   cd app && UPDATE_CONTRACT=1 flutter test test/contract/
 //
@@ -242,7 +242,7 @@ void main() {
       final name = rel.substring(0, rel.length - '.uri'.length);
       final basePath = file.path.substring(0, file.path.length - '.uri'.length);
       final baseExpectedPath = '$basePath.expected.json';
-      final overridePath = '$basePath.expected.lxbox.json';
+      final overridePath = '$basePath.expected.dark.json';
 
       test(name, () {
         final uri = _readCorpusUri(file);

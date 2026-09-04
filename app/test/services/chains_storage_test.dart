@@ -3,10 +3,10 @@ import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/models/direction.dart';
-import 'package:lxbox/models/source_chain.dart';
-import 'package:lxbox/services/backup_service.dart';
-import 'package:lxbox/services/settings_storage.dart';
+import 'package:dark/models/direction.dart';
+import 'package:dark/models/source_chain.dart';
+import 'package:dark/services/backup_service.dart';
+import 'package:dark/services/settings_storage.dart';
 
 // §393 C2 — хранение источников-цепочек (`chains[]`) и их выживание в
 // ВНУТРЕННЕМ backup/restore.
@@ -22,7 +22,7 @@ void main() {
 
   setUp(() async {
     TestWidgetsFlutterBinding.ensureInitialized();
-    tmp = await Directory.systemTemp.createTemp('lxbox_chains_');
+    tmp = await Directory.systemTemp.createTemp('dark_chains_');
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(channel, (call) async {
       if (call.method == 'getApplicationDocumentsDirectory' ||
@@ -45,7 +45,7 @@ void main() {
   });
 
   Future<Map<String, dynamic>> readFile() async => jsonDecode(
-        File('${tmp.path}/lxbox_settings.json').readAsStringSync(),
+        File('${tmp.path}/dark_settings.json').readAsStringSync(),
       ) as Map<String, dynamic>;
 
   group('CRUD', () {
@@ -235,7 +235,7 @@ void main() {
     test('миграция: старый storage без order — цепочки встают в конец, '
         'взаимный порядок сохранён', () async {
       // Ключ `chains` уже в проде у dev-сборок, и записи там без `order`.
-      final f = File('${tmp.path}/lxbox_settings.json');
+      final f = File('${tmp.path}/dark_settings.json');
       f.writeAsStringSync(jsonEncode({
         'server_lists': [
           {'type': 'user', 'id': 'u1', 'name': 'S', 'enabled': true},
@@ -300,7 +300,7 @@ void main() {
 
       // Restore на «чистое» устройство.
       SettingsStorage.resetCacheForTesting();
-      await File('${tmp.path}/lxbox_settings.json').delete();
+      await File('${tmp.path}/dark_settings.json').delete();
       SettingsStorage.resetCacheForTesting();
       expect(await SettingsStorage.getChains(), isEmpty);
 

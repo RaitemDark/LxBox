@@ -2,17 +2,17 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/models/custom_rule.dart';
-import 'package:lxbox/models/direction.dart';
-import 'package:lxbox/models/server_list.dart';
-import 'package:lxbox/models/source_chain.dart';
-import 'package:lxbox/services/dns/dns_backup.dart';
-import 'package:lxbox/services/lx_backup.dart';
-import 'package:lxbox/services/warp/masque_account.dart';
-import 'package:lxbox/services/warp/warp_account.dart';
-import 'package:lxbox/services/warp/warp_backup.dart';
+import 'package:dark/models/custom_rule.dart';
+import 'package:dark/models/direction.dart';
+import 'package:dark/models/server_list.dart';
+import 'package:dark/models/source_chain.dart';
+import 'package:dark/services/dns/dns_backup.dart';
+import 'package:dark/services/lx_backup.dart';
+import 'package:dark/services/warp/masque_account.dart';
+import 'package:dark/services/warp/warp_account.dart';
+import 'package:dark/services/warp/warp_backup.dart';
 
-// LX Backup v1, сторона LxBox (SPEC 103, фаза 4).
+// LX Backup v1, сторона DARK (SPEC 103, фаза 4).
 //
 // Парные тесты к core/backup/*_test.go в лаунчере: перенос настроек между
 // приложениями имеет смысл ровно настолько, насколько обе стороны одинаково
@@ -177,7 +177,7 @@ void main() {
 
       final exported = (doc['rules'] as List).single as Map<String, dynamic>;
       expect((exported['match'] as Map)['domain_suffix'], ['example-1.com']);
-      final ext = (exported['extensions'] as Map)['lxbox'] as Map;
+      final ext = (exported['extensions'] as Map)['dark'] as Map;
       expect(ext['packages'], ['com.example.app']);
       expect(ext['wifiSsids'], ['HomeNet']);
 
@@ -589,7 +589,7 @@ void main() {
 
   group('LX Backup: секции обмена', () {
     // §393 B7 — самый дорогой из инвариантов: блоб чужого приложения обязан
-    // пережить круг launcher→LxBox→launcher БАЙТ В БАЙТ. Обеднение здесь
+    // пережить круг launcher→DARK→launcher БАЙТ В БАЙТ. Обеднение здесь
     // молчаливое — мобила о содержимом ничего не знает и предъявить
     // пользователю не может.
     test('чужой блоб переживает круг байт-в-байт', () async {
@@ -628,30 +628,30 @@ void main() {
     test('свой блоб в чужие не попадает и обратно не возвращается', () async {
       final incoming = jsonEncode({
         'lx_backup': 1,
-        'exported_by': {'app': 'lxbox', 'version': '2.0.0'},
+        'exported_by': {'app': 'dark', 'version': '2.0.0'},
         'exported_at': '2026-08-22T00:00:00Z',
         'extensions': {
-          'lxbox': {'folders': ['work']},
+          'dark': {'folders': ['work']},
           'launcher': {'state_version': 6},
         },
       });
       final parsed = parseLxBackup(incoming);
-      expect(parsed.foreignExtensions.containsKey('lxbox'), isFalse,
+      expect(parsed.foreignExtensions.containsKey('dark'), isFalse,
           reason: 'своё применяется полями, а не хранится как чужой груз');
 
       // Даже если своё положат в чужие руками — экспорт его не вернёт:
-      // `extensions.lxbox` наполняется своими данными, а не копией себя.
+      // `extensions.dark` наполняется своими данными, а не копией себя.
       final out = await buildLxBackup(
         lists: const [],
         rules: const [],
         vars: const {},
         foreignExtensions: const {
-          'lxbox': {'folders': ['work']},
+          'dark': {'folders': ['work']},
           'launcher': {'state_version': 6},
         },
       );
       final ext = (jsonDecode(out) as Map<String, dynamic>)['extensions'] as Map;
-      expect(ext.containsKey('lxbox'), isFalse);
+      expect(ext.containsKey('dark'), isFalse);
       expect(ext['launcher'], {'state_version': 6});
     });
 
@@ -785,7 +785,7 @@ void main() {
       expect(exported['sorcery'], {'launcher_only': true},
           reason: 'поле чужой схемы не вернулось на верхний уровень записи');
       expect(
-          ((exported['extensions'] as Map?)?['lxbox'] as Map?)
+          ((exported['extensions'] as Map?)?['dark'] as Map?)
               ?.containsKey('_backup_fields'),
           isNot(isTrue),
           reason: 'служебный контейнер не поле схемы — в файл он не едет');
@@ -878,7 +878,7 @@ void main() {
       expect(wire['type'], 'masque');
       expect(wire['private_key_der'], 'ZGVy');
       // sni/idle_timeout — параметры узла, канон их не знает.
-      final own = (wire['extensions'] as Map)['lxbox'] as Map;
+      final own = (wire['extensions'] as Map)['dark'] as Map;
       expect(own['sni'], 'www.cloudflare.com');
       expect(own['idle_timeout'], '5m');
 

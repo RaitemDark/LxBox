@@ -19,7 +19,7 @@ fun hasReleaseKeystore(): Boolean =
         !keystoreProperties.getProperty("storeFile").isNullOrBlank()
 
 android {
-    namespace = "com.leadaxe.lxbox"
+    namespace = "com.leadaxe.dark"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -49,7 +49,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.leadaxe.lxbox"
+        applicationId = "com.leadaxe.dark"
         // Android 7.0 (API 24) minimum — §233. Это абсолютный пол: Flutter
         // 3.41.x поддерживает минимум API 24, libbox.aar требует 23.
         // Приоритет тестирования и поддержки — 11+ (primary target window).

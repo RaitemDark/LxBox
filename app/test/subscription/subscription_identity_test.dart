@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/models/server_list.dart';
-import 'package:lxbox/services/subscription/subscription_identity.dart';
+import 'package:dark/models/server_list.dart';
+import 'package:dark/services/subscription/subscription_identity.dart';
 
 void main() {
   group('§118 generateUuidV4', () {

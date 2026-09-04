@@ -2,10 +2,10 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/models/config_node.dart';
-import 'package:lxbox/models/direction.dart';
-import 'package:lxbox/models/source_chain.dart';
-import 'package:lxbox/screens/chain_edit_screen.dart';
+import 'package:dark/models/config_node.dart';
+import 'package:dark/models/direction.dart';
+import 'package:dark/models/source_chain.dart';
+import 'package:dark/screens/chain_edit_screen.dart';
 
 // §393 C7 — экран цепочки строится и переживает взаимодействие. Не тест на
 // вёрстку и не на тексты (AGENTS.md): проверяем, что форма поднимается, что

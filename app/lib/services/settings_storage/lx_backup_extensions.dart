@@ -3,11 +3,11 @@ part of '../settings_storage.dart';
 // §393 B7 — блобы `extensions.<чужое приложение>` из LX Backup.
 //
 // BACKUP.md §1: принимающая сторона обязана сохранить чужой блоб НЕТРОНУТЫМ
-// до следующего экспорта («лаунчер — новое поле state v6; LxBox — новый ключ
+// до следующего экспорта («лаунчер — новое поле state v6; DARK — новый ключ
 // allowlist»). Это тот самый ключ.
 //
 // Зачем отдельный ключ, а не «положить в extensions при экспорте на лету».
-// Круг launcher→LxBox→launcher проходит через ИМПОРТ на телефон: если блоб не
+// Круг launcher→DARK→launcher проходит через ИМПОРТ на телефон: если блоб не
 // лёг на диск, следующий экспорт с телефона его не восстановит, и настройки
 // лаунчера (цепочки хопов SPEC 110, skip-фильтры, локальные outbound'ы)
 // исчезнут — молча, потому что мобила о них ничего не знает и предъявить
@@ -19,7 +19,7 @@ part of '../settings_storage.dart';
 // НЕ config-significant: содержимое ключа в конфиг ядра не попадает вообще
 // никогда — это транзитный груз для чужого приложения.
 
-/// §393 B7 — чужие блобы: `{"launcher": {...}}`. Ключ `lxbox` сюда не
+/// §393 B7 — чужие блобы: `{"launcher": {...}}`. Ключ `dark` сюда не
 /// попадает — своё применяется полями импорта.
 Future<Map<String, dynamic>> _getLxBackupExtensions() async {
   final data = await _load();
@@ -47,8 +47,8 @@ Future<void> _setLxBackupExtensions(
   };
   for (final e in blobs.entries) {
     // Своё приложение в чужих блобах — ошибка вызывающего; молча не
-    // сохраняем, иначе экспорт положил бы в `extensions.lxbox` копию себя.
-    if (e.key == kLxAppLxBox) continue;
+    // сохраняем, иначе экспорт положил бы в `extensions.dark` копию себя.
+    if (e.key == kLxAppDARK) continue;
     merged[e.key] = e.value;
   }
   data['lx_backup_extensions'] = merged;

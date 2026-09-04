@@ -88,7 +88,7 @@ class DumpBuilder {
 
     final dump = <String, dynamic>{
       'generated_at': now.toIso8601String(),
-      'app': 'lxbox',
+      'app': 'dark',
       // §378 — чем собран пак. `app_version` — versionName (`X.Y.Z`),
       // `app_build` — versionCode: по §379 последняя цифра кодирует ABI
       // (0/1/2/4, см. docs/FDROID.md), то есть отвечает на «какой именно APK
@@ -111,7 +111,7 @@ class DumpBuilder {
     final dir = await getTemporaryDirectory();
     final stamp =
         now.toIso8601String().replaceAll(':', '-').substring(0, 19);
-    final file = File('${dir.path}/lxbox-dump-$stamp.json');
+    final file = File('${dir.path}/dark-dump-$stamp.json');
     await file.writeAsString(
         const JsonEncoder.withIndent('  ').convert(dump));
     return file.path;

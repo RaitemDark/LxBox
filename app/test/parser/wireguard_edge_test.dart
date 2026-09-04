@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/models/node_spec.dart';
-import 'package:lxbox/models/template_vars.dart';
-import 'package:lxbox/services/parser/json_parsers.dart';
-import 'package:lxbox/services/parser/uri_parsers/wireguard_parser.dart';
-import 'package:lxbox/services/parser/uri_utils.dart';
+import 'package:dark/models/node_spec.dart';
+import 'package:dark/models/template_vars.dart';
+import 'package:dark/services/parser/json_parsers.dart';
+import 'package:dark/services/parser/uri_parsers/wireguard_parser.dart';
+import 'package:dark/services/parser/uri_utils.dart';
 
 // SPEC 103 D-023/D-030 — валидные 32-байтные base64-ключи для фикстур (эталон
 // Go wgTestPub, node_parser_wireguard_test.go). normalizeWGKey (wireguard_

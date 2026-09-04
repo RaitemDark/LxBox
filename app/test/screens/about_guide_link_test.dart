@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/screens/about_screen.dart';
+import 'package:dark/screens/about_screen.dart';
 
 // §361 — кнопка «Руководство пользователя» в About ведёт на документ языка
 // интерфейса. Единственная логика, где можно ошибиться, — сопоставление
@@ -28,7 +28,7 @@ void main() {
       for (final url in [AboutScreen.guideUrlEn, AboutScreen.guideUrlRu]) {
         // Ветка main — единственная, куда доезжают релизные доки (§361);
         // ссылка на develop сгнила бы после мержа.
-        expect(url, startsWith('https://github.com/Leadaxe/LxBox/blob/main/'),
+        expect(url, startsWith('https://***/Leadaxe/DARK/blob/main/'),
             reason: 'ссылка должна вести в main: $url');
         expect(url, endsWith('.md'));
       }

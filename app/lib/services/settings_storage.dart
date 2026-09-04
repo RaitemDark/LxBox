@@ -15,7 +15,7 @@ import '../vpn/box_vpn_client.dart';
 import 'app_log.dart';
 import 'config_dirty_check.dart';
 import 'l10n/app_language_reconcile.dart';
-import 'lx_backup.dart' show kLxAppLxBox;
+import 'lx_backup.dart' show kLxAppDARK;
 import 'template_loader.dart';
 import 'warp/masque_account.dart';
 import 'warp/warp_account.dart';
@@ -51,7 +51,7 @@ part 'settings_storage/native_prefs.dart';
 class SettingsStorage {
   SettingsStorage._();
 
-  static const _fileName = 'lxbox_settings.json';
+  static const _fileName = 'dark_settings.json';
   static const _bakSuffix = '.bak';
   static const _tmpSuffix = '.tmp';
   // §141 P1.5 — монотонный суффикс tmp-файлов. Два перекрывающихся `_save()`
@@ -129,7 +129,7 @@ class SettingsStorage {
   // DENY-`.remove()` и one-shot миграции удалены (см. spec/tasks/159).
   // ---------------------------------------------------------------------------
 
-  /// Валидные top-level ключи `lxbox_settings.json`. Полный закрытый список —
+  /// Валидные top-level ключи `dark_settings.json`. Полный закрытый список —
   /// все имена известны. `vars` — контейнер, его содержимое фильтруется
   /// отдельно через [allowedVarKeys]. Источник правды: STORAGE.md.
   static const allowedTopLevelKeys = <String>{
@@ -877,7 +877,7 @@ class SettingsStorage {
       setVar('automation_explainer_shown_v1', shown ? 'true' : 'false');
 
   // ---------------------------------------------------------------------------
-  // Backup snapshot (§031) — dump/export/replace всего `lxbox_settings.json`.
+  // Backup snapshot (§031) — dump/export/replace всего `dark_settings.json`.
   // ---------------------------------------------------------------------------
 
   /// Снимок всего `_cache` для `/state/storage` (§031). Возвращает
@@ -885,7 +885,7 @@ class SettingsStorage {
   /// чтобы не утекли чувствительные поля (debug_token, subscription URLs).
   static Future<Map<String, dynamic>> dumpCache() => _dumpCache();
 
-  /// Backup: глубокая копия всего `lxbox_settings.json` для export'а через
+  /// Backup: глубокая копия всего `dark_settings.json` для export'а через
   /// [BackupService]. Возвращает то же что [dumpCache] — alias для ясности
   /// семантики на call-site.
   static Future<Map<String, dynamic>> exportRaw() => dumpCache();

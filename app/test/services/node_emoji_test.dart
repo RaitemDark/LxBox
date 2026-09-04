@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/models/node_spec.dart';
-import 'package:lxbox/services/node_emoji.dart';
-import 'package:lxbox/services/parser/uri_parsers.dart';
+import 'package:dark/models/node_spec.dart';
+import 'package:dark/services/node_emoji.dart';
+import 'package:dark/services/parser/uri_parsers.dart';
 
 /// §090 G2b — unit tests для эмодзи-тегов (палитра / hasEmoji / дефолт по
 /// протоколу / вставка в rawBody с round-trip через парсер).

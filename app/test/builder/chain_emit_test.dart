@@ -1,12 +1,12 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/config/consts.dart';
-import 'package:lxbox/models/direction.dart';
-import 'package:lxbox/models/node_spec.dart';
-import 'package:lxbox/models/parser_config.dart';
-import 'package:lxbox/models/server_list.dart';
-import 'package:lxbox/models/source_chain.dart';
-import 'package:lxbox/services/builder/build_config.dart';
-import 'package:lxbox/services/parser/uri_parsers.dart';
+import 'package:dark/config/consts.dart';
+import 'package:dark/models/direction.dart';
+import 'package:dark/models/node_spec.dart';
+import 'package:dark/models/parser_config.dart';
+import 'package:dark/models/server_list.dart';
+import 'package:dark/models/source_chain.dart';
+import 'package:dark/services/builder/build_config.dart';
+import 'package:dark/services/parser/uri_parsers.dart';
 
 // §393 C3–C5 — эмиссия источников-цепочек через НАСТОЯЩИЙ `buildConfig`.
 //

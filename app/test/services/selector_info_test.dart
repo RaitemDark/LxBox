@@ -1,10 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/models/direction.dart';
-import 'package:lxbox/screens/stats_screen/routing_section.dart';
-import 'package:lxbox/services/selector_info.dart';
-import 'package:lxbox/services/traffic_profiler.dart';
-import 'package:lxbox/vpn/cc_channel.dart';
-import 'package:lxbox/widgets/detour_target_picker.dart';
+import 'package:dark/models/direction.dart';
+import 'package:dark/screens/stats_screen/routing_section.dart';
+import 'package:dark/services/selector_info.dart';
+import 'package:dark/services/traffic_profiler.dart';
+import 'package:dark/vpn/cc_channel.dart';
+import 'package:dark/widgets/detour_target_picker.dart';
 
 /// §251 — схлопывание «селектор + его выбор» в `селектор (выбор)`:
 /// pure-fold, обе routingLine-модели (TrafficEvent / CcConnection), строка

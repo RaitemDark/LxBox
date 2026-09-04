@@ -4,8 +4,8 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:lxbox/services/backup_service.dart';
-import 'package:lxbox/services/settings_storage.dart';
+import 'package:dark/services/backup_service.dart';
+import 'package:dark/services/settings_storage.dart';
 
 /// §040 backup-restore — round-trip и edge cases для нового single-format
 /// (`storage` + `vpn_settings` блоки).
@@ -15,7 +15,7 @@ void main() {
 
   setUp(() async {
     TestWidgetsFlutterBinding.ensureInitialized();
-    tmp = await Directory.systemTemp.createTemp('lxbox_backup_test_');
+    tmp = await Directory.systemTemp.createTemp('dark_backup_test_');
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(channel, (call) async {
       if (call.method == 'getApplicationDocumentsDirectory' ||
@@ -135,7 +135,7 @@ void main() {
         BackupCategory.debugConfig,
       });
       final parsed = jsonDecode(json) as Map<String, dynamic>;
-      expect(parsed['app'], 'lxbox');
+      expect(parsed['app'], 'dark');
       expect(parsed['kind'], 'backup');
       expect(parsed['created_at'], isA<String>());
       expect(parsed.containsKey('version'), isFalse,
@@ -322,7 +322,7 @@ void main() {
     test('rejects legacy format (no storage key)', () async {
       final svc = const BackupService();
       final legacy = {
-        'app': 'lxbox',
+        'app': 'dark',
         'kind': 'backup',
         'version': 1,
         'vars': {'log_level': 'info'},
@@ -336,7 +336,7 @@ void main() {
     test('parses minimal valid backup', () async {
       final svc = const BackupService();
       final raw = jsonEncode({
-        'app': 'lxbox',
+        'app': 'dark',
         'kind': 'backup',
         'created_at': '2026-05-10T12:00:00Z',
         'storage': {
@@ -577,7 +577,7 @@ void main() {
     });
 
     final backup = jsonEncode({
-      'app': 'lxbox',
+      'app': 'dark',
       'kind': 'backup',
       'storage': {
         'custom_rules': [
@@ -616,7 +616,7 @@ void main() {
   group('§393 A2 restore→migrate', () {
     /// Архив, каким его писала сборка ДО переименования ключа.
     String legacyArchive() => jsonEncode({
-          'app': 'lxbox',
+          'app': 'dark',
           'kind': 'backup',
           'storage': {
             'route_final': 'vpn-2',
@@ -702,7 +702,7 @@ void main() {
       });
       final svc = const BackupService();
       final archive = jsonEncode({
-        'app': 'lxbox',
+        'app': 'dark',
         'kind': 'backup',
         'storage': {
           'directions': [

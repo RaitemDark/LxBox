@@ -1,13 +1,13 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/models/debug_entry.dart';
-import 'package:lxbox/services/app_log.dart';
-import 'package:lxbox/services/debug/context.dart';
-import 'package:lxbox/services/debug/contract/errors.dart';
-import 'package:lxbox/services/debug/debug_registry.dart';
-import 'package:lxbox/services/debug/handlers/logs.dart';
-import 'package:lxbox/services/debug/handlers/ping.dart';
-import 'package:lxbox/services/debug/transport/request.dart';
-import 'package:lxbox/services/debug/transport/response.dart';
+import 'package:dark/models/debug_entry.dart';
+import 'package:dark/services/app_log.dart';
+import 'package:dark/services/debug/context.dart';
+import 'package:dark/services/debug/contract/errors.dart';
+import 'package:dark/services/debug/debug_registry.dart';
+import 'package:dark/services/debug/handlers/logs.dart';
+import 'package:dark/services/debug/handlers/ping.dart';
+import 'package:dark/services/debug/transport/request.dart';
+import 'package:dark/services/debug/transport/response.dart';
 
 /// Handler-тесты без platform-зависимостей.
 ///
@@ -31,7 +31,7 @@ void main() {
       expect(resp, isA<JsonResponse>());
       final body = (resp as JsonResponse).body as Map;
       expect(body['pong'], isTrue);
-      expect(body['server'], 'lxbox-debug');
+      expect(body['server'], 'dark-debug');
       expect(body['uptime_seconds'], 42);
     });
   });

@@ -12,7 +12,7 @@ import 'settings_storage.dart';
 /// выпускать релиз.
 ///
 /// Источник — `docs/donate.json` в репо, раздаётся через
-/// raw.githubusercontent.com (паттерн §356 support.json): адреса правятся без
+/// *** (паттерн §356 support.json): адреса правятся без
 /// релиза. Порядок: сеть → кэш последнего удачного ответа
 /// (`donate_cache_json`) → bundled-копия `assets/donate.json` (первый запуск
 /// офлайн). Загрузка ленивая, кэш на процесс.
@@ -75,7 +75,7 @@ class DonateMethods {
   static const _url = String.fromEnvironment(
     'LXBOX_DONATE_URL',
     defaultValue:
-        'https://raw.githubusercontent.com/Leadaxe/LxBox/main/docs/donate.json',
+        'https://***/Leadaxe/DARK/main/docs/donate.json',
   );
   static const _httpTimeout = Duration(seconds: 10);
   static const _cacheKey = 'donate_cache_json';
@@ -95,7 +95,7 @@ class DonateMethods {
     final client = httpClientForTesting ?? http.Client();
     try {
       final resp = await client
-          .get(Uri.parse(_url), headers: {'User-Agent': 'LxBox/1.x'})
+          .get(Uri.parse(_url), headers: {'User-Agent': 'DARK/1.x'})
           .timeout(_httpTimeout);
       if (resp.statusCode == 200) {
         final parsed = _parse(resp.body);

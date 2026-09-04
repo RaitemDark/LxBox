@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/models/parser_config.dart';
-import 'package:lxbox/services/builder/if_engine.dart';
+import 'package:dark/models/parser_config.dart';
+import 'package:dark/services/builder/if_engine.dart';
 
 // SPEC 393 фаза D (D5) — рубеж LOAD-валидации на общем корпусе шаблонов.
 //
@@ -16,7 +16,7 @@ import 'package:lxbox/services/builder/if_engine.dart';
 //
 // Почему отдельный файл, а не расширение раннера: фикстуры в `contract/**` —
 // read-only копия общего контракта, а формата «ожидаемый вердикт загрузки» у
-// корпуса СЕГОДНЯ НЕТ. Поэтому здесь — сторона LxBox, с явными списками
+// корпуса СЕГОДНЯ НЕТ. Поэтому здесь — сторона DARK, с явными списками
 // кейсов; предложение общего формата описано в конце файла и уходит в контракт
 // отдельной задачей.
 //

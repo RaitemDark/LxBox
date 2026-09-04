@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/models/node_spec.dart';
-import 'package:lxbox/models/node_warning.dart';
-import 'package:lxbox/models/template_vars.dart';
-import 'package:lxbox/services/parser/uri_parsers.dart';
+import 'package:dark/models/node_spec.dart';
+import 'package:dark/models/node_warning.dart';
+import 'package:dark/models/template_vars.dart';
+import 'package:dark/services/parser/uri_parsers.dart';
 
 /// §320 — `ech` из подписки НЕ применяется, только предупреждение.
 ///

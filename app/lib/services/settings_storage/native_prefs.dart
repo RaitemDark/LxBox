@@ -2,7 +2,7 @@ part of '../settings_storage.dart';
 
 // §189 — native_prefs: JSON-зеркало Android-prefs (`boxvpn_boot.*`).
 //
-// Модель: lxbox_settings.json = ИСТОЧНИК ИСТИНЫ (диск); native SharedPreferences
+// Модель: dark_settings.json = ИСТОЧНИК ИСТИНЫ (диск); native SharedPreferences
 // = рабочая копия (оперативка) для Dart-less моментов (BOOT_COMPLETED, swipe
 // onTaskRemoved, openTun/establish). native читает СВОЮ копию синхронно.
 //
@@ -209,7 +209,7 @@ Future<void> _reconcileAppLanguageWithSystem() async {
 /// НЕ член [NativePrefsKeys] (членство экспортировало бы его вторым
 /// представлением в vpn_settings-блок бэкапа с неопределённым precedence на
 /// import). Его boxvpn_boot-копия — derived cache: единственный источник
-/// истины — var в lxbox_settings.json; кэш пере-пушится setAppLanguage и
+/// истины — var в dark_settings.json; кэш пере-пушится setAppLanguage и
 /// bootstrapAndSyncNativePrefs. Best-effort: native-handler появляется в
 /// Phase 6 фичи l10n — до того вызов падает в notImplemented и глотается.
 Future<void> _mirrorAppLanguageToNative(String value) async {

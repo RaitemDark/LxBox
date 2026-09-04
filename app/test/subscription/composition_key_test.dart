@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/controllers/subscription_controller.dart';
-import 'package:lxbox/models/node_spec.dart';
-import 'package:lxbox/services/parser/uri_parsers.dart';
+import 'package:dark/controllers/subscription_controller.dart';
+import 'package:dark/models/node_spec.dart';
+import 'package:dark/services/parser/uri_parsers.dart';
 
 /// §331 — отпечаток «состава» подписки: то и только то, от чего зависит
 /// собранный конфиг. Одинаковый отпечаток ⇒ пересобирать нечего ⇒ синюю плашку

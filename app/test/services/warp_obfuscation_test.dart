@@ -1,11 +1,11 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/models/node_spec.dart';
-import 'package:lxbox/services/parser/ini_parser.dart';
-import 'package:lxbox/services/warp/masquerade_params.dart';
-import 'package:lxbox/services/warp/warp_account.dart';
-import 'package:lxbox/services/warp/warp_client.dart';
+import 'package:dark/models/node_spec.dart';
+import 'package:dark/services/parser/ini_parser.dart';
+import 'package:dark/services/warp/masquerade_params.dart';
+import 'package:dark/services/warp/warp_account.dart';
+import 'package:dark/services/warp/warp_client.dart';
 
 /// §126 — WARP + AmneziaWG 1.5 обфускация: preset, .conf round-trip, persist.
 void main() {

@@ -1,6 +1,6 @@
 {
-    "name": "lxbox",
-    "short_name": "lxbox",
+    "name": "dark",
+    "short_name": "dark",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/services/subscription/input_helpers.dart';
+import 'package:dark/services/subscription/input_helpers.dart';
 
 void main() {
   group('isSubscriptionUrl (night T5-3)', () {

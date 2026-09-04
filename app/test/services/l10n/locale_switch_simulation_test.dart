@@ -2,10 +2,10 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/models/node_warning.dart';
-import 'package:lxbox/models/ui_msg.dart';
-import 'package:lxbox/services/l10n/get_local_text.dart';
-import 'package:lxbox/services/l10n/plural_resolver.dart';
+import 'package:dark/models/node_warning.dart';
+import 'package:dark/models/ui_msg.dart';
+import 'package:dark/services/l10n/get_local_text.dart';
+import 'package:dark/services/l10n/plural_resolver.dart';
 
 // §285 — симуляция смены локали на живых lazy-рендер объектах: один и тот же
 // сохранённый объект (NodeWarning в подписке, UiMsg в home_state.lastError)

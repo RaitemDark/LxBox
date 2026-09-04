@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/controllers/subscription_controller.dart';
-import 'package:lxbox/screens/lazy_persist_mixin.dart';
-import 'package:lxbox/services/settings_storage.dart';
+import 'package:dark/controllers/subscription_controller.dart';
+import 'package:dark/screens/lazy_persist_mixin.dart';
+import 'package:dark/services/settings_storage.dart';
 
 /// §085 R4 / §107 — widget tests для LazyPersistMixin (staging core).
 ///

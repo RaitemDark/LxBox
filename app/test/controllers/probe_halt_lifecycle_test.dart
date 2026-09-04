@@ -5,10 +5,10 @@ import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/controllers/home_controller.dart';
-import 'package:lxbox/models/home_state.dart';
-import 'package:lxbox/services/haptic_service.dart';
-import 'package:lxbox/services/probe/probe_lifecycle.dart';
+import 'package:dark/controllers/home_controller.dart';
+import 'package:dark/models/home_state.dart';
+import 'package:dark/services/haptic_service.dart';
+import 'package:dark/services/probe/probe_lifecycle.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
@@ -32,9 +32,9 @@ class _FakePathProvider extends PathProviderPlatform
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  const methods = MethodChannel('com.leadaxe.lxbox/methods');
-  const ccStatus = MethodChannel('lxbox/cc/status');
-  const ccGroups = MethodChannel('lxbox/cc/groups');
+  const methods = MethodChannel('com.leadaxe.dark/methods');
+  const ccStatus = MethodChannel('dark/cc/status');
+  const ccGroups = MethodChannel('dark/cc/groups');
   final messenger =
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
 

@@ -12,40 +12,34 @@ import 'version_info.dart';
 class ProjectLinks {
   ProjectLinks._();
 
-  static const repo = 'https://github.com/Leadaxe/LxBox';
-  static const latestRelease =
-      'https://github.com/Leadaxe/LxBox/releases/latest';
-  static const core = 'https://github.com/Leadaxe/sing-box-lx';
-  static const launcher = 'https://github.com/Leadaxe/singbox-launcher';
-  static const singboxUpstream = 'https://github.com/SagerNet/sing-box';
-  static const telegram = 'https://t.me/singbox_launcher/4317';
-  static const donate = 'https://t.me/singbox_launcher/340/3621';
-  static const issues = 'https://github.com/Leadaxe/LxBox/issues';
-  static const boosty = 'https://boosty.to/lxbox/donate';
-  static const donatePage =
-      'https://github.com/Leadaxe/LxBox/blob/main/docs/DONATE.md';
-  static const donatePageRu =
-      'https://github.com/Leadaxe/LxBox/blob/main/docs/DONATE.ru.md';
+  static const repo = '';
+  static const latestRelease = '';
+  static const core = '';
+  static const launcher = '';
+  static const singboxUpstream = '';
+  static const telegram = '';
+  static const donate = '';
+  static const issues = '';
+  static const boosty = '';
+  static const donatePage = '';
+  static const donatePageRu = '';
 
   /// Страница поддержки на языке интерфейса (пара RU/EN, как гайд).
   static String donatePageFor(String tag) =>
       tag == 'ru' ? donatePageRu : donatePage;
-  static const automationDoc =
-      'https://github.com/Leadaxe/LxBox/blob/main/docs/AUTOMATION.md';
+  static const automationDoc = '';
 
   /// §361 — руководство пользователя. Пара RU/EN держится синхронной
   /// CI-проверкой парности (tool/docs/parity_check.dart). Ветка `main`: в APK
   /// попадает релизный код, а релиз — это merge в main, который принесёт туда
   /// и оба файла гайда. Незнакомый тег → английская версия, а не 404.
-  static const guideEn =
-      'https://github.com/Leadaxe/LxBox/blob/main/docs/USER_GUIDE.md';
-  static const guideRu =
-      'https://github.com/Leadaxe/LxBox/blob/main/docs/USER_GUIDE.ru.md';
+  static const guideEn = '';
+  static const guideRu = '';
 
   static String guideFor(String tag) => tag == 'ru' ? guideRu : guideEn;
 
   static String releaseTag(String tag) =>
-      'https://github.com/Leadaxe/LxBox/releases/tag/$tag';
+      'https://***/Leadaxe/DARK/releases/tag/$tag';
 
   /// §390 — страницы приложения в сторах. Куда вести за обновлением, решает
   /// канал установки (`InstallSource.updateUrl`): APK с GitHub не встанет

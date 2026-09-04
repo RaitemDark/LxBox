@@ -15,7 +15,7 @@ class AboutScreen extends StatelessWidget {
   const AboutScreen({super.key, this.openDonate = false});
 
   /// §362 — открыть донат-попап сразу после первого кадра: кнопка
-  /// `lxbox://route:donate` в support-ленте ведёт к способам поддержки
+  /// `dark://route:donate` в support-ленте ведёт к способам поддержки
   /// ВНУТРИ приложения, а не на внешнюю страницу.
   final bool openDonate;
 
@@ -76,7 +76,7 @@ class AboutScreen extends StatelessWidget {
                 const SizedBox(height: 8),
                 Text(
                   // l10n-exempt: app name
-                  'L×Box',
+                  'DARK',
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                         fontWeight: FontWeight.w700,
                       ),
@@ -218,7 +218,7 @@ class AboutScreen extends StatelessWidget {
     showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text(getLocalText.s("Support L×Box")),
+        title: Text(getLocalText.s("Support DARK")),
         contentPadding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
         content: SizedBox(
           width: double.maxFinite,

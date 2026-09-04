@@ -2,8 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/services/config_dirty_check.dart';
-import 'package:lxbox/services/settings_storage.dart';
+import 'package:dark/services/config_dirty_check.dart';
+import 'package:dark/services/settings_storage.dart';
 
 /// §113 — config-dirty флаг владеется `SettingsStorage`, поднимается
 /// config-значимыми сейверами; `_save` при снятом флаге выравнивает mtime
@@ -20,7 +20,7 @@ void main() {
 
   setUp(() async {
     TestWidgetsFlutterBinding.ensureInitialized();
-    tmp = await Directory.systemTemp.createTemp('lxbox_dirty_');
+    tmp = await Directory.systemTemp.createTemp('dark_dirty_');
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(channel, (call) async {
       if (call.method == 'getApplicationDocumentsDirectory' ||

@@ -5,11 +5,11 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
-import 'package:lxbox/controllers/subscription_controller.dart';
-import 'package:lxbox/models/server_list.dart';
-import 'package:lxbox/services/settings_storage.dart';
-import 'package:lxbox/services/subscription/http_cache.dart';
-import 'package:lxbox/services/subscription/sources.dart';
+import 'package:dark/controllers/subscription_controller.dart';
+import 'package:dark/models/server_list.dart';
+import 'package:dark/services/settings_storage.dart';
+import 'package:dark/services/subscription/http_cache.dart';
+import 'package:dark/services/subscription/sources.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 

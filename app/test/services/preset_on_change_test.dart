@@ -3,10 +3,10 @@ import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/models/custom_rule.dart';
-import 'package:lxbox/models/parser_config.dart';
-import 'package:lxbox/services/preset_on_change.dart';
-import 'package:lxbox/services/settings_storage.dart';
+import 'package:dark/models/custom_rule.dart';
+import 'package:dark/models/parser_config.dart';
+import 'package:dark/services/preset_on_change.dart';
+import 'package:dark/services/settings_storage.dart';
 
 /// §266 — on_change пресета FakeIP: `@rule_enable AND @dns_enable` → глушит
 /// глобальную `resolve_enabled`. Тест на РЕАЛЬНОМ wizard_template.json.
@@ -17,7 +17,7 @@ void main() {
 
   setUp(() async {
     TestWidgetsFlutterBinding.ensureInitialized();
-    tmp = await Directory.systemTemp.createTemp('lxbox_on_change_');
+    tmp = await Directory.systemTemp.createTemp('dark_on_change_');
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(channel, (call) async {
       if (call.method == 'getApplicationDocumentsDirectory' ||

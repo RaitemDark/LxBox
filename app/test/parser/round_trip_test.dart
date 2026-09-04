@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/models/node_warning.dart';
-import 'package:lxbox/models/template_vars.dart';
-import 'package:lxbox/services/parser/uri_parsers.dart';
+import 'package:dark/models/node_warning.dart';
+import 'package:dark/models/template_vars.dart';
+import 'package:dark/services/parser/uri_parsers.dart';
 
 /// Round-trip §4 спеки 026: `parseUri(spec.toUri()) ≈ spec`. Сравнение без
 /// `id`, `rawUri`, `warnings` — это ephemeral поля, не связанные со значением

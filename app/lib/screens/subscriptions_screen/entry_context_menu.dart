@@ -62,7 +62,7 @@ void showEntryContextMenu(
               title: Text(getLocalText.s("Share URL…")),
               onTap: () async {
                 Navigator.pop(ctx);
-                await Share.share(entry.url, subject: 'LxBox subscription');
+                await Share.share(entry.url, subject: 'DARK subscription');
               },
             ),
           ListTile(

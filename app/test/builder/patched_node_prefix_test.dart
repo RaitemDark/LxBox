@@ -1,13 +1,13 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/models/emit_context.dart';
-import 'package:lxbox/models/import_rule.dart';
-import 'package:lxbox/models/server_list.dart';
-import 'package:lxbox/models/singbox_entry.dart';
-import 'package:lxbox/models/template_vars.dart';
-import 'package:lxbox/services/builder/rule_set_registry.dart';
-import 'package:lxbox/services/builder/server_list_build.dart';
-import 'package:lxbox/services/parser/uri_parsers.dart';
-import 'package:lxbox/services/subscription/import_rules.dart';
+import 'package:dark/models/emit_context.dart';
+import 'package:dark/models/import_rule.dart';
+import 'package:dark/models/server_list.dart';
+import 'package:dark/models/singbox_entry.dart';
+import 'package:dark/models/template_vars.dart';
+import 'package:dark/services/builder/rule_set_registry.dart';
+import 'package:dark/services/builder/server_list_build.dart';
+import 'package:dark/services/parser/uri_parsers.dart';
+import 'package:dark/services/subscription/import_rules.dart';
 
 /// §307 — накопление tag-префикса у пропатченных нод (4PDA #1263).
 ///

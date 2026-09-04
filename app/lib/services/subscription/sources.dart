@@ -21,11 +21,11 @@ final class UrlSource extends SubscriptionSource {
   final String url;
 
   /// Кастомный UA. `null` (дефолт) → `_fetch` резолвит брендированный
-  /// `LxBox-android/<ver>` (см. [user_agent.dart]).
+  /// `DARK-android/<ver>` (см. [user_agent.dart]).
   ///
   /// Некоторые провайдеры выбирают формат тела по UA: неопознанному клиенту
   /// отдают JSON-конфиг/заглушку, опознанному — base64 URI-list (который ест
-  /// парсер v2). Бренд-токен `LxBox-android` опознаётся панелями
+  /// парсер v2). Бренд-токен `DARK-android` опознаётся панелями
   /// (Remnawave/Marzban); голого `singbox` в UA нет.
   final String? userAgent;
 

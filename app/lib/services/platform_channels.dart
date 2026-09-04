@@ -1,7 +1,7 @@
 // -----------------------------------------------------------------------------
 // §141 P2.4e — централизованные имена MethodChannel / EventChannel.
 //
-// Раньше строки каналов (`com.leadaxe.lxbox/methods` и т.д.) дублировались в
+// Раньше строки каналов (`com.leadaxe.dark/methods` и т.д.) дублировались в
 // 6+ Dart-файлах + Kotlin-стороне. Опечатка в одном месте → молчаливо мёртвый
 // канал (вызовы уходят в никуда). Единый источник здесь; Kotlin-зеркало —
 // `MainActivity.kt` / `VpnPlugin.kt` (их строки должны совпадать дословно).
@@ -16,7 +16,7 @@ class PlatformChannels {
   /// native кладёт именно его (`service.packageName` в `buildOverrideOptions`),
   /// и зеркало override сравнивает по этой строке. Публичный, чтобы литерал не
   /// расползался третьей копией.
-  static const packageName = 'com.leadaxe.lxbox';
+  static const packageName = 'com.leadaxe.dark';
 
   static const _ns = packageName;
 
@@ -35,15 +35,15 @@ class PlatformChannels {
 
   /// EventChannel для forward'а sing-box core-логов в AppLog (§043).
   /// Отдельный (короткий) неймспейс — зеркало `BoxService.coreLog`.
-  static const coreLog = 'lxbox/coreLog';
+  static const coreLog = 'dark/coreLog';
 
   /// §122 Фаза 0 — EventChannel'ы нативного CommandClient-канала.
   /// Зеркало `VpnPlugin.CC_*_CHANNEL` + `BoxVpnService.cc*Sink`.
   /// status: скорость/память/трафик (always-on). outbounds: плоский node-list +
   /// delay. groups: дерево групп. connections: снапшот соединений (дельты→аккумулятор).
-  static const ccStatus = 'lxbox/cc/status';
-  static const ccOutbounds = 'lxbox/cc/outbounds';
-  static const ccGroups = 'lxbox/cc/groups';
-  static const ccConnections = 'lxbox/cc/connections';
-  static const ccDns = 'lxbox/cc/dns'; // §180 — DNS-журнал из ядра (SPEC 018)
+  static const ccStatus = 'dark/cc/status';
+  static const ccOutbounds = 'dark/cc/outbounds';
+  static const ccGroups = 'dark/cc/groups';
+  static const ccConnections = 'dark/cc/connections';
+  static const ccDns = 'dark/cc/dns'; // §180 — DNS-журнал из ядра (SPEC 018)
 }

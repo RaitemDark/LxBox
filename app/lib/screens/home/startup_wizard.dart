@@ -36,7 +36,7 @@ class StartupWizard {
     await maybeShowAddTilePrompt(context, vpn);
 
     // 4. §395 — автопроверка обновлений: спрашиваем явно, потому что фоновый
-    //    запрос к github.com без согласия — anti-feature Tracking у F-Droid.
+    //    запрос к *** без согласия — anti-feature Tracking у F-Droid.
     //    Последним: работе не мешает, в отличие от шагов выше.
     if (!context.mounted) return;
     await maybeShowUpdateCheckPrompt(context);

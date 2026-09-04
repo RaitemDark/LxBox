@@ -35,15 +35,15 @@ class _AutomationTabState extends State<AutomationTab> {
 
   /// (action-строка, подпись с extras) для UI-списка команд.
   static const _commands = <(String, String)>[
-    ('com.leadaxe.lxbox.START_VPN', ''),
-    ('com.leadaxe.lxbox.STOP_VPN', ''),
-    ('com.leadaxe.lxbox.TOGGLE_VPN', ''),
-    ('com.leadaxe.lxbox.SWITCH_NODE', 'extra: tag'),
-    ('com.leadaxe.lxbox.SET_GROUP', 'extra: group'),
-    ('com.leadaxe.lxbox.REBUILD_CONFIG', ''),
-    ('com.leadaxe.lxbox.REFRESH_SUBS', 'extra: force'),
-    ('com.leadaxe.lxbox.RESET_NETWORK', ''),
-    ('com.leadaxe.lxbox.URLTEST_GROUP', 'extra: group'),
+    ('com.leadaxe.dark.START_VPN', ''),
+    ('com.leadaxe.dark.STOP_VPN', ''),
+    ('com.leadaxe.dark.TOGGLE_VPN', ''),
+    ('com.leadaxe.dark.SWITCH_NODE', 'extra: tag'),
+    ('com.leadaxe.dark.SET_GROUP', 'extra: group'),
+    ('com.leadaxe.dark.REBUILD_CONFIG', ''),
+    ('com.leadaxe.dark.REFRESH_SUBS', 'extra: force'),
+    ('com.leadaxe.dark.RESET_NETWORK', ''),
+    ('com.leadaxe.dark.URLTEST_GROUP', 'extra: group'),
   ];
 
   bool _loaded = false;
@@ -130,7 +130,7 @@ class _AutomationTabState extends State<AutomationTab> {
       context: context,
       builder: (ctx) => AlertDialog(
         title: Text(getLocalText.s("Emitting events outward")),
-        content: Text(getLocalText.s("Enabling this category lets other apps receive L×Box events.\n\nEvents do NOT contain subscription / config secrets — only labels (node tags, group names, status).")),
+        content: Text(getLocalText.s("Enabling this category lets other apps receive DARK events.\n\nEvents do NOT contain subscription / config secrets — only labels (node tags, group names, status).")),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
@@ -174,7 +174,7 @@ class _AutomationTabState extends State<AutomationTab> {
             style: theme.textTheme.titleMedium),
         const SizedBox(height: 4),
         Text(
-          getLocalText.s("Control L×Box from Tasker / Macrodroid / Llama and other automation apps via Android broadcast intents."),
+          getLocalText.s("Control DARK from Tasker / Macrodroid / Llama and other automation apps via Android broadcast intents."),
           style: muted,
         ),
         const Divider(height: 28),

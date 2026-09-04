@@ -110,9 +110,9 @@
         </service>
 
         <service
-            android:name=".vpn.LxBoxTileService"
+            android:name=".vpn.DARKTileService"
             android:label="@string/app_name"
-            android:icon="@drawable/ic_lxbox_tile"
+            android:icon="@drawable/ic_dark_tile"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE"
             android:exported="true">
             <intent-filter>
@@ -149,24 +149,24 @@
              задан намеренно: per-app пропуск удалён (§157 —
              `checkCallingPermission` в broadcast-onReceive недетерминирован). -->
         <receiver
-            android:name=".vpn.LxBoxIntentReceiver"
+            android:name=".vpn.DARKIntentReceiver"
             android:exported="true"
             android:enabled="false">
             <intent-filter>
-                <action android:name="com.leadaxe.lxbox.START_VPN" />
-                <action android:name="com.leadaxe.lxbox.STOP_VPN" />
-                <action android:name="com.leadaxe.lxbox.TOGGLE_VPN" />
-                <action android:name="com.leadaxe.lxbox.SWITCH_NODE" />
-                <action android:name="com.leadaxe.lxbox.SET_GROUP" />
-                <action android:name="com.leadaxe.lxbox.REBUILD_CONFIG" />
-                <action android:name="com.leadaxe.lxbox.REFRESH_SUBS" />
-                <action android:name="com.leadaxe.lxbox.RESET_NETWORK" />
-                <action android:name="com.leadaxe.lxbox.URLTEST_GROUP" />
+                <action android:name="com.leadaxe.dark.START_VPN" />
+                <action android:name="com.leadaxe.dark.STOP_VPN" />
+                <action android:name="com.leadaxe.dark.TOGGLE_VPN" />
+                <action android:name="com.leadaxe.dark.SWITCH_NODE" />
+                <action android:name="com.leadaxe.dark.SET_GROUP" />
+                <action android:name="com.leadaxe.dark.REBUILD_CONFIG" />
+                <action android:name="com.leadaxe.dark.REFRESH_SUBS" />
+                <action android:name="com.leadaxe.dark.RESET_NETWORK" />
+                <action android:name="com.leadaxe.dark.URLTEST_GROUP" />
             </intent-filter>
         </receiver>
 
         <!-- §047 Шаг 2 — Locale / Tasker plugin-стандарт (twofortyfouram).
-             L×Box виден в Tasker как Plugin (Action + State). Edit-Activity
+             DARK виден в Tasker как Plugin (Action + State). Edit-Activity
              exported (хост открывает их). Fire/Query receiver'ы БЕЗ
              `android:permission` (стандарт запрещает — хост проверяет права
              сам); `enabled="false"` — включаются мастер-toggle'ом

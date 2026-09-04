@@ -2,11 +2,11 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/models/source_chain.dart';
-import 'package:lxbox/services/json_clone.dart';
-import 'package:lxbox/services/lx_backup.dart';
+import 'package:dark/models/source_chain.dart';
+import 'package:dark/services/json_clone.dart';
+import 'package:dark/services/lx_backup.dart';
 
-// Конформанс-раннер корпуса LX Backup (SPEC 103, фаза 4), сторона LxBox.
+// Конформанс-раннер корпуса LX Backup (SPEC 103, фаза 4), сторона DARK.
 // Тот же набор гоняет Go (core/backup/corpus_test.go).
 //
 // Перенос настроек между приложениями имеет смысл ровно настолько, насколько
@@ -162,7 +162,7 @@ void main() {
           expect(file.foreignExtensions.containsKey(kLxAppLauncher), isTrue,
               reason: 'блоб extensions.$kLxAppLauncher не сохранён — '
                   'обратный экспорт обеднеет');
-          expect(file.foreignExtensions.containsKey(kLxAppLxBox), isFalse,
+          expect(file.foreignExtensions.containsKey(kLxAppDARK), isFalse,
               reason: 'собственный блоб положен в чужие — он должен '
                   'применяться полями');
         }

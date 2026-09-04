@@ -58,8 +58,8 @@ MasqueSpec? parseMasqueUri(String uri) {
   final vhttpValid = vhttpPicked == 'h3' || vhttpPicked == 'h2';
   final vhttp = vhttpValid ? vhttpPicked : 'h3';
   // SPEC 103 `masque_vhttp_invalid` — форс h3 виден пользователю, а не только
-  // в логе лаунчера. Реестр помечает код «Desktop-протокол, в LxBox нет» —
-  // запись протухла: masque в LxBox есть (см. отчёт).
+  // в логе лаунчера. Реестр помечает код «Desktop-протокол, в DARK нет» —
+  // запись протухла: masque в DARK есть (см. отчёт).
   if (!vhttpValid) warnings.add(MasqueVhttpInvalidWarning(vhttpPicked));
   final sni = (q['sni'] ?? '').trim(); // server_name-алиас снесён (0.8.0)
   final disableSni = q['disable_sni'] == '1' || q['disable_sni'] == 'true';

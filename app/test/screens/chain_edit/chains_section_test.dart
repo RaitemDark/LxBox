@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/models/source_chain.dart';
-import 'package:lxbox/screens/subscriptions_screen/widgets/chains_section.dart';
-import 'package:lxbox/widgets/reorder_grab_strip.dart';
+import 'package:dark/models/source_chain.dart';
+import 'package:dark/screens/subscriptions_screen/widgets/chains_section.dart';
+import 'package:dark/widgets/reorder_grab_strip.dart';
 
 // §393 D1 — цепочка СТРОКОЙ общего списка источников (директива оператора
 // 24.08): отдельной секции «Цепочки хопов» больше нет, ряд тот же, что у

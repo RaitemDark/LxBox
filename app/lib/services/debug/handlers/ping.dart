@@ -10,7 +10,7 @@ Future<DebugResponse> pingHandler(DebugRequest req, DebugContext ctx) async {
   final uptime = ctx.now().difference(ctx.appStartedAt).inSeconds;
   return JsonResponse({
     'pong': true,
-    'server': 'lxbox-debug',
+    'server': 'dark-debug',
     'uptime_seconds': uptime,
   });
 }

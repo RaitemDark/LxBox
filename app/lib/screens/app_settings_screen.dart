@@ -337,10 +337,10 @@ class _AppSettingsScreenState extends State<AppSettingsScreen> with WidgetsBindi
       'dismissed' => 'Add tile dismissed.',
       'unsupported' =>
         'Your Android version doesn\'t support an in-app prompt. '
-            'Pull down the status bar → edit tiles → drag L×Box to active tiles.',
+            'Pull down the status bar → edit tiles → drag DARK to active tiles.',
       'no_activity' => 'Cannot show prompt right now — try again.',
       _ => 'Could not request tile add ($result). '
-            'Pull down the status bar → edit tiles → drag L×Box manually.',
+            'Pull down the status bar → edit tiles → drag DARK manually.',
     };
     final duration = (result == 'unsupported' ||
             result.startsWith('error') ||

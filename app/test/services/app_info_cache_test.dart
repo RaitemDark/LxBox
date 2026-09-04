@@ -1,6 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/services/app_info_cache.dart';
+import 'package:dark/services/app_info_cache.dart';
 
 /// §109 — семантика AppInfoCache: «подтверждённый not-found» vs
 /// «проверка сорвалась». Регрессия, которую ловим: timeout/ошибка канала
@@ -9,7 +9,7 @@ import 'package:lxbox/services/app_info_cache.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  const channel = MethodChannel('com.leadaxe.lxbox/methods');
+  const channel = MethodChannel('com.leadaxe.dark/methods');
   final messenger =
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
 

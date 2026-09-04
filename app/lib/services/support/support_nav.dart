@@ -1,9 +1,9 @@
-/// §357 — псевдопротокол `lxbox://` в кнопках support-ленты.
+/// §357 — псевдопротокол `dark://` в кнопках support-ленты.
 ///
-/// Грамматика: `lxbox://<action>:<payload>` — действие отделено от аргумента
+/// Грамматика: `dark://<action>:<payload>` — действие отделено от аргумента
 /// ДВОЕТОЧИЕМ: payload — сырая строка «всё после первого `:`», поэтому
 /// аргументом может быть целый URI со слешами/query/фрагментом
-/// (`lxbox://add:vless://uuid@host:443?…#имя`). `Uri.parse` НЕ используется —
+/// (`dark://add:vless://uuid@host:443?…#имя`). `Uri.parse` НЕ используется —
 /// он видит в `route:dns` пару host:port; парсим строкой.
 ///
 /// v1-действия:
@@ -21,7 +21,7 @@ library;
 
 import 'package:flutter/foundation.dart';
 
-/// Разобранная lxbox-ссылка: действие + сырой payload.
+/// Разобранная dark-ссылка: действие + сырой payload.
 @immutable
 class SupportLinkAction {
   const SupportLinkAction(this.action, this.payload);
@@ -29,9 +29,9 @@ class SupportLinkAction {
   final String action;
   final String payload;
 
-  static const _scheme = 'lxbox://';
+  static const _scheme = 'dark://';
 
-  /// null — не lxbox-ссылка (обычный URL) или битая (нет `:`/пустые части).
+  /// null — не dark-ссылка (обычный URL) или битая (нет `:`/пустые части).
   static SupportLinkAction? parse(String url) {
     if (!url.startsWith(_scheme)) return null;
     final rest = url.substring(_scheme.length);

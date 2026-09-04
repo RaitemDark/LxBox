@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/services/debug/serializers/storage.dart';
-import 'package:lxbox/services/debug/serializers/subs.dart';
+import 'package:dark/services/debug/serializers/storage.dart';
+import 'package:dark/services/debug/serializers/subs.dart';
 
 void main() {
   group('maskSubscriptionUrl', () {

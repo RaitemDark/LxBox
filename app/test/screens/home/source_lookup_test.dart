@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/controllers/subscription_controller.dart';
-import 'package:lxbox/models/server_list.dart';
-import 'package:lxbox/models/node_spec.dart';
-import 'package:lxbox/screens/home/source_lookup.dart';
+import 'package:dark/controllers/subscription_controller.dart';
+import 'package:dark/models/server_list.dart';
+import 'package:dark/models/node_spec.dart';
+import 'package:dark/screens/home/source_lookup.dart';
 
 /// §091/§235 — Unit tests для prefix-based `sourcesOfTag` (бывш.
 /// `subscriptionsOfTag`; §235 — источник = подписка ИЛИ папка §234).

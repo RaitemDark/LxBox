@@ -4,9 +4,9 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:lxbox/models/direction.dart';
-import 'package:lxbox/screens/subscription_detail_screen/tag_prefix_cascade.dart';
-import 'package:lxbox/services/settings_storage.dart';
+import 'package:dark/models/direction.dart';
+import 'package:dark/screens/subscription_detail_screen/tag_prefix_cascade.dart';
+import 'package:dark/services/settings_storage.dart';
 
 /// §393 A6 — каскад смены `tag_prefix` подписки/папки на regex-фильтры
 /// Направлений НА УРОВНЕ STORAGE: однозначное вхождение обязано доехать до
@@ -19,11 +19,11 @@ void main() {
   late Directory tmp;
   const channel = MethodChannel('plugins.flutter.io/path_provider');
 
-  String mainPath() => '${tmp.path}/lxbox_settings.json';
+  String mainPath() => '${tmp.path}/dark_settings.json';
 
   setUp(() async {
     TestWidgetsFlutterBinding.ensureInitialized();
-    tmp = await Directory.systemTemp.createTemp('lxbox_prefix_cascade_');
+    tmp = await Directory.systemTemp.createTemp('dark_prefix_cascade_');
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(channel, (call) async {
       if (call.method == 'getApplicationDocumentsDirectory' ||

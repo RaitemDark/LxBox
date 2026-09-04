@@ -20,14 +20,14 @@ class UpdateChecker {
   static final UpdateChecker I = UpdateChecker._();
 
   static const _repoApi =
-      'https://api.github.com/repos/Leadaxe/LxBox/releases/latest';
+      'https://api.***/repos/Leadaxe/DARK/releases/latest';
   /// Fallback — own manifest, committed to repo on every release by CI.
-  /// Используется когда api.github.com даёт 403/429/5xx/timeout (типичный
+  /// Используется когда api.*** даёт 403/429/5xx/timeout (типичный
   /// сценарий — shared VPN exit IP исчерпал anonymous 60 req/h cap).
   /// Schema контролируем сами; raw-endpoint cdn-cached, anti-abuse лояльнее.
   static const _repoFallback =
-      'https://raw.githubusercontent.com/Leadaxe/LxBox/main/docs/latest.json';
-  static const _userAgent = 'LxBox';
+      'https://***/Leadaxe/DARK/main/docs/latest.json';
+  static const _userAgent = 'DARK';
   static const _httpTimeout = Duration(seconds: 10);
   static const _minCheckInterval = Duration(hours: 24);
 
@@ -70,24 +70,13 @@ class UpdateChecker {
   /// - последний успешный check был < 24h назад
   /// - сеть недоступна / GitHub вернул не-200
   Future<void> maybeCheck({required String localVersion}) async {
-    if (_inFlight) return;
-    if (_isDevBuild(localVersion)) return;
-    final enabled = await SettingsStorage.getAutoCheckUpdates();
-    if (!enabled) return;
-    final last = await SettingsStorage.getLastUpdateCheck();
-    if (last != null && DateTime.now().toUtc().difference(last) < _minCheckInterval) {
-      return;
-    }
-    await _check(localVersion: localVersion, source: 'auto');
+    // Disabled: no GitHub mentions
+    return;
   }
 
-  /// Принудительная проверка — bypass cap и toggle. Вызывается из UI кнопки
-  /// "Check now" (About / App Settings). Возвращает результат для caller'а
-  /// (показать snackbar "you're up to date" / "checking..." и т.п.).
-  /// На dev-build всё равно выполняется — юзер явно нажал кнопку.
   Future<UpdateCheckResult> forceCheck({required String localVersion}) async {
-    if (_inFlight) return UpdateCheckResult.skipped('check already in flight');
-    return _check(localVersion: localVersion, source: 'manual');
+    // Disabled: no GitHub mentions
+    return UpdateCheckResult.skipped('Update check disabled');
   }
 
   Future<UpdateCheckResult> _check({
@@ -96,7 +85,7 @@ class UpdateChecker {
   }) async {
     _inFlight = true;
     try {
-      // 1. Primary — api.github.com (canonical, full meta).
+      // 1. Primary — api.*** (canonical, full meta).
       var info = await _fetchPrimary(source);
       // 2. Fallback — raw манифест (избегает 403 при shared VPN exit IP).
       info ??= await _fetchFallback(source);
@@ -131,7 +120,7 @@ class UpdateChecker {
     }
   }
 
-  /// Primary source: api.github.com. Возвращает [UpdateInfo] на 200,
+  /// Primary source: api.***. Возвращает [UpdateInfo] на 200,
   /// `null` на любую ошибку — caller тогда пробует fallback.
   Future<UpdateInfo?> _fetchPrimary(String source) async {
     try {
@@ -143,7 +132,7 @@ class UpdateChecker {
           .timeout(_httpTimeout);
       if (resp.statusCode != 200) {
         AppLog.I.warning(
-            'UpdateChecker[$source]: api.github.com HTTP ${resp.statusCode} — '
+            'UpdateChecker[$source]: api.*** HTTP ${resp.statusCode} — '
             'will try fallback');
         return null;
       }
@@ -167,12 +156,12 @@ class UpdateChecker {
         publishedAt: publishedAt,
       );
     } catch (e) {
-      AppLog.I.warning('UpdateChecker[$source]: api.github.com $e');
+      AppLog.I.warning('UpdateChecker[$source]: api.*** $e');
       return null;
     }
   }
 
-  /// Fallback source: own manifest at raw.githubusercontent.com.
+  /// Fallback source: own manifest at ***.
   /// Schema мы контролируем (см. docs/latest.json в repo). Этот endpoint
   /// CDN-кэширован GitHub'ом — anti-abuse намного лояльнее API.
   Future<UpdateInfo?> _fetchFallback(String source) async {

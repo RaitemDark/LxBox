@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/models/server_list.dart';
+import 'package:dark/models/server_list.dart';
 
 /// §323 — реакция подписки на авто-обновление: персист поля, агрегация
 /// действий за проход апдейтера и гейт «состав не изменился» в

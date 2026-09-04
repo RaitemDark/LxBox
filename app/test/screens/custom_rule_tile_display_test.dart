@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/models/custom_rule.dart';
-import 'package:lxbox/models/parser_config.dart';
-import 'package:lxbox/screens/routing_screen/widgets/custom_rule_tile.dart';
-import 'package:lxbox/services/rule_display_names.dart';
+import 'package:dark/models/custom_rule.dart';
+import 'package:dark/models/parser_config.dart';
+import 'package:dark/screens/routing_screen/widgets/custom_rule_tile.dart';
+import 'package:dark/services/rule_display_names.dart';
 
 /// §279 Phase 2 (§3.5.1) — тайлы двух копий одного пресета рендерятся
 /// РАЗЛИЧИМО: live-label + порядковый суффикс " (N)" у N-й копии.

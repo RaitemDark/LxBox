@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:lxbox/services/settings_storage.dart';
+import 'package:dark/services/settings_storage.dart';
 
 /// §072 — атомарность + восстановление SettingsStorage.
 ///
@@ -15,23 +15,23 @@ void main() {
   late Directory tmp;
   const channel = MethodChannel('plugins.flutter.io/path_provider');
 
-  String mainPath() => '${tmp.path}/lxbox_settings.json';
-  String bakPath() => '${tmp.path}/lxbox_settings.json.bak';
+  String mainPath() => '${tmp.path}/dark_settings.json';
+  String bakPath() => '${tmp.path}/dark_settings.json.bak';
   // §141 P1.5 — фиксированное legacy-имя (для эмуляции crashed save прошлых
   // версий) + glob-счётчик новых seq-уникальных tmp.
-  String tmpPath() => '${tmp.path}/lxbox_settings.json.tmp';
+  String tmpPath() => '${tmp.path}/dark_settings.json.tmp';
   int orphanTmpCount() => tmp
       .listSync()
       .whereType<File>()
       .where((f) {
         final name = f.uri.pathSegments.last;
-        return name.startsWith('lxbox_settings.json.') && name.endsWith('.tmp');
+        return name.startsWith('dark_settings.json.') && name.endsWith('.tmp');
       })
       .length;
 
   setUp(() async {
     TestWidgetsFlutterBinding.ensureInitialized();
-    tmp = await Directory.systemTemp.createTemp('lxbox_settings_storage_');
+    tmp = await Directory.systemTemp.createTemp('dark_settings_storage_');
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(channel, (call) async {
       if (call.method == 'getApplicationDocumentsDirectory' ||
@@ -164,7 +164,7 @@ void main() {
       // подобрать оба по маске.
       await File(mainPath()).writeAsString(jsonEncode({'vars': {'a': '1'}}));
       await File(tmpPath()).writeAsString('{"vars":{"a":"PARTIAL');
-      await File('${tmp.path}/lxbox_settings.json.7.tmp')
+      await File('${tmp.path}/dark_settings.json.7.tmp')
           .writeAsString('{"vars":{"a":"PARTIAL2');
 
       SettingsStorage.resetCacheForTesting();

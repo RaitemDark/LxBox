@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/models/validation.dart';
-import 'package:lxbox/services/builder/validator.dart';
-import 'package:lxbox/services/error_humanize.dart';
+import 'package:dark/models/validation.dart';
+import 'package:dark/services/builder/validator.dart';
+import 'package:dark/services/error_humanize.dart';
 
 void main() {
   group('validateConfig', () {

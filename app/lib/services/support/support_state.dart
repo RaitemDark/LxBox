@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 
 /// §105 — persist-состояние support-message фичи. **Отдельный файл**
-/// (`support_state.json` в documents), НЕ `lxbox_settings.json`:
+/// (`support_state.json` в documents), НЕ `dark_settings.json`:
 /// счётчик активного времени флашится каждую минуту работы туннеля, а
 /// mtime settings-файла участвует в §076 configDirty-сравнении — писали бы
 /// мы туда, каждый старт дирявил бы конфиг и гонял лишний rebuild.

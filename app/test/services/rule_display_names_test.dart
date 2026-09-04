@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/models/custom_rule.dart';
-import 'package:lxbox/models/parser_config.dart';
-import 'package:lxbox/screens/routing_screen/routing_screen_helpers.dart';
-import 'package:lxbox/services/rule_display_names.dart';
+import 'package:dark/models/custom_rule.dart';
+import 'package:dark/models/parser_config.dart';
+import 'package:dark/screens/routing_screen/routing_screen_helpers.dart';
+import 'package:dark/services/rule_display_names.dart';
 
 /// §279 Phase 2 (§3.5.1) — live display-имена preset-правил: label из
 /// локализованного шаблона, порядковая дизамбигуация копий, дедуп новых

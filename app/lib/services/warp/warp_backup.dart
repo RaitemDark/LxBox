@@ -13,7 +13,7 @@
 /// файл, который лаунчер прочитает как пустую регистрацию.
 ///
 /// Поля, которых у канона нет (мобильная AWG-обфускация §126, SNI и таймауты
-/// MASQUE-узла), едут в `extensions.lxbox` записи: применить их лаунчер не
+/// MASQUE-узла), едут в `extensions.dark` записи: применить их лаунчер не
 /// может, но вернуть обязан (§1 BACKUP.md).
 library;
 
@@ -21,7 +21,7 @@ import 'masque_account.dart';
 import 'warp_account.dart';
 
 /// Ключ приложения в per-entity `extensions` записи `warp[]`.
-const String _kLxBox = 'lxbox';
+const String _kDARK = 'dark';
 
 /// §393 B8 — [WarpAccount] → каноническая запись `warp[]` (`type: wg`).
 Map<String, dynamic> warpAccountToBackup(WarpAccount acc) {
@@ -46,7 +46,7 @@ Map<String, dynamic> warpAccountToBackup(WarpAccount acc) {
     if (acc.license != null && acc.license!.isNotEmpty) 'license': acc.license,
     if (acc.warpPlus) 'warp_plus': true,
     if (acc.createdAt.isNotEmpty) 'created_at': acc.createdAt,
-    if (own.isNotEmpty) 'extensions': {_kLxBox: own},
+    if (own.isNotEmpty) 'extensions': {_kDARK: own},
   };
 }
 
@@ -70,7 +70,7 @@ Map<String, dynamic> masqueAccountToBackup(MasqueAccount acc) {
     if (acc.deviceId.isNotEmpty) 'device_id': acc.deviceId,
     if (acc.token.isNotEmpty) 'token': acc.token,
     if (acc.createdAt.isNotEmpty) 'created_at': acc.createdAt,
-    if (own.isNotEmpty) 'extensions': {_kLxBox: own},
+    if (own.isNotEmpty) 'extensions': {_kDARK: own},
   };
 }
 
@@ -122,7 +122,7 @@ MasqueAccount? masqueAccountFromBackup(Map<String, dynamic> j) {
 }
 
 Map<String, dynamic> _ownExtensions(Map<String, dynamic> j) {
-  final ext = (j['extensions'] as Map?)?[_kLxBox];
+  final ext = (j['extensions'] as Map?)?[_kDARK];
   return ext is Map ? ext.cast<String, dynamic>() : const {};
 }
 

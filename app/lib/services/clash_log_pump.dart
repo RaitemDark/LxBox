@@ -8,7 +8,7 @@ import 'platform_channels.dart';
 
 /// §043: Pump для sing-box logs из Kotlin'а в наш [AppLog].
 ///
-/// Подписывается на EventChannel `lxbox/coreLog` (registered в `VpnPlugin.kt`
+/// Подписывается на EventChannel `dark/coreLog` (registered в `VpnPlugin.kt`
 /// onAttachedToEngine). Каждое event — строка sing-box формата:
 /// `+0300 2026-05-06 12:34:56 INFO  router: rule[0]: ...`
 ///

@@ -3,8 +3,8 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:lxbox/models/parser_config.dart';
-import 'package:lxbox/services/builder/if_engine.dart';
+import 'package:dark/models/parser_config.dart';
+import 'package:dark/services/builder/if_engine.dart';
 
 /// §120 — typed template engine + `#if`. Unit-тесты ядра [if_engine].
 

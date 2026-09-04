@@ -6,12 +6,12 @@ import 'package:path_provider/path_provider.dart';
 import '../vpn/box_vpn_client.dart';
 
 /// §316 — базовое имя краш-репорта ядра. Совпадает с `crashReportSource`
-/// из `BoxApplication` (`SetupOptions.crashReportSource = "lxbox"`): libbox
+/// из `BoxApplication` (`SetupOptions.crashReportSource = "dark"`): libbox
 /// редиректит Go-stderr в `workingPath/CrashReport-<source>.log`.
 ///
 /// Дублирует константу из `debug/handlers/files.dart` намеренно НЕ будем —
 /// см. импорт ниже.
-const kCrashReportBaseName = 'CrashReport-lxbox.log';
+const kCrashReportBaseName = 'CrashReport-dark.log';
 
 /// §316 — подпапка, куда ЯДРО архивирует прошлые репорты на каждом `Setup()`.
 /// Размер архива ядро не ограничивает — ротацию делаем мы ([CrashReports.prune]).
@@ -69,12 +69,12 @@ class CrashReportFile {
 /// §038/§316 — read-only доступ к Go-паникам ядра.
 ///
 /// Libbox через `debug.SetCrashOutput` (`experimental/libbox/setup.go`)
-/// перенаправляет Go stderr в `workingPath/CrashReport-lxbox.log`. При
+/// перенаправляет Go stderr в `workingPath/CrashReport-dark.log`. При
 /// panic'е без recover() Go runtime пишет multi-goroutine stacktrace до
 /// SIGABRT'а — файл переживает смерть процесса. Прошлые репорты ядро
 /// само перекладывает в `crash_reports/` при следующем `Setup()`.
 ///
-/// **Читаем `CrashReport-lxbox.log`, а не `stderr.log`.** Второе — имя из
+/// **Читаем `CrashReport-dark.log`, а не `stderr.log`.** Второе — имя из
 /// схемы ДО libbox 1.14, когда `redirectStderr` звался вручную; на 1.14
 /// такого файла не существует, и §038-канал молча отдавал пустоту.
 /// Фоллбэка на старое имя нет намеренно (решение юзера): тянуть мёртвое

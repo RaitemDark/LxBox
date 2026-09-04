@@ -52,7 +52,7 @@ class SubscriptionsScreen extends StatefulWidget {
   /// (навигация из detour-cycle sheet к владельцу ноды-виновника). null = нет.
   final String? focusEntryId;
 
-  /// §357 — предзаполнить поле «URL подписки или proxy-ссылка» (lxbox-кнопка
+  /// §357 — предзаполнить поле «URL подписки или proxy-ссылка» (dark-кнопка
   /// `add:<uri>` support-ленты). Только prefill: добавление подтверждает сам
   /// юзер кнопкой «+». null = пустое поле.
   final String? initialInput;
@@ -93,7 +93,7 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
     unawaited(_loadAutoUpdateFlag());
     unawaited(_loadCameraAvailability());
     unawaited(_loadChains());
-    // §357 — prefill поля ввода из lxbox-кнопки `add:<uri>` support-ленты.
+    // §357 — prefill поля ввода из dark-кнопки `add:<uri>` support-ленты.
     final prefill = widget.initialInput;
     if (prefill != null && prefill.trim().isNotEmpty) {
       _inputController.text = prefill.trim();

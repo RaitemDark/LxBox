@@ -19,7 +19,7 @@ class DebugScreen extends StatefulWidget {
   const DebugScreen({super.key, this.initialTab = 0});
 
   /// §357 — стартовая вкладка (0 Log · 1 Crashes · 2 OOM · 3 Profiling),
-  /// паттерн `AppSettingsScreen.initialTab`. Используется lxbox-навигацией
+  /// паттерн `AppSettingsScreen.initialTab`. Используется dark-навигацией
   /// support-ленты (`route:debug/<tab>`, `route:profiler`).
   final int initialTab;
 
@@ -72,7 +72,7 @@ class _DebugScreenState extends State<DebugScreen> with SnackHelper {
       // ignore: deprecated_member_use
       await Share.shareXFiles(
         [XFile(path, name: name, mimeType: 'application/json')],
-        text: 'LxBox diagnostic dump',
+        text: 'DARK diagnostic dump',
         subject: name,
       );
     } catch (e) {

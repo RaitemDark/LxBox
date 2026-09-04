@@ -1,10 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/services/debug/context.dart';
-import 'package:lxbox/services/debug/contract/errors.dart';
-import 'package:lxbox/services/debug/debug_registry.dart';
-import 'package:lxbox/services/debug/transport/request.dart';
-import 'package:lxbox/services/debug/transport/response.dart';
-import 'package:lxbox/services/debug/transport/router.dart';
+import 'package:dark/services/debug/context.dart';
+import 'package:dark/services/debug/contract/errors.dart';
+import 'package:dark/services/debug/debug_registry.dart';
+import 'package:dark/services/debug/transport/request.dart';
+import 'package:dark/services/debug/transport/response.dart';
+import 'package:dark/services/debug/transport/router.dart';
 
 DebugContext _ctx() => DebugContext(
       registry: DebugRegistry.I,

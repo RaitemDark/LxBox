@@ -4,14 +4,14 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:lxbox/controllers/subscription_controller.dart';
-import 'package:lxbox/models/direction.dart';
-import 'package:lxbox/models/server_list.dart';
-import 'package:lxbox/models/source_chain.dart';
-import 'package:lxbox/services/direction_mutations.dart';
-import 'package:lxbox/services/parser/body_decoder.dart';
-import 'package:lxbox/services/parser/parse_all.dart';
-import 'package:lxbox/services/settings_storage.dart';
+import 'package:dark/controllers/subscription_controller.dart';
+import 'package:dark/models/direction.dart';
+import 'package:dark/models/server_list.dart';
+import 'package:dark/models/source_chain.dart';
+import 'package:dark/services/direction_mutations.dart';
+import 'package:dark/services/parser/body_decoder.dart';
+import 'package:dark/services/parser/parse_all.dart';
+import 'package:dark/services/settings_storage.dart';
 
 /// §393 D2 — каскад «источник удалён → из цепочек вычищается ЕГО ПОЗИЦИЯ».
 ///
@@ -27,11 +27,11 @@ void main() {
   late Directory tmp;
   const channel = MethodChannel('plugins.flutter.io/path_provider');
 
-  String mainPath() => '${tmp.path}/lxbox_settings.json';
+  String mainPath() => '${tmp.path}/dark_settings.json';
 
   setUp(() async {
     TestWidgetsFlutterBinding.ensureInitialized();
-    tmp = await Directory.systemTemp.createTemp('lxbox_chain_heal_');
+    tmp = await Directory.systemTemp.createTemp('dark_chain_heal_');
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(channel, (call) async {
       if (call.method == 'getApplicationDocumentsDirectory' ||

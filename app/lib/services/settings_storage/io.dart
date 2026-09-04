@@ -18,7 +18,7 @@ Future<File> _bakFile() async {
 }
 
 /// §141 P1.5 — уникальный tmp на каждый вызов `_save()`. Имя:
-/// `lxbox_settings.json.<seq>.tmp`. Префикс совпадает с `_orphanTmpPrefix`,
+/// `dark_settings.json.<seq>.tmp`. Префикс совпадает с `_orphanTmpPrefix`,
 /// чтобы `_sweepOrphanTmp` мог подобрать осиротевшие после kill.
 Future<File> _tmpFile() async {
   final dir = await getApplicationDocumentsDirectory();
@@ -30,9 +30,9 @@ Future<File> _tmpFile() async {
 /// Префикс осиротевших tmp-файлов настроек (для glob-чистки в `_load`).
 const _orphanTmpPrefix = '${SettingsStorage._fileName}.';
 
-/// §141 P1.5 — удалить осиротевшие `lxbox_settings.json.<seq>.tmp` (kill между
+/// §141 P1.5 — удалить осиротевшие `dark_settings.json.<seq>.tmp` (kill между
 /// write и rename). Best-effort: фейл listing/delete не критичен. НЕ трогает
-/// main (`lxbox_settings.json`) и `.bak` (`...json.bak` не кончается на `.tmp`).
+/// main (`dark_settings.json`) и `.bak` (`...json.bak` не кончается на `.tmp`).
 Future<void> _sweepOrphanTmp() async {
   try {
     final dir = await getApplicationDocumentsDirectory();
@@ -93,7 +93,7 @@ Future<Map<String, dynamic>> _load() async {
     // Rename консумирует `.tmp` при success — оставшийся файл значит save был
     // убит. Содержимое не консистентно (partial write), нельзя использовать
     // для recovery. §141 P1.5 — tmp теперь уникальны per-save
-    // (`lxbox_settings.json.<seq>.tmp`), поэтому чистим по маске, а не один
+    // (`dark_settings.json.<seq>.tmp`), поэтому чистим по маске, а не один
     // фиксированный файл.
     await _sweepOrphanTmp();
 

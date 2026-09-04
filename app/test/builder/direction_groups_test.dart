@@ -1,12 +1,12 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/config/consts.dart';
-import 'package:lxbox/models/auto_select.dart';
-import 'package:lxbox/models/direction.dart';
-import 'package:lxbox/models/node_spec.dart';
-import 'package:lxbox/models/parser_config.dart';
-import 'package:lxbox/models/server_list.dart';
-import 'package:lxbox/services/builder/build_config.dart';
-import 'package:lxbox/services/parser/uri_parsers.dart';
+import 'package:dark/config/consts.dart';
+import 'package:dark/models/auto_select.dart';
+import 'package:dark/models/direction.dart';
+import 'package:dark/models/node_spec.dart';
+import 'package:dark/models/parser_config.dart';
+import 'package:dark/models/server_list.dart';
+import 'package:dark/services/builder/build_config.dart';
+import 'package:dark/services/parser/uri_parsers.dart';
 
 /// §125 F1/F2/F3 — билдер собирает outbound-группы из BuildSettings.directions:
 /// per-direction regex node-set, direct/auto-членство из галок, auto-двойник,

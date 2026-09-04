@@ -13,7 +13,7 @@ import '../transport/response.dart';
 /// файл из UI можно скормить в `POST /backup/import` через curl, и наоборот.
 ///
 /// Каждый запрос содержит блоки:
-/// - `storage` — `lxbox_settings.json` целиком (Flutter side)
+/// - `storage` — `dark_settings.json` целиком (Flutter side)
 /// - `vpn_settings` — native VPN toggles (auto_start, keep_on_exit,
 ///   background_mode, core_logs_enabled, allow_bypass)
 ///
@@ -40,7 +40,7 @@ Future<DebugResponse> _export(DebugRequest req) async {
       .where(_allParts.contains)
       .toSet();
   final out = <String, dynamic>{
-    'app': 'lxbox',
+    'app': 'dark',
     'kind': 'backup',
     'created_at': DateTime.now().toUtc().toIso8601String(),
   };

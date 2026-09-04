@@ -3,11 +3,11 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:lxbox/models/custom_rule.dart';
-import 'package:lxbox/models/parser_config.dart';
-import 'package:lxbox/services/builder/post_steps.dart'
+import 'package:dark/models/custom_rule.dart';
+import 'package:dark/models/parser_config.dart';
+import 'package:dark/services/builder/post_steps.dart'
     show resolveDnsServersBodies;
-import 'package:lxbox/services/builder/preset_expand.dart';
+import 'package:dark/services/builder/preset_expand.dart';
 
 void main() {
   group('expandPreset (spec §033)', () {

@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/models/dns_ref.dart';
+import 'package:dark/models/dns_ref.dart';
 
 /// §294 — DnsServerRef / DnsRuleRef.
 ///

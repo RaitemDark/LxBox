@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:lxbox/models/custom_rule.dart';
-import 'package:lxbox/models/parser_config.dart';
-import 'package:lxbox/services/builder/rule_order.dart';
+import 'package:dark/models/custom_rule.dart';
+import 'package:dark/models/parser_config.dart';
+import 'package:dark/services/builder/rule_order.dart';
 
 /// §370 — сценарные тесты оси порядка: не отдельные вызовы, а работа
 /// пользователя целиком (серии drag'ов, добавления, удаления, перезапуски).

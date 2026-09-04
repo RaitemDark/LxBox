@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/screens/home/support_message_screen.dart';
-import 'package:lxbox/services/support/support_message.dart';
-import 'package:lxbox/services/support/support_nav.dart';
+import 'package:dark/screens/home/support_message_screen.dart';
+import 'package:dark/services/support/support_message.dart';
+import 'package:dark/services/support/support_nav.dart';
 
 /// §357 — полноэкранный показ сообщения ленты: таймер «Got it», видимость
 /// кнопок (https / незнакомое действие / route с гейтом), навигация route.
@@ -73,9 +73,9 @@ void main() {
       (tester) async {
     final m = msg(links: const [
       SupportLinkSpec('ext-btn', 'https://example.com'),
-      SupportLinkSpec('future-btn', 'lxbox://teleport:mars'),
-      SupportLinkSpec('dns-btn', 'lxbox://route:dns'),
-      SupportLinkSpec('stats-btn', 'lxbox://route:stats'),
+      SupportLinkSpec('future-btn', 'dark://teleport:mars'),
+      SupportLinkSpec('dns-btn', 'dark://route:dns'),
+      SupportLinkSpec('stats-btn', 'dark://route:stats'),
     ]);
     await pumpScreen(
       tester,
@@ -93,7 +93,7 @@ void main() {
 
   testWidgets('тап route-кнопки заменяет экран сообщения целевым',
       (tester) async {
-    final m = msg(links: const [SupportLinkSpec('go', 'lxbox://route:dns')]);
+    final m = msg(links: const [SupportLinkSpec('go', 'dark://route:dns')]);
     await pumpScreen(tester, m,
         build: (_) => const Scaffold(body: Text('TARGET')));
     await tester.tap(find.text('go'));

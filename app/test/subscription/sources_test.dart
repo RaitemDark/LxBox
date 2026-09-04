@@ -1,10 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
-import 'package:lxbox/models/server_list.dart';
-import 'package:lxbox/models/subscription_meta.dart';
-import 'package:lxbox/services/subscription/sources.dart';
-import 'package:lxbox/services/subscription/subscription_identity.dart';
+import 'package:dark/models/server_list.dart';
+import 'package:dark/models/subscription_meta.dart';
+import 'package:dark/services/subscription/sources.dart';
+import 'package:dark/services/subscription/subscription_identity.dart';
 
 void main() {
   // Нулевые backoff'ы — ретраи без реального сна 1s+3s (см. §101): иначе
@@ -194,7 +194,7 @@ void main() {
       ));
       expect(h['User-Agent'], isNotNull);
       expect(h['User-Agent'], isNotEmpty);
-      expect(h['User-Agent'], contains('LxBox'));
+      expect(h['User-Agent'], contains('DARK'));
     });
   });
 }

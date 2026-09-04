@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/services/parser/body_decoder.dart';
-import 'package:lxbox/services/parser/parse_all.dart';
+import 'package:dark/services/parser/body_decoder.dart';
+import 'package:dark/services/parser/parse_all.dart';
 
 /// §321 P2+P4 — порядок обработки и дедуп по идентичности.
 ///

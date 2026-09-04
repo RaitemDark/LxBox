@@ -2,10 +2,10 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/models/custom_rule.dart';
-import 'package:lxbox/screens/connections_screen.dart';
-import 'package:lxbox/services/process_name.dart';
-import 'package:lxbox/services/rule_name_resolver.dart';
+import 'package:dark/models/custom_rule.dart';
+import 'package:dark/screens/connections_screen.dart';
+import 'package:dark/services/process_name.dart';
+import 'package:dark/services/rule_name_resolver.dart';
 
 /// §153 — тесты эвристики `isOneWayStuck` (подсветка зависших соединений).
 ///

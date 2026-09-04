@@ -3,8 +3,8 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:lxbox/services/profile_dump_writer.dart';
-import 'package:lxbox/vpn/pprof_profile.dart';
+import 'package:dark/services/profile_dump_writer.dart';
+import 'package:dark/vpn/pprof_profile.dart';
 
 /// §207 — `ProfileDumpWriter`: goroutine-дамп → `.txt`, CPU-профиль → `.pb`,
 /// оба в temp с timestamp-именем. Round-trip содержимого.
@@ -14,7 +14,7 @@ void main() {
 
   setUp(() async {
     TestWidgetsFlutterBinding.ensureInitialized();
-    tmp = await Directory.systemTemp.createTemp('lxbox_profile_test_');
+    tmp = await Directory.systemTemp.createTemp('dark_profile_test_');
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(channel, (call) async {
       if (call.method == 'getTemporaryDirectory' ||

@@ -1,10 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/models/node_spec.dart';
-import 'package:lxbox/models/node_spec_emit.dart';
-import 'package:lxbox/models/template_vars.dart';
-import 'package:lxbox/models/tls_spec.dart';
-import 'package:lxbox/services/parser/uri_parsers.dart';
-import 'package:lxbox/services/parser/uri_utils.dart';
+import 'package:dark/models/node_spec.dart';
+import 'package:dark/models/node_spec_emit.dart';
+import 'package:dark/models/template_vars.dart';
+import 'package:dark/models/tls_spec.dart';
+import 'package:dark/services/parser/uri_parsers.dart';
+import 'package:dark/services/parser/uri_utils.dart';
 
 void main() {
   group('NaïveProxy emit (spec 037 §4)', () {

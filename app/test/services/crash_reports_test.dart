@@ -4,9 +4,9 @@ import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/services/crash_banner_state.dart';
-import 'package:lxbox/services/settings_storage.dart';
-import 'package:lxbox/services/stderr_reader.dart';
+import 'package:dark/services/crash_banner_state.dart';
+import 'package:dark/services/settings_storage.dart';
+import 'package:dark/services/stderr_reader.dart';
 
 /// §316 (пользовательская половина) — история краш-репортов ядра: чтение
 /// правильного файла, список, ротация, одноразовость плашки.
@@ -64,13 +64,13 @@ void main() {
     await write('$dir/$kCrashTraceName', trace, mtime: mtime);
     await write(
         '$dir/$kCrashMetaName',
-        '{"source":"lxbox","coreVersion":"${coreVersion ?? '1.14.0-lx.16'}",'
+        '{"source":"dark","coreVersion":"${coreVersion ?? '1.14.0-lx.16'}",'
             '"crashedAt":"2026-07-26T22:26:00Z"}');
     await write('$dir/configuration.json', '{}');
   }
 
   group('StderrReader — читаем CrashReport, а не stderr.log', () {
-    test('берёт CrashReport-lxbox.log', () async {
+    test('берёт CrashReport-dark.log', () async {
       await write(kCrashReportBaseName, 'panic: boom');
       expect(await StderrReader.read(), 'panic: boom');
     });

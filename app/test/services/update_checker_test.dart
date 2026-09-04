@@ -3,8 +3,8 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:lxbox/services/settings_storage.dart';
-import 'package:lxbox/services/update_checker.dart';
+import 'package:dark/services/settings_storage.dart';
+import 'package:dark/services/update_checker.dart';
 
 void main() {
   group('isNewer — semver comparisons', () {
@@ -70,7 +70,7 @@ void main() {
 
     setUp(() async {
       TestWidgetsFlutterBinding.ensureInitialized();
-      tmp = await Directory.systemTemp.createTemp('lxbox_update_checker_');
+      tmp = await Directory.systemTemp.createTemp('dark_update_checker_');
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMethodCallHandler(channel, (call) async {
         if (call.method == 'getApplicationDocumentsDirectory' ||

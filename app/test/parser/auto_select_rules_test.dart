@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lxbox/models/import_rule.dart';
-import 'package:lxbox/models/node_spec.dart';
-import 'package:lxbox/services/node_identity.dart';
-import 'package:lxbox/services/parser/uri_parsers.dart';
-import 'package:lxbox/services/subscription/import_rules.dart';
+import 'package:dark/models/import_rule.dart';
+import 'package:dark/models/node_spec.dart';
+import 'package:dark/services/node_identity.dart';
+import 'package:dark/services/parser/uri_parsers.dart';
+import 'package:dark/services/subscription/import_rules.dart';
 
 /// §322 × §302 — правило импорта может переписать `server`/`uuid`, и в конфиг
 /// уходит патч, а не исходный узел. Значит идентичность узла ПОСЛЕ правил
