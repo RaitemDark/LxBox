@@ -768,7 +768,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
               padding: EdgeInsets.only(left: 16),
               child: Icon(Icons.star, color: Color(0xFF2DE0C4)),
             ),
-            title: const Text('DARK Raitem'),
+            title: const Text('DARK Raitem'), // l10n-exempt: brand name
             actions: [
               IconButton(
                 icon: const Icon(Icons.settings_outlined),
@@ -1031,7 +1031,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
-                '$latency ms',
+                '$latency ms', // l10n-exempt: units
                 style: const TextStyle(color: Color(0xFF2DE0C4), fontWeight: FontWeight.bold),
               ),
             ),
