@@ -2719,9 +2719,6 @@
   "No positions yet — add at least two.": {
     "value": "Позиций пока нет — добавьте хотя бы две."
   },
-  "No provider yet?": {
-    "value": "Провайдера пока нет?"
-  },
   "No rule data": {
     "value": "Данных по правилам нет"
   },
@@ -4228,9 +4225,6 @@
   },
   "Tries HTTP/3 first, falls back to HTTP/2 where QUIC/UDP is blocked — best for hop chains.": {
     "value": "Сначала HTTP/3, при недоступности QUIC/UDP — откат на HTTP/2. Лучший выбор для цепочек хопов."
-  },
-  "Try a public test server — free, limited, good for first-time check:": {
-    "value": "Попробуйте публичный тестовый сервер — бесплатный, с ограничениями, подойдёт для первой проверки:"
   },
   "Tunnel apps": {
     "value": "Приложения туннеля"
