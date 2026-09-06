@@ -2014,9 +2014,6 @@
   "Generation failed — no WARP account.": {
     "value": "Генерация не удалась — нет WARP-аккаунта."
   },
-  "Get Public Test Servers": {
-    "value": "Получить публичные тестовые серверы"
-  },
   "Get WARP": {
     "value": "Получить WARP"
   },
@@ -2425,9 +2422,6 @@
   },
   "Lifecycle": {
     "value": "Жизненный цикл"
-  },
-  "List %d": {
-    "value": "Список %d"
   },
   "Live path in packet order. Tap a hop to open its source.": {
     "value": "Живой путь в порядке следования пакета. Нажмите на хоп, чтобы открыть его источник."
@@ -4070,9 +4064,6 @@
   "Test servers": {
     "value": "Тест серверов"
   },
-  "Test servers list unavailable": {
-    "value": "Список тестовых серверов недоступен"
-  },
   "Test ≤": {
     "value": "Тест ≤"
   },
@@ -4398,9 +4389,6 @@
   },
   "View details": {
     "value": "Подробности"
-  },
-  "View on GitHub": {
-    "value": "Открыть на GitHub"
   },
   "View pool": {
     "value": "Показать пул"
