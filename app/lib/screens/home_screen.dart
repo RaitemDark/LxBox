@@ -607,7 +607,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
     ));
   }
 
-  /// §357 — резолв dark-действия в экран приложения. null → кнопка
+  /// §357 — резолв lxbox-действия в экран приложения. null → кнопка
   /// скрывается (незнакомый маршрут у старой версии / гейт не прошёл).
   /// Контроллеры живут здесь — по той же причине, по которой экраны строит
   /// HomeDrawer.
@@ -726,7 +726,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
         // а не по наличию файла конфига: шаблонная сборка при нуле серверов
         // оставляет configRaw непустым навсегда. `e.nodeCount` — персистентный
         // кэш: у подписок `list.nodes` до rehydration пуст, по нему одному
-        // гайд мигал бы на каждом старте.
+        // гайд мигал на каждом старте.
         final showEmptyGuide = showAddServerGuide(
           tunnelUp: state.tunnelUp,
           configEmpty: state.configRaw.isEmpty,

@@ -110,15 +110,15 @@ void main() async {
     await SettingsStorage.migrateChainOrderIfNeeded();
     // §229 — вызов one-shot ремапа preset_id (§228) убран: миграция удалена,
     // отработала у всех, кто обновлялся начиная с v2.10.0.
-    // §043 — pump sing-box logs из Kotlin EventChannel "dark/coreLog" в
+    // §043 — pump sing-box logs из Kotlin EventChannel "lxbox/coreLog" в
     // AppLog как DebugSource.core. Идемпотентно (повторный attach no-op).
     ClashLogPump.I.attach();
     // §051 Phase 3 — register handler для native `onWifiSeen` events.
-    // Если `auto_record_wifi_history` ON в storage — sync'нёт state с
+    // Если `auto_record_wifi_history` ON в storage — sync'нёт state with
     // native observer'ом (start callback). Default OFF, no-op до toggle.
     unawaited(WifiHistoryListener.I.init());
     // §047 — register incoming automation-intent dispatcher (native
-    // DARKIntentReceiver → этот handler → shared action-handlers). Пассивен
+    // LxBoxIntentReceiver → этот handler → shared action-handlers). Пассивен
     // пока receiver disabled. Подгружаем emit-gates из storage (default OFF).
     registerAutomationBridge();
     unawaited(AutomationEventEmitter.I.reload());
@@ -148,7 +148,7 @@ void main() async {
   // §220 — ориентация: default портрет (как всегда было), toggle «Allow
   // rotation» в App Settings → General снимает фиксацию. Планшетный фидбэк.
   await applyAllowRotationSetting();
-  runApp(const DARKApp());
+  runApp(const LxBoxApp());
 }
 
 /// §220 — применяет сохранённый `allow_rotation`-флаг к preferred
@@ -245,8 +245,8 @@ class ThemeNotifier extends ChangeNotifier {
 
 final themeNotifier = ThemeNotifier();
 
-class DARKApp extends StatelessWidget {
-  const DARKApp({super.key});
+class LxBoxApp extends StatelessWidget {
+  const LxBoxApp({super.key});
 
   static const _seed = Color(0xFF2DE0C4);
 
