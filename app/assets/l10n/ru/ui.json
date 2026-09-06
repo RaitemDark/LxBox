@@ -4792,5 +4792,8 @@
   },
   "✳ Resolve only%s": {
     "value": "✳ Только резолв%s"
+  },
+  "Folder \"%s\" has not been created yet — add it on the Servers screen": {
+    "value": "Папка «%s» ещё не создана — добавьте её на экране Servers"
   }
 }

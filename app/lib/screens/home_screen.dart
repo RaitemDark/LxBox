@@ -861,7 +861,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
     }
     if (found == null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Папка "$name" ещё не создана — добавьте её на экране Servers'),
+        content: Text(getLocalText.s('Folder "%s" has not been created yet — add it on the Servers screen', name)),
       ));
       return;
     }
