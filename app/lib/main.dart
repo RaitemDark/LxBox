@@ -261,7 +261,7 @@ class DARKApp extends StatelessWidget {
         // LocaleController._applyLocale (dict-reload на каждую смену); отдельного
         // per-build присваивания активного локализатора не требуется.
         return MaterialApp(
-          title: 'DARK', // l10n-exempt: brand name
+          title: 'DARK',
           theme: ThemeData(
             colorScheme: ColorScheme.fromSeed(seedColor: _seed),
             useMaterial3: true,

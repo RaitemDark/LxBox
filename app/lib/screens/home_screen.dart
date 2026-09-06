@@ -1,4 +1,4 @@
-import 'dart:async'; 
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 
@@ -162,9 +162,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
   TunnelStatus _prevTunnel = TunnelStatus.disconnected;
   UiMsg? _prevError;
 
-  bool _strictRoute = false;
-  bool _dnsProtection = true;
-
   @override
   void initState() {
     super.initState();
@@ -174,14 +171,13 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
     _subController = SubscriptionController();
     _autoUpdater = AutoUpdater(_subController);
     _subController.bindAutoUpdater(_autoUpdater);
-    // §366 — авто-обновление кэшированных rule-set'ов. Создаём до HomeController: он
+    // §366 — авто-обновление rule-set'ов. Создаём до HomeController: он
     // держит ссылку и дёргает `onVpnConnected` на transition.
     _ruleSetAutoUpdater = RuleSetAutoUpdater();
     _controller = HomeController(
       autoUpdater: _autoUpdater,
       ruleSetAutoUpdater: _ruleSetAutoUpdater,
     );
-    unawaited(_loadDashboardSettings());
     // §366 — обновившийся `.srs` меняет содержимое конфига (путь тот же, но
     // ядро читает файл при старте) → пересобрать. Без reload: рвать рабочий
     // туннель ради обновлённого списка блокировок не стоит, новый файл
@@ -711,29 +707,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
     if (mounted) setState(() {});
   }
 
-  Future<void> _loadDashboardSettings() async {
-    final strict = await SettingsStorage.getVar('tun_strict_route', 'false');
-    final hijack = await SettingsStorage.getVar('hijack_dns_enabled', 'true');
-    if (mounted) {
-      setState(() {
-        _strictRoute = strict == 'true';
-        _dnsProtection = hijack == 'true';
-      });
-    }
-  }
-
-  Future<void> _toggleStrictRoute(bool val) async {
-    setState(() => _strictRoute = val);
-    await SettingsStorage.setVar('tun_strict_route', val ? 'true' : 'false');
-    _subController.configDirty = true;
-  }
-
-  Future<void> _toggleDnsProtection(bool val) async {
-    setState(() => _dnsProtection = val);
-    await SettingsStorage.setVar('hijack_dns_enabled', val ? 'true' : 'false');
-    _subController.configDirty = true;
-  }
-
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
@@ -762,22 +735,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
               .any((e) => e.nodeCount > 0 || e.list.nodes.isNotEmpty),
         );
         return Scaffold(
-          // l10n-exempt: brand name
-          appBar: AppBar(
-            leading: const Padding(
-              padding: EdgeInsets.only(left: 16),
-              child: Icon(Icons.star, color: Color(0xFF2DE0C4)),
-            ),
-            title: const Text('DARK Raitem'), // l10n-exempt: brand name
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.settings_outlined),
-                onPressed: () => Navigator.of(context).push(MaterialPageRoute(
-                  builder: (_) => const AppSettingsScreen(),
-                )),
-              ),
-            ],
-          ),
+          // l10n-exempt: brand name, идентичен во всех локалях
+          appBar: AppBar(title: const Text('DARK Raitem')),
           drawer: HomeDrawer(
             controller: _controller,
             subController: _subController,
@@ -788,11 +747,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
             onDestinationSelected: (index) {
               switch (index) {
                 case 1:
-                  _openFolderByName('Избранное'); // l10n-exempt: folder name identifier
-                  break;
+                  _openFolderByName('Избранное');
                 case 2:
-                  _openFolderByName('Белые списки'); // l10n-exempt: folder name identifier
-                  break;
+                  _openFolderByName('Белые списки');
                 case 3:
                   Navigator.of(context).push(MaterialPageRoute(
                     builder: (_) => SubscriptionsScreen(
@@ -801,84 +758,22 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
                       autoUpdater: _autoUpdater,
                     ),
                   ));
-                  break;
               }
             },
-            destinations: [
-              NavigationDestination(icon: const Icon(Icons.home), label: getLocalText.s('Home')),
-              NavigationDestination(icon: const Icon(Icons.star), label: getLocalText.s('Favorites')),
-              NavigationDestination(icon: const Icon(Icons.shield_outlined), label: getLocalText.s('Whitelists')),
-              NavigationDestination(icon: const Icon(Icons.dns), label: getLocalText.s('Servers')),
+            destinations: const [
+              NavigationDestination(icon: Icon(Icons.home), label: 'Главная'),
+              NavigationDestination(icon: Icon(Icons.star), label: 'Избранное'),
+              NavigationDestination(icon: Icon(Icons.shield_outlined), label: 'Белые списки'),
+              NavigationDestination(icon: Icon(Icons.dns), label: 'Все конфиги'),
             ],
           ),
           body: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              if (state.tunnelUp)
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24),
-                      child: Column(
-                        children: [
-                          const SizedBox(height: 32),
-                          _buildPowerButton(state),
-                          const SizedBox(height: 24),
-                          Text(
-                            getLocalText.s('Connected'),
-                            style: const TextStyle(
-                              color: Color(0xFF2DE0C4),
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          if (state.connectedSince != null)
-                            StreamBuilder(
-                              stream: Stream.periodic(const Duration(seconds: 1)),
-                              builder: (context, _) => Text(
-                                _formatDuration(DateTime.now().difference(state.connectedSince!)),
-                                style: const TextStyle(color: Colors.white70),
-                              ),
-                            ),
-                          const SizedBox(height: 32),
-                          _buildServerCard(state),
-                          const SizedBox(height: 16),
-                          Row(
-                            children: [
-                              Expanded(child: _buildStatCard(
-                                getLocalText.s('Download'),
-                                state.traffic.downloadFormatted,
-                                Icons.arrow_downward,
-                              )),
-                              const SizedBox(width: 16),
-                              Expanded(child: _buildStatCard(
-                                getLocalText.s('Upload'),
-                                state.traffic.uploadFormatted,
-                                Icons.arrow_upward,
-                              )),
-                            ],
-                          ),
-                          const SizedBox(height: 24),
-                          _buildToggleTile(
-                            getLocalText.s('Kill Switch'),
-                            'Kill Switch',
-                            Icons.shield_outlined,
-                            _strictRoute,
-                            _toggleStrictRoute,
-                          ),
-                          _buildToggleTile(
-                            getLocalText.s('DNS Protection'),
-                            getLocalText.s('DNS-защита'),
-                            Icons.lock_outline,
-                            _dnsProtection,
-                            _toggleDnsProtection,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                )
-              else if (state.configRaw.isNotEmpty && !showEmptyGuide) ...[
+              // Empty state (§328 — нет серверов, не «нет конфига») → guide +
+              // CTA берёт на себя весь экран; controls/header не рисуем,
+              // чтобы disabled-кнопка не путала первого пользователя.
+              if (state.configRaw.isNotEmpty && !showEmptyGuide) ...[
                 HomeControls(
                   controller: _controller,
                   subController: _subController,
@@ -931,171 +826,26 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
                   const SizedBox(height: 4),
                 ],
               ],
-              if (!state.tunnelUp)
-                HomeNodeList(
-                  controller: _controller,
-                  subController: _subController,
-                  autoUpdater: _autoUpdater,
-                  filter: _filter,
-                  presenter: _nodeList,
-                  state: state,
-                  showEmptyGuide: showEmptyGuide,
-                  onRestoreFromBackup: () =>
-                      restoreFromBackup(context, _subController, _autoUpdater),
-                  onTapToConnect: () => unawaited(_startWithAutoRefresh()),
-                  rowKeyFor: _nodeRowKey, // §203
-                  onSelectServer: _scrollToNode, // §203
-                  onViewPool: _showPool, // §208
-                ),
+              HomeNodeList(
+                controller: _controller,
+                subController: _subController,
+                autoUpdater: _autoUpdater,
+                filter: _filter,
+                presenter: _nodeList,
+                state: state,
+                showEmptyGuide: showEmptyGuide,
+                onRestoreFromBackup: () =>
+                    restoreFromBackup(context, _subController, _autoUpdater),
+                onTapToConnect: () => unawaited(_startWithAutoRefresh()),
+                rowKeyFor: _nodeRowKey, // §203
+                onSelectServer: _scrollToNode, // §203
+                onViewPool: _showPool, // §208
+              ),
             ],
           ),
         );
       },
     );
-  }
-
-  Widget _buildPowerButton(HomeState state) {
-    return GestureDetector(
-      onTap: () {
-        HapticService.I.onConnectTap();
-        if (state.tunnelUp) {
-          confirmStop(context, _controller, state);
-        } else {
-          _startWithAutoRefresh();
-        }
-      },
-      child: Container(
-        width: 120,
-        height: 120,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          border: Border.all(color: const Color(0xFF2DE0C4).withAlpha(100), width: 2),
-        ),
-        child: Center(
-          child: Container(
-            width: 100,
-            height: 100,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: state.tunnelUp ? const Color(0xFF2DE0C4).withAlpha(30) : Colors.transparent,
-            ),
-            child: Icon(
-              Icons.power_settings_new,
-              size: 48,
-              color: state.tunnelUp ? const Color(0xFF2DE0C4) : Colors.white54,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildServerCard(HomeState state) {
-    final activeTag = state.activeInGroup;
-    final node = activeTag != null ? state.activeModel[activeTag] : null;
-    final label = node?.tag ?? activeTag ?? getLocalText.s('Unknown');
-    final latency = activeTag != null ? state.delayOf(activeTag) : null;
-
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: const Color(0xFF1E1E1E),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: Colors.white10,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: const Center(child: Text('🌍', style: TextStyle(fontSize: 20))),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(label, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                Text(node?.type ?? '', style: const TextStyle(color: Colors.white54, fontSize: 12)),
-              ],
-            ),
-          ),
-          if (latency != null)
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: const Color(0xFF2DE0C4).withAlpha(40),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Text(
-                '$latency ms', // l10n-exempt: units
-                style: const TextStyle(color: Color(0xFF2DE0C4), fontWeight: FontWeight.bold),
-              ),
-            ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildStatCard(String label, String value, IconData icon) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: const Color(0xFF1E1E1E),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(icon, size: 16, color: const Color(0xFF2DE0C4)),
-              const SizedBox(width: 4),
-              Text(label, style: const TextStyle(color: Colors.white54, fontSize: 12)),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Text(value, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildToggleTile(String title, String subtitle, IconData icon, bool value, ValueChanged<bool> onChanged) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Row(
-        children: [
-          Icon(icon, color: Colors.white54),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
-                Text(subtitle, style: const TextStyle(color: Colors.white54, fontSize: 12)),
-              ],
-            ),
-          ),
-          Switch(
-            value: value,
-            onChanged: onChanged,
-            activeThumbColor: const Color(0xFF2DE0C4),
-          ),
-        ],
-      ),
-    );
-  }
-
-  String _formatDuration(Duration d) {
-    String pad(int n) => n.toString().padLeft(2, '0');
-    final hours = pad(d.inHours);
-    final minutes = pad(d.inMinutes.remainder(60));
-    final seconds = pad(d.inSeconds.remainder(60));
-    return '$hours:$minutes:$seconds';
   }
 
   /// Открывает папку серверов по точному имени (используется нижней панелью
@@ -1111,7 +861,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
     }
     if (found == null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(getLocalText.s('Folder "%s" has not been created yet — add it on the Servers screen', name)),
+        content: Text('Папка "$name" ещё не создана — добавьте её на экране Servers'),
       ));
       return;
     }

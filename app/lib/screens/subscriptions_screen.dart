@@ -23,7 +23,6 @@ import 'subscriptions_screen/clipboard_analysis.dart';
 import 'subscriptions_screen/entry_context_menu.dart';
 import 'subscriptions_screen/folder_picker.dart';
 import 'subscriptions_screen/paste_dialogs.dart';
-import 'subscriptions_screen/public_test_servers.dart';
 import '../models/source_chain.dart';
 import 'chain_edit/new_chain_dialog.dart';
 import 'chain_edit_screen.dart';
@@ -642,7 +641,6 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
                     // overflow menu — explicit affordance).
                     if (v == 'wizard') _openAddServerWizard();
                     if (v == 'warp') _openWarpWizard();
-                    if (v == 'public') unawaited(_pickPublicTestServer());
                     if (v == 'paste') unawaited(_pasteFromClipboard());
                     if (v == 'qr') unawaited(_scanQrCode());
                     if (v == 'file') unawaited(_importFromFile());
@@ -664,7 +662,6 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
                     PopupMenuItem(value: 'folder', child: Text(getLocalText.s("New folder…"))),
                     const PopupMenuDivider(),
                     PopupMenuItem(value: 'warp', child: Text(getLocalText.s("Get WARP"))),
-                    PopupMenuItem(value: 'public', child: Text(getLocalText.s("Get Public Test Servers"))),
                     const PopupMenuDivider(),
                     PopupMenuItem(value: 'paste', child: Text(getLocalText.s("Paste from clipboard"))),
                     // §375 — на устройстве без камеры (Android TV) пункта нет:
@@ -790,13 +787,6 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
     }
   }
 
-  Future<void> _pickPublicTestServer() async {
-    await pickPublicTestServer(
-      context,
-      onSelectSource: (source) => _inputController.text = source,
-    );
-  }
-
   /// §393 D1 — общий список источников: подписки/серверы/папки и цепочки
   /// ОДНИМ рядом. Порядок цепочек внутри него и есть их взаимный порядок, по
   /// которому считается инвариант «позиция ссылается только на цепочку ВЫШЕ».
@@ -816,7 +806,7 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
     if (ctrl.entries.isEmpty && _chains.isEmpty) {
       return SubscriptionsEmptyState(
         busy: ctrl.busy,
-        onPickPublicTestServer: () => unawaited(_pickPublicTestServer()),
+        onPickPublicTestServer: () {},
       );
     }
     final rows = _rows(ctrl);
