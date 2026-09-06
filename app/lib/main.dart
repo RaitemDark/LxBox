@@ -114,7 +114,7 @@ void main() async {
     // AppLog как DebugSource.core. Идемпотентно (повторный attach no-op).
     ClashLogPump.I.attach();
     // §051 Phase 3 — register handler для native `onWifiSeen` events.
-    // Если `auto_record_wifi_history` ON в storage — sync'нёт state with
+    // Если `auto_record_wifi_history` ON в storage — sync'нёт state с
     // native observer'ом (start callback). Default OFF, no-op до toggle.
     unawaited(WifiHistoryListener.I.init());
     // §047 — register incoming automation-intent dispatcher (native

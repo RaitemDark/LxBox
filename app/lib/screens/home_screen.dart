@@ -726,7 +726,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
         // а не по наличию файла конфига: шаблонная сборка при нуле серверов
         // оставляет configRaw непустым навсегда. `e.nodeCount` — персистентный
         // кэш: у подписок `list.nodes` до rehydration пуст, по нему одному
-        // гайд мигал на каждом старте.
+        // гайд мигал бы на каждом старте.
         final showEmptyGuide = showAddServerGuide(
           tunnelUp: state.tunnelUp,
           configEmpty: state.configRaw.isEmpty,

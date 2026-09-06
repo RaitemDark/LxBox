@@ -12,8 +12,9 @@ import '../../../services/l10n/locale_controller.dart';
 /// активных соединений, global-recording индикатор профайлера (§044) и uptime.
 /// Тап открывает [StatsScreen] (Overview).
 ///
-/// Перерисовывается на `TrafficProfiler.I` (recording-флаг) через внутренний
-/// `AnimatedBuilder`; трафик/uptime приходят из переданного [state].
+/// Внешний вид — две карточки (загрузка/отдача) под фирменный дизайн DARK,
+/// вместо плоской строки. Источник данных, тап-навигация и recording-индикатор
+/// не изменены.
 class TrafficBar extends StatelessWidget {
   const TrafficBar({
     super.key,
@@ -59,59 +60,110 @@ class TrafficBar extends StatelessWidget {
           animation: TrafficProfiler.I,
           builder: (_, _) {
             final profiler = TrafficProfiler.I;
-            return Row(
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                _chip(
-                  context,
-                  Icons.arrow_upward,
-                  state.traffic.uploadFormatted,
-                  cs.primary,
-                ),
-                const SizedBox(width: 8),
-                _chip(
-                  context,
-                  Icons.arrow_downward,
-                  state.traffic.downloadFormatted,
-                  cs.tertiary,
-                ),
-                if (state.traffic.activeConnections > 0) ...[
-                  const SizedBox(width: 8),
-                  // §194 — РАЗДЕЛЬНО: connectionsIn = соединения приложений
-                  // (трафик-трекер ядра = то, что в списке на Stats);
-                  // connectionsOut = физические соединения наружу к серверам
-                  // (route-менеджер). Раньше показывали сумму «13», путавшую с
-                  // числом активных в списке на Stats (≈connectionsIn).
-                  _chip(
-                    context,
-                    Icons.link,
-                    '${state.traffic.connectionsIn}',
-                    cs.secondary,
-                    tooltip: getLocalText.s("App connections"),
-                  ),
-                  const SizedBox(width: 8),
-                  _chip(
-                    context,
-                    Icons.dns_outlined,
-                    '${state.traffic.connectionsOut}',
-                    cs.secondary,
-                    tooltip: getLocalText.s("Outbound connections to servers"),
-                  ),
-                ],
-                if (profiler.isGlobalRecording) ...[
-                  const SizedBox(width: 8),
-                  _chip(context, Icons.podcasts, 'Live', cs.error),
-                ],
-                const Spacer(),
-                if (uptime.isNotEmpty)
-                  Text(
-                    uptime,
-                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: cs.onSurfaceVariant,
+                Row(
+                  children: [
+                    _speedCard(
+                      context,
+                      icon: Icons.arrow_downward,
+                      label: getLocalText.s("Download"),
+                      value: state.traffic.downloadFormatted,
+                      accent: cs.primary,
                     ),
-                  ),
+                    const SizedBox(width: 10),
+                    _speedCard(
+                      context,
+                      icon: Icons.arrow_upward,
+                      label: getLocalText.s("Upload"),
+                      value: state.traffic.uploadFormatted,
+                      accent: cs.onSurfaceVariant,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                Row(
+                  children: [
+                    if (state.traffic.activeConnections > 0) ...[
+                      // §194 — РАЗДЕЛЬНО: connectionsIn = соединения приложений
+                      // (трафик-трекер ядра), connectionsOut = физические
+                      // соединения наружу к серверам (route-менеджер).
+                      _chip(
+                        context,
+                        Icons.link,
+                        '${state.traffic.connectionsIn}',
+                        cs.secondary,
+                        tooltip: getLocalText.s("App connections"),
+                      ),
+                      const SizedBox(width: 8),
+                      _chip(
+                        context,
+                        Icons.dns_outlined,
+                        '${state.traffic.connectionsOut}',
+                        cs.secondary,
+                        tooltip: getLocalText.s("Outbound connections to servers"),
+                      ),
+                    ],
+                    if (profiler.isGlobalRecording) ...[
+                      const SizedBox(width: 8),
+                      _chip(context, Icons.podcasts, 'Live', cs.error),
+                    ],
+                    const Spacer(),
+                    if (uptime.isNotEmpty)
+                      Text(
+                        uptime,
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          color: cs.onSurfaceVariant,
+                        ),
+                      ),
+                  ],
+                ),
               ],
             );
           },
+        ),
+      ),
+    );
+  }
+
+  static Widget _speedCard(
+    BuildContext context, {
+    required IconData icon,
+    required String label,
+    required String value,
+    required Color accent,
+  }) {
+    final cs = Theme.of(context).colorScheme;
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        decoration: BoxDecoration(
+          color: cs.surfaceContainerHighest.withValues(alpha: 0.5),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: cs.outlineVariant.withValues(alpha: 0.4)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(icon, size: 13, color: accent),
+                const SizedBox(width: 5),
+                Text(label,
+                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          color: cs.onSurfaceVariant,
+                        )),
+              ],
+            ),
+            const SizedBox(height: 4),
+            Text(
+              value,
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
+            ),
+          ],
         ),
       ),
     );

@@ -16,10 +16,9 @@ import '../../../services/l10n/locale_controller.dart';
 
 /// Controls-блок главного экрана.
 ///
-/// Поведение байт-в-байт идентично. Все state-mutating flows (rebuild /
-/// reconnect / start) приходят callback'ами из `_HomeScreenState`, чтобы
-/// владение side-effect'ами (`setState`, `configDirty=false`, SnackBars)
-/// оставалось в State — этот widget только рисует + диспатчит.
+/// Поведение байт-в-байт идентично оригиналу — изменена только вёрстка
+/// (круглая кнопка подключения по центру + карточки вместо плоской строки),
+/// под фирменный дизайн DARK. Все callback'и/условия доступности те же самые.
 class HomeControls extends StatelessWidget {
   const HomeControls({
     super.key,
@@ -78,6 +77,7 @@ class HomeControls extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     final isConnecting = state.tunnel == TunnelStatus.connecting;
     final isStopping = state.tunnel == TunnelStatus.stopping;
     final canToggle = !state.busy && !isConnecting && !isStopping;
@@ -88,39 +88,29 @@ class HomeControls extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Row(
+          // ── Круглая кнопка подключения по центру + статус-чип под ней ──
+          // Логика onPressed идентична оригиналу (HapticService, confirmStop /
+          // onStartWithAutoRefresh) — изменён только внешний вид кнопки.
+          Stack(
             children: [
-              FilledButton.icon(
-                // §372 — D-pad: на Android TV фокус при открытии экрана должен
-                // стоять на главном действии, иначе первое нажатие пульта
-                // уходит в никуда и выглядит как «кнопки не работают».
-                autofocus: true,
-                onPressed: toggleEnabled
-                    ? () {
-                        HapticService.I.onConnectTap();
-                        if (state.tunnelUp) {
-                          confirmStop(context, controller, state);
-                        } else {
-                          onStartWithAutoRefresh();
-                        }
-                      }
-                    : null,
-                icon: Icon(
-                  state.tunnelUp ? Icons.stop_rounded : Icons.play_arrow_rounded,
-                  size: 20,
+              Center(
+                child: Column(
+                  children: [
+                    _buildRoundConnectButton(context, toggleEnabled, cs),
+                    const SizedBox(height: 12),
+                    connectingAnimChild,
+                  ],
                 ),
-                label: Text(state.tunnelUp
-                    ? getLocalText.s("Stop")
-                    : getLocalText.s("Start")),
               ),
-              const SizedBox(width: 8),
-              // Статус-чип отдаёт ширину первым: Start/Stop и reload имеют
-              // натуральный размер, а длинный статус сжимается с эллипсисом.
-              Flexible(child: connectingAnimChild),
-              const SizedBox(width: 8),
-              _buildReloadButton(context),
+              // Кнопка reload — та же самая, что и раньше, просто теперь в
+              // углу, а не в общей строке рядом с чипом.
+              Align(
+                alignment: Alignment.topRight,
+                child: _buildReloadButton(context),
+              ),
             ],
           ),
+          const SizedBox(height: 16),
           // §116 — единый banner-механизм: проекция состояния → BannerStack.
           // Три исторических плашки (settings_changed / restart / last_error)
           // + config_load_error деривятся в activeBanners.
@@ -151,19 +141,20 @@ class HomeControls extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          Row(
-            children: [
-              Text(getLocalText.s("Direction"),
-                  style: const TextStyle(fontWeight: FontWeight.w600)),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Container(
-                  height: 40,
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Theme.of(context).colorScheme.outline),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
+          // ── Направление + пинг — та же логика, оформлена карточкой ──
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            decoration: BoxDecoration(
+              color: cs.surfaceContainerHighest.withValues(alpha: 0.5),
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: cs.outlineVariant.withValues(alpha: 0.4)),
+            ),
+            child: Row(
+              children: [
+                Text(getLocalText.s("Direction"),
+                    style: const TextStyle(fontWeight: FontWeight.w600)),
+                const SizedBox(width: 12),
+                Expanded(
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton<String>(
                       isExpanded: true,
@@ -185,50 +176,110 @@ class HomeControls extends StatelessWidget {
                     ),
                   ),
                 ),
-              ),
-              // §372 — InkWell, не GestureDetector: у последнего нет фокусного
-              // узла, и на Android TV кнопка была недостижима с пульта
-              // (D-pad её просто пропускал). InkWell фокусируется и
-              // подсвечивается, поведение тапа/long-press то же.
-              InkWell(
-                borderRadius: BorderRadius.circular(20),
-                onTap: (!state.tunnelUp || state.busy || state.nodes.isEmpty)
-                    ? null
-                    : () {
-                        if (controller.massPingRunning) {
-                          controller.cancelMassPing();
-                        } else {
-                          // §078 — пингуем в порядке отображения. Фильтр и
-                          // sort учитываются: ping всё что **видно**, в том
-                          // порядке как видно. Control-outbounds тоже в
-                          // списке (clash.delay для них вернёт error или
-                          // реальный latency для direct-out).
-                          unawaited(controller.runMassUrltest(
-                              order: presenter.computeDisplayList(state)));
-                        }
-                      },
-                onLongPress: () => showPingSettings(context, controller),
-                child: Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: Icon(
-                    controller.massPingRunning ? Icons.stop_circle_outlined : Icons.speed,
-                    color: (!state.tunnelUp || state.busy || state.nodes.isEmpty)
-                        ? Theme.of(context).disabledColor
-                        : null,
+                // §372 — InkWell, не GestureDetector: у последнего нет фокусного
+                // узла, и на Android TV кнопка была недостижима с пульта
+                // (D-pad её просто пропускал). InkWell фокусируется и
+                // подсвечивается, поведение тапа/long-press то же.
+                InkWell(
+                  borderRadius: BorderRadius.circular(20),
+                  onTap: (!state.tunnelUp || state.busy || state.nodes.isEmpty)
+                      ? null
+                      : () {
+                          if (controller.massPingRunning) {
+                            controller.cancelMassPing();
+                          } else {
+                            // §078 — пингуем в порядке отображения. Фильтр и
+                            // sort учитываются: ping всё что **видно**, в том
+                            // порядке как видно. Control-outbounds тоже в
+                            // списке (clash.delay для них вернёт error или
+                            // реальный latency для direct-out).
+                            unawaited(controller.runMassUrltest(
+                                order: presenter.computeDisplayList(state)));
+                          }
+                        },
+                  onLongPress: () => showPingSettings(context, controller),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: Icon(
+                      controller.massPingRunning ? Icons.stop_circle_outlined : Icons.speed,
+                      color: (!state.tunnelUp || state.busy || state.nodes.isEmpty)
+                          ? Theme.of(context).disabledColor
+                          : cs.primary,
+                      ),
                     ),
                   ),
-                ),
-            ],
+              ],
+            ),
           ),
         ],
       ),
     );
   }
 
-  /// Кнопка справа от status chip. Short tap = умный default (reconnect /
-  /// rebuild+start / rebuild+reconnect в зависимости от состояния), long
-  /// press = меню с 3 явными действиями. Иконка refresh читается как
-  /// «переподключиться», что и является default-поведением.
+  /// Круглая кнопка подключения со свечением — визуальный аналог оригинальной
+  /// FilledButton.icon (Start/Stop). Логика onPressed идентична 1:1.
+  Widget _buildRoundConnectButton(BuildContext context, bool toggleEnabled, ColorScheme cs) {
+    final connected = state.tunnelUp;
+    final ringColor = connected ? cs.primary : cs.outline;
+    return Semantics(
+      button: true,
+      label: connected ? getLocalText.s("Stop") : getLocalText.s("Start"),
+      child: SizedBox(
+        width: 130,
+        height: 130,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            if (connected)
+              Container(
+                width: 130,
+                height: 130,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: cs.primary.withValues(alpha: 0.10),
+                ),
+              ),
+            Material(
+              color: cs.surface,
+              shape: CircleBorder(
+                side: BorderSide(color: ringColor.withValues(alpha: 0.6), width: 1.5),
+              ),
+              child: InkWell(
+                // §372 — D-pad: на Android TV фокус при открытии экрана должен
+                // стоять на главном действии, иначе первое нажатие пульта
+                // уходит в никуда и выглядит как «кнопки не работают».
+                autofocus: true,
+                customBorder: const CircleBorder(),
+                onTap: toggleEnabled
+                    ? () {
+                        HapticService.I.onConnectTap();
+                        if (state.tunnelUp) {
+                          confirmStop(context, controller, state);
+                        } else {
+                          onStartWithAutoRefresh();
+                        }
+                      }
+                    : null,
+                child: SizedBox(
+                  width: 96,
+                  height: 96,
+                  child: Icon(
+                    Icons.power_settings_new_rounded,
+                    size: 34,
+                    color: toggleEnabled ? ringColor : cs.outline.withValues(alpha: 0.4),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Кнопка reload (та же самая, что и раньше). Short tap = умный default
+  /// (reconnect / rebuild+start / rebuild+reconnect), long press = меню с
+  /// 3 явными действиями. Логика не изменена — только положение на экране.
   Widget _buildReloadButton(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     final dirty = subController.configDirty || needsRestart;
