@@ -1,10 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:dark/screens/about_screen.dart';
 
-// §361 — кнопка «Руководство пользователя» в About ведёт на документ языка
-// интерфейса. Единственная логика, где можно ошибиться, — сопоставление
-// тега локали и URL: перепутанные языки выглядят рабочей кнопкой, но открывают
-// текст, который юзер не читает.
+// §361 — ссылки на документацию (теперь ведут на официальный сайт sing-box).
+// Проверяем, что логика выбора языка по-прежнему работает корректно.
 
 void main() {
   group('About → user guide link', () {
@@ -14,27 +12,17 @@ void main() {
       expect(AboutScreen.guideUrlRu, isNot(AboutScreen.guideUrlEn));
     });
 
-    test('незнакомый язык → английский (fallback, не 404)', () {
-      // LocaleController.effectiveTag сейчас отдаёт только en/ru, но при
-      // добавлении третьего языка (без своего гайда) ссылка обязана остаться
-      // рабочей.
+    test('незнакомый язык → английский (fallback)', () {
       for (final tag in ['de', 'fa', 'zh', '']) {
         expect(AboutScreen.guideUrlFor(tag), AboutScreen.guideUrlEn,
             reason: 'тег "$tag" должен падать в английскую версию');
       }
     });
 
-    test('оба URL смотрят на main и на разные файлы репозитория', () {
+    test('URL смотрят на официальный сайт sing-box', () {
       for (final url in [AboutScreen.guideUrlEn, AboutScreen.guideUrlRu]) {
-        // Ветка main — единственная, куда доезжают релизные доки (§361);
-        // ссылка на develop сгнила бы после мержа.
-        if (url.isEmpty) continue;
-        // expect(url, startsWith('https://***/Leadaxe/DARK/blob/main/'),
-        //    reason: 'ссылка должна вести в main: $url');
-        // expect(url, endsWith('.md'));
+        expect(url, startsWith('https://sing-box.sagernet.org/'));
       }
-      // expect(AboutScreen.guideUrlEn, contains('docs/USER_GUIDE.md'));
-      // expect(AboutScreen.guideUrlRu, contains('docs/USER_GUIDE.ru.md'));
     });
   });
 }

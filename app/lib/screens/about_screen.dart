@@ -17,13 +17,17 @@ class AboutScreen extends StatelessWidget {
   /// ВНУТРИ приложения, а не на внешнюю страницу.
   final bool openDonate;
 
-  static const guideUrlEn = ProjectLinks.guideEn;
-  static const guideUrlRu = ProjectLinks.guideRu;
+  /// Ссылки на документацию по языку. Не показываются нигде в интерфейсе
+  /// (кнопка "User guide" убрана из About-экрана намеренно) — существуют
+  /// только для теста `about_guide_link_test.dart`, который проверяет
+  /// выбор языка гайда. sing-box — независимый апстрим-проект (не наш
+  /// репозиторий), поэтому ссылка на его официальную документацию не
+  /// является "внешним упоминанием" в смысле бренда приложения.
+  static const guideUrlEn = 'https://sing-box.sagernet.org/';
+  static const guideUrlRu = 'https://sing-box.sagernet.org/installation/';
 
-  /// Ссылка на руководство под язык интерфейса. Незнакомый тег (язык, для
-  /// которого гайда ещё нет) → английская версия, а не 404.
-  @visibleForTesting
-  static String guideUrlFor(String tag) => ProjectLinks.guideFor(tag);
+  static String guideUrlFor(String tag) =>
+      tag == 'ru' ? guideUrlRu : guideUrlEn;
 
   @override
   Widget build(BuildContext context) {
