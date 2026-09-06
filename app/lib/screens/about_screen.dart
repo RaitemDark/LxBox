@@ -17,6 +17,14 @@ class AboutScreen extends StatelessWidget {
   /// ВНУТРИ приложения, а не на внешнюю страницу.
   final bool openDonate;
 
+  static const guideUrlEn = ProjectLinks.guideEn;
+  static const guideUrlRu = ProjectLinks.guideRu;
+
+  /// Ссылка на руководство под язык интерфейса. Незнакомый тег (язык, для
+  /// которого гайда ещё нет) → английская версия, а не 404.
+  @visibleForTesting
+  static String guideUrlFor(String tag) => ProjectLinks.guideFor(tag);
+
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
