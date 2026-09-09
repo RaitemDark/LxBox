@@ -824,6 +824,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
                 case 2:
                   _openFolderByName('БС');
                 case 3:
+                  _openFolderByName('Brawl');
+                case 4:
                   Navigator.of(context).push(MaterialPageRoute(
                     builder: (_) => SubscriptionsScreen(
                       subController: _subController,
@@ -837,6 +839,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
               NavigationDestination(icon: Icon(Icons.home), label: 'Главная'),
               NavigationDestination(icon: Icon(Icons.star), label: 'Избранное'),
               NavigationDestination(icon: Icon(Icons.shield_outlined), label: 'БС'),
+              NavigationDestination(icon: Icon(Icons.sports_esports), label: 'Brawl'),
               NavigationDestination(icon: Icon(Icons.dns), label: 'Все конфиги'),
             ],
           ),
