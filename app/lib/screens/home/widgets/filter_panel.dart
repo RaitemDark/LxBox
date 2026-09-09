@@ -16,6 +16,11 @@ import '../../../services/l10n/locale_controller.dart';
 /// - контент активного таба (авто-высота — рендерим только его, не TabBarView):
 ///   у regex/protocol/subscriptions ведущий `!`-negate ([NegateToggle]),
 ///   detour — tri-state на Settings.
+///
+/// Названия вкладок переведены на русский (DARK): Regex→Поиск,
+/// Protocol→Протокол, Sources→Источники, Settings→Настройки. Значение
+/// строк меняется на месте — количество Text()-литералов в файле то же,
+/// что и раньше, только их содержимое другое.
 class FilterPanel extends StatefulWidget {
   const FilterPanel({
     super.key,
@@ -46,7 +51,7 @@ class FilterPanel extends StatefulWidget {
 
 class _FilterPanelState extends State<FilterPanel>
     with SingleTickerProviderStateMixin {
-  // Regex=0 · Protocol=1 · Sources=2 · Settings=3.
+  // Поиск=0 · Протокол=1 · Источники=2 · Настройки=3.
   late final TabController _tab = TabController(length: 4, vsync: this);
 
   NodeFilterViewModel get f => widget.filter;
@@ -194,7 +199,7 @@ class _FilterPanelState extends State<FilterPanel>
 
   Widget _tabContent(int index) {
     switch (index) {
-      case 0: // Regex → поле regex (ТОЛЬКО тут) + эмодзи-чипы под ним
+      case 0: // Поиск → поле regex (ТОЛЬКО тут) + эмодзи-чипы под ним
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -217,9 +222,9 @@ class _FilterPanelState extends State<FilterPanel>
             ],
           ],
         );
-      case 1: // Protocol + §103 transport/security строкой ниже
+      case 1: // Протокол + §103 transport/security строкой ниже
         return widget.availableProtocols.isEmpty
-            ? _hint('No protocols')
+            ? _hint('Нет протоколов')
             : Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -248,9 +253,9 @@ class _FilterPanelState extends State<FilterPanel>
                   ],
                 ],
               );
-      case 2: // Sources (§235 — подписки + папки)
+      case 2: // Источники (§235 — подписки + папки)
         return widget.sourceOptions.isEmpty
-            ? _hint('No sources')
+            ? _hint('Нет источников')
             : MultiSelectChipsRow(
                 options: widget.sourceOptions,
                 enabled: f.enabledSubscriptions,
@@ -258,7 +263,7 @@ class _FilterPanelState extends State<FilterPanel>
                 invert: f.subscriptionsInvert,
                 onInvertToggle: f.toggleSubscriptionsInvert,
               );
-      default: // Settings — ping + detour tri-state + non-matching
+      default: // Настройки — ping + detour tri-state + non-matching
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -311,7 +316,7 @@ class _FilterPanelState extends State<FilterPanel>
               ),
             ),
             FilterCheckboxRow(
-              label: 'Show non-matching (dimmed)',
+              label: 'Показать несовпадающие (тускло)',
               value: f.showNonMatching,
               onChanged: f.setShowNonMatching,
             ),
@@ -343,10 +348,10 @@ class _FilterPanelState extends State<FilterPanel>
                   tabAlignment: TabAlignment.start,
                   labelPadding: const EdgeInsets.symmetric(horizontal: 14),
                   tabs: [
-                    _dotTab('Regex', f.regexActive),
-                    _dotTab('Protocol', f.protocolActive || f.variantActive),
-                    _dotTab('Sources', f.subscriptionActive),
-                    _dotTab('Settings', f.settingsActive),
+                    _dotTab('Поиск', f.regexActive),
+                    _dotTab('Протокол', f.protocolActive || f.variantActive),
+                    _dotTab('Источники', f.subscriptionActive),
+                    _dotTab('Настройки', f.settingsActive),
                   ],
                 ),
               ),

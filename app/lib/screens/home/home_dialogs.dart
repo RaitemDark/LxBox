@@ -13,39 +13,14 @@ import '../../vpn/box_vpn_client.dart';
 import '../../widgets/wifi_permission_dialog.dart';
 import '../../services/l10n/locale_controller.dart';
 
-/// Подтверждение остановки VPN: если активных соединений > 3 — показываем
-/// диалог (их закрытие оборвёт сессии), иначе останавливаем сразу через
-/// [controller].
+/// Остановка VPN — сразу, без вопроса подтверждения (DARK: убрано намеренно,
+/// раньше при >3 активных соединений спрашивало подтверждение).
 void confirmStop(
   BuildContext context,
   HomeController controller,
   HomeState state,
 ) {
-  if (state.traffic.activeConnections > 3) {
-    showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(getLocalText.s("Stop VPN?")),
-        content: Text(
-          getLocalText.plural("%d active connections will be closed.", state.traffic.activeConnections),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: Text(getLocalText.s("Cancel")),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            child: Text(getLocalText.s("Stop")),
-          ),
-        ],
-      ),
-    ).then((confirmed) {
-      if (confirmed == true) controller.stop();
-    });
-  } else {
-    controller.stop();
-  }
+  controller.stop();
 }
 
 /// Диалог «активен другой VPN» — показывается перед ручным стартом, если на
@@ -83,12 +58,6 @@ Future<bool?> showForeignVpnDialog(BuildContext context) {
   );
 }
 
-/// SnackBar при foreign-revoke — системный VPN-слот перехватило другое активное
-/// VPN-приложение (§012, §224). Частая причина — always-on / kill-switch у
-/// второго VPN, который пере-захватывает единственный слот в окне reconnect.
-/// Текст самодостаточный: юзер не должен думать, что это «своё же прошлое
-/// подключение». Имя перехватчика Android через публичный API не отдаёт.
-/// Action «Start» перезапускает через [controller].
 /// Диалог-объяснение про location/wifi permission (§050): config содержит
 /// `wifi_ssid`/`wifi_bssid` правила → нужен доступ к Wi-Fi state. [permName] —
 /// comma-separated список permission'ов из BoxService alert prefix.

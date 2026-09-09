@@ -49,6 +49,7 @@ import '../services/settings_storage.dart';
 import '../services/rule_set_auto_updater.dart';
 import '../services/subscription/auto_updater.dart';
 import '../services/update_checker.dart';
+import '../services/whitelist_detector.dart';
 import '../vpn/box_vpn_client.dart';
 import '../services/l10n/locale_controller.dart';
 
@@ -255,6 +256,27 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
         UpdateChecker.I.maybeCheck(localVersion: VersionInfo.I.version),
       );
     });
+    // Проверка режима "белых списков": один раз при старте, потом раз в
+    // 5 минут — сеть могла ограничиться/освободиться, пока приложение
+    // открыто. Не блокирует остальной запуск (unawaited).
+    unawaited(_runWhitelistCheck());
+    _whitelistCheckTimer =
+        Timer.periodic(const Duration(minutes: 5), (_) {
+      if (!mounted) return;
+      unawaited(_runWhitelistCheck());
+    });
+  }
+
+  /// Результат последней проверки сети на режим "белых списков". Влияет
+  /// только на баннер — не трогает ни VPN, ни конфиг, ни какую-либо другую
+  /// логику приложения.
+  NetworkAccessLevel _networkAccess = NetworkAccessLevel.unknown;
+  Timer? _whitelistCheckTimer;
+
+  Future<void> _runWhitelistCheck() async {
+    final level = await WhitelistDetector.I.check();
+    if (!mounted) return;
+    setState(() => _networkAccess = level);
   }
 
   /// §390 — единственная точка показа update-снека: кеш `last_known_version`
@@ -413,6 +435,13 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
   Future<void> _initSubsAndAutoUpdate() async {
     await _subController.init();
 
+    // Первый запуск — предзаполняем список готовыми подписками и создаём
+    // папки "Избранное"/"БС", чтобы приложение сразу было готово
+    // к использованию (для всех, кто ставит DARK — не только для меня).
+    // Флаг `dark_bootstrap_seeded` защищает от повторного добавления при
+    // каждом запуске — сработает ровно один раз, на самом первом старте.
+    await _seedDefaultDataIfFirstRun();
+
     // §101 — bootstrap обязан дождаться:
     //   1. rehydrationDone — ноды подписок восстановлены из HTTP-кеша
     //      (иначе соберём конфиг из nodes=[] и молча потеряем подписку);
@@ -462,6 +491,49 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
     }
   }
 
+  /// Первый запуск приложения: добавляет 4 готовые подписки (с автообновлением,
+  /// живут на вкладке "Все конфиги") и создаёт папки "Избранное"/"БС"
+  /// пустыми — чтобы нижняя панель сразу открывала их без ошибки. Срабатывает
+  /// РОВНО ОДИН РАЗ за всё время жизни приложения — дальше флаг в SettingsStorage
+  /// не даёт повторить добавление на каждом запуске (в т.ч. для друзей,
+  /// ставящих то же приложение с нуля).
+  Future<void> _seedDefaultDataIfFirstRun() async {
+    final already = await SettingsStorage.getVar('dark_bootstrap_seeded', 'false');
+    if (already == 'true') return;
+    // §101 review pattern: bootstrap не должен падать при сетевой ошибке —
+    // отсутствие интернета на первом запуске не должно блокировать сам факт
+    // открытия приложения. Каждая подписка добавляется независимо.
+    const seeds = <(String emoji, String label, String url)>[
+      ('🏴', 'Подписка ЧС',
+          'https://gitverse.ru/api/repos/Pizduk/PizdukVPN/raw/branch/master/sub.txt'),
+      ('🏴📲', 'ЧС-Автовыбор',
+          'https://gitverse.ru/api/repos/Pizduk/PizdukVPN/raw/branch/master/AutoPizduk.txt'),
+      ('🏳️', 'Подписка БС',
+          'https://gitverse.ru/api/repos/Pizduk/PizdukVPN/raw/branch/master/WlSubPiz.txt'),
+      ('🏳️📲', 'БС-Автовыбор',
+          'https://gitverse.ru/api/repos/Pizduk/PizdukVPN/raw/branch/master/WLAutoPiz.txt'),
+    ];
+    for (final (emoji, label, url) in seeds) {
+      try {
+        await _subController.addFromInput(url);
+        if (_subController.lastError == null && _subController.entries.isNotEmpty) {
+          await _subController.renameAt(
+              _subController.entries.length - 1, '$emoji $label');
+        }
+      } catch (e) {
+        AppLog.I.warning('Bootstrap seed skipped ($label): $e');
+      }
+    }
+    try {
+      await _subController.addFolder('Избранное');
+      await _subController.addFolder('БС');
+      await _subController.addFolder('Brawl');
+    } catch (e) {
+      AppLog.I.warning('Bootstrap folders skipped: $e');
+    }
+    await SettingsStorage.setVar('dark_bootstrap_seeded', 'true');
+  }
+
   Future<void> _loadHapticPref() async {
     await HapticService.I.loadFromPrefs();
   }
@@ -478,6 +550,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
       _idleRetryListener = null;
     }
     _updateCheckTimer?.cancel(); // §141 P1.9f
+    _whitelistCheckTimer?.cancel();
     _filter.removeListener(_onFilterChanged);
     _filter.dispose();
     _controller.removeListener(_onControllerChange);
@@ -749,7 +822,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
                 case 1:
                   _openFolderByName('Избранное');
                 case 2:
-                  _openFolderByName('Белые списки');
+                  _openFolderByName('БС');
                 case 3:
                   Navigator.of(context).push(MaterialPageRoute(
                     builder: (_) => SubscriptionsScreen(
@@ -763,13 +836,18 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
             destinations: const [
               NavigationDestination(icon: Icon(Icons.home), label: 'Главная'),
               NavigationDestination(icon: Icon(Icons.star), label: 'Избранное'),
-              NavigationDestination(icon: Icon(Icons.shield_outlined), label: 'Белые списки'),
+              NavigationDestination(icon: Icon(Icons.shield_outlined), label: 'БС'),
               NavigationDestination(icon: Icon(Icons.dns), label: 'Все конфиги'),
             ],
           ),
           body: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              // Баннер "обнаружен режим белых списков" — не зависит от
+              // остального состояния экрана, показывается всегда сверху,
+              // когда обнаружено ограничение сети.
+              if (_networkAccess == NetworkAccessLevel.whitelistOnly)
+                _WhitelistBanner(onOpenWhitelists: () => _openFolderByName('БС')),
               // Empty state (§328 — нет серверов, не «нет конфига») → guide +
               // CTA берёт на себя весь экран; controls/header не рисуем,
               // чтобы disabled-кнопка не путала первого пользователя.
@@ -849,7 +927,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
   }
 
   /// Открывает папку серверов по точному имени (используется нижней панелью
-  /// для "Избранное"/"Белые списки"). Если папки с таким именем ещё нет —
+  /// для "Избранное"/"БС"). Если папки с таким именем ещё нет —
   /// подсказывает создать её на экране Servers.
   void _openFolderByName(String name) {
     SubscriptionEntry? found;
@@ -1176,5 +1254,75 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
       );
     }
     return true;
+  }
+}
+
+/// Баннер "обнаружен режим белых списков" на главном экране DARK. Показывает
+/// предупреждение и кнопку быстрого перехода к папке "БС" (та же
+/// навигация, что и нижняя панель).
+class _WhitelistBanner extends StatelessWidget {
+  const _WhitelistBanner({required this.onOpenWhitelists});
+
+  final VoidCallback onOpenWhitelists;
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    return Container(
+      margin: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: cs.tertiaryContainer.withValues(alpha: 0.5),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: cs.tertiary.withValues(alpha: 0.4)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(Icons.warning_amber_rounded, color: cs.tertiary, size: 22),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Обнаружен режим «белых списков»', // l10n-exempt: new feature, translated later
+                  style: TextStyle(fontWeight: FontWeight.w700, color: cs.onSurface),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Провайдер пропускает только разрешённые сайты. Обычное подключение сейчас не поможет.', // l10n-exempt: new feature, translated later
+                  style: TextStyle(fontSize: 12, color: cs.onSurfaceVariant),
+                ),
+                const SizedBox(height: 10),
+                InkWell(
+                  onTap: onOpenWhitelists,
+                  borderRadius: BorderRadius.circular(10),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: cs.tertiary,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text('Перейти к БС', // l10n-exempt: new feature, translated later
+                            style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w700,
+                                color: cs.onTertiary)),
+                        const SizedBox(width: 4),
+                        Icon(Icons.arrow_forward, size: 14, color: cs.onTertiary),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

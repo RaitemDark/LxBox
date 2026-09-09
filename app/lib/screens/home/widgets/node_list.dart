@@ -52,6 +52,11 @@ bool showAddServerGuide({
 ///   + manual-reorder pinnedCount logic;
 /// - §078 control-outbound short-circuit;
 /// - все NodeRow/NodeViewItem props + callbacks байт-в-байт.
+///
+/// DARK: убрана дублирующая большая кнопка "Tap to connect" (когда нет узлов
+/// у выбранного Направления/не выбрано Направление) — единственная кнопка
+/// подключения теперь в HomeControls (круглая, сверху экрана). Здесь вместо
+/// неё — пассивная подсказка без действия по тапу.
 class HomeNodeList extends StatelessWidget {
   const HomeNodeList({
     super.key,
@@ -144,42 +149,28 @@ class HomeNodeList extends StatelessWidget {
           ),
         );
       }
-      // Конфиг есть, не подключены — большая кликабельная Start-зона.
-      // Тап = тот же путь что и FilledButton Start в _buildControls.
-      final canStart = !state.busy &&
-          state.tunnel != TunnelStatus.connecting &&
-          state.tunnel != TunnelStatus.stopping;
+      // DARK: конфиг есть, не подключены — раньше здесь была вторая большая
+      // кнопка "Tap to connect" (дублировала круглую кнопку в HomeControls
+      // наверху экрана). Оставляем только пассивную подсказку без своего
+      // действия по тапу — единственная кнопка подключения теперь одна.
       return Expanded(
         child: Center(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 32),
-            child: InkWell(
-              borderRadius: BorderRadius.circular(16),
-              onTap: canStart
-                  ? () {
-                      HapticService.I.onConnectTap();
-                      onTapToConnect();
-                    }
-                  : null,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.play_circle_outline,
-                        size: 64, color: cs.primary),
-                    const SizedBox(height: 12),
-                    Text(
-                      getLocalText.s("Tap to connect"),
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            color: cs.primary,
-                            fontWeight: FontWeight.w600,
-                          ),
-                    ),
-                  ],
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.dns_outlined,
+                    size: 40, color: cs.onSurfaceVariant.withAlpha(120)),
+                const SizedBox(height: 10),
+                Text(
+                  getLocalText.s("Select a direction to see its servers"),
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: cs.onSurfaceVariant,
+                      ),
                 ),
-              ),
+              ],
             ),
           ),
         ),

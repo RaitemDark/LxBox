@@ -4777,5 +4777,8 @@
   },
   "Folder \"%s\" has not been created yet — add it on the Servers screen": {
     "value": "Папка «%s» ещё не создана — добавьте её на экране Servers"
+  },
+  "Select a direction to see its servers": {
+    "value": "Выберите направление, чтобы увидеть серверы"
   }
 }
