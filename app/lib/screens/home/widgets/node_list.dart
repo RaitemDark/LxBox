@@ -7,7 +7,6 @@ import '../../../controllers/subscription_controller.dart';
 import '../../../models/home_state.dart';
 import '../../../services/direction_mutations.dart';
 import '../../../services/settings_storage.dart';
-import '../../../services/haptic_service.dart';
 import '../../../services/subscription/auto_updater.dart';
 import '../../../widgets/node_row.dart';
 import '../../../widgets/node_view_item.dart';

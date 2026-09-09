@@ -806,7 +806,6 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
     if (ctrl.entries.isEmpty && _chains.isEmpty) {
       return SubscriptionsEmptyState(
         busy: ctrl.busy,
-        onPickPublicTestServer: () {},
       );
     }
     final rows = _rows(ctrl);
