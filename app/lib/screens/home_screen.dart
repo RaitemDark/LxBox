@@ -849,8 +849,11 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
               // Баннер "обнаружен режим белых списков" — не зависит от
               // остального состояния экрана, показывается всегда сверху,
               // когда обнаружено ограничение сети.
-              if (_networkAccess == NetworkAccessLevel.whitelistOnly)
-                _WhitelistBanner(onOpenWhitelists: () => _openFolderByName('БС')),
+              _NetworkStatusBanner(
+                level: _networkAccess,
+                onCheckNow: () => unawaited(_runWhitelistCheck()),
+                onOpenWhitelists: () => _openFolderByName('БС'),
+              ),
               // Empty state (§328 — нет серверов, не «нет конфига») → guide +
               // CTA берёт на себя весь экран; controls/header не рисуем,
               // чтобы disabled-кнопка не путала первого пользователя.
@@ -1263,63 +1266,121 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
 /// Баннер "обнаружен режим белых списков" на главном экране DARK. Показывает
 /// предупреждение и кнопку быстрого перехода к папке "БС" (та же
 /// навигация, что и нижняя панель).
-class _WhitelistBanner extends StatelessWidget {
-  const _WhitelistBanner({required this.onOpenWhitelists});
+class _NetworkStatusBanner extends StatelessWidget {
+  const _NetworkStatusBanner({
+    required this.level,
+    required this.onCheckNow,
+    required this.onOpenWhitelists,
+  });
 
+  final NetworkAccessLevel level;
+  final VoidCallback onCheckNow;
   final VoidCallback onOpenWhitelists;
 
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+
+    // Цвет/текст/иконка по трём состояниям — как в референсном приложении
+    // (зелёная полоса "Полный доступ" / оранжевая "Только белый список").
+    final (Color accent, IconData icon, String title) = switch (level) {
+      NetworkAccessLevel.fullAccess => (
+          cs.primary,
+          Icons.check_circle_outline,
+          'Полный доступ к интернету', // l10n-exempt: new feature, translated later
+        ),
+      NetworkAccessLevel.whitelistOnly => (
+          cs.tertiary,
+          Icons.warning_amber_rounded,
+          'Обнаружен режим «белых списков»', // l10n-exempt: new feature, translated later
+        ),
+      NetworkAccessLevel.unknown => (
+          cs.onSurfaceVariant,
+          Icons.help_outline,
+          'Статус сети не определён', // l10n-exempt: new feature, translated later
+        ),
+    };
+
     return Container(
       margin: const EdgeInsets.fromLTRB(16, 12, 16, 0),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: cs.tertiaryContainer.withValues(alpha: 0.5),
+        color: accent.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: cs.tertiary.withValues(alpha: 0.4)),
+        border: Border.all(color: accent.withValues(alpha: 0.4)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(Icons.warning_amber_rounded, color: cs.tertiary, size: 22),
+          Icon(icon, color: accent, size: 22),
           const SizedBox(width: 10),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Обнаружен режим «белых списков»', // l10n-exempt: new feature, translated later
+                  title,
                   style: TextStyle(fontWeight: FontWeight.w700, color: cs.onSurface),
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  'Провайдер пропускает только разрешённые сайты. Обычное подключение сейчас не поможет.', // l10n-exempt: new feature, translated later
-                  style: TextStyle(fontSize: 12, color: cs.onSurfaceVariant),
-                ),
-                const SizedBox(height: 10),
-                InkWell(
-                  onTap: onOpenWhitelists,
-                  borderRadius: BorderRadius.circular(10),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    decoration: BoxDecoration(
-                      color: cs.tertiary,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text('Перейти к БС', // l10n-exempt: new feature, translated later
-                            style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w700,
-                                color: cs.onTertiary)),
-                        const SizedBox(width: 4),
-                        Icon(Icons.arrow_forward, size: 14, color: cs.onTertiary),
-                      ],
-                    ),
+                if (level == NetworkAccessLevel.whitelistOnly) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    'Провайдер пропускает только разрешённые сайты. Обычное подключение сейчас не поможет.', // l10n-exempt: new feature, translated later
+                    style: TextStyle(fontSize: 12, color: cs.onSurfaceVariant),
                   ),
+                ],
+                const SizedBox(height: 10),
+                Row(
+                  children: [
+                    // Кнопка ручной проверки — доступна всегда, независимо
+                    // от текущего статуса.
+                    InkWell(
+                      onTap: onCheckNow,
+                      borderRadius: BorderRadius.circular(10),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: cs.surfaceContainerHighest.withValues(alpha: 0.7),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.refresh, size: 14, color: cs.onSurface),
+                            const SizedBox(width: 4),
+                            Text('Проверить', // l10n-exempt: new feature, translated later
+                                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: cs.onSurface)),
+                          ],
+                        ),
+                      ),
+                    ),
+                    if (level == NetworkAccessLevel.whitelistOnly) ...[
+                      const SizedBox(width: 8),
+                      InkWell(
+                        onTap: onOpenWhitelists,
+                        borderRadius: BorderRadius.circular(10),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          decoration: BoxDecoration(
+                            color: accent,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text('Перейти к БС', // l10n-exempt: new feature, translated later
+                                  style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w700,
+                                      color: cs.onTertiary)),
+                              const SizedBox(width: 4),
+                              Icon(Icons.arrow_forward, size: 14, color: cs.onTertiary),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
               ],
             ),
