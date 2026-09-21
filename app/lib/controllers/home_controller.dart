@@ -1430,7 +1430,7 @@ class HomeController extends ChangeNotifier
     if (!_state.tunnelUp) return;
     final group = _state.selectedGroup;
     if (group == null) return;
-    unawaited(selectNode(nodeTag));
+    unawaited(switchNode(nodeTag));
   }
 
   void setHighlightedNode(String nodeTag) {
