@@ -225,10 +225,27 @@ class NodeListPresenter {
   /// Возвращает `(matching, nonMatching)`.
   (List<String>, List<String>) splitNodes(
       List<String> sortedNodes, HomeState state) {
+    const hiddenFolders = {'Избранное', 'БС', 'Brawl', 'Белые списки'};
     final pool = sortedNodes
         .where((t) =>
             state.isSystemControlTag(t) || // §359
             filter.detourPoolPasses(state.activeModel[t]?.isDetour ?? false)) // §311
+        .where((t) {
+          if (state.isSystemControlTag(t)) return true;
+          final sources = _sourcesOfTag(t);
+          if (sources.isEmpty) return true;
+          final isHidden = sources.every((sId) {
+            SubscriptionEntry? entry;
+            for (final e in subController.entries) {
+              if (e.id == sId) {
+                entry = e;
+                break;
+              }
+            }
+            return entry != null && entry.list is FolderServers && hiddenFolders.contains(entry.name);
+          });
+          return !isHidden;
+        })
         .toList();
     final f = buildNodeFilter(state);
     final matching = <String>[];

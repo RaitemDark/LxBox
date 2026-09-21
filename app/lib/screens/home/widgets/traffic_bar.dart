@@ -137,10 +137,10 @@ class TrafficBar extends StatelessWidget {
     final cs = Theme.of(context).colorScheme;
     return Expanded(
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
         decoration: BoxDecoration(
           color: cs.surfaceContainerHighest.withValues(alpha: 0.5),
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(12),
           border: Border.all(color: cs.outlineVariant.withValues(alpha: 0.4)),
         ),
         child: Column(
@@ -148,18 +148,19 @@ class TrafficBar extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(icon, size: 13, color: accent),
-                const SizedBox(width: 5),
+                Icon(icon, size: 12, color: accent),
+                const SizedBox(width: 4),
                 Text(label,
                     style: Theme.of(context).textTheme.labelSmall?.copyWith(
                           color: cs.onSurfaceVariant,
+                          fontSize: 10,
                         )),
               ],
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: 2),
             Text(
               value,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              style: Theme.of(context).textTheme.titleSmall?.copyWith(
                     fontWeight: FontWeight.w700,
                   ),
             ),

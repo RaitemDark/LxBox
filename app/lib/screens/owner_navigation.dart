@@ -69,6 +69,7 @@ Future<void> openTagOwner(
           return FolderDetailScreen(
             entry: entry,
             controller: subController,
+            homeController: homeController,
             focusMemberIndex: owner.memberIndex,
           );
         }

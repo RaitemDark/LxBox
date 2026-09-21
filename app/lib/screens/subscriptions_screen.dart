@@ -874,6 +874,7 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
                       builder: (_) => FolderDetailScreen(
                         entry: entry,
                         controller: widget.subController,
+                        homeController: widget.homeController,
                       ),
                     ),
                   );

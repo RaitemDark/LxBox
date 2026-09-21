@@ -143,29 +143,30 @@ class HomeControls extends StatelessWidget {
           const SizedBox(height: 16),
           // ── Направление + пинг — та же логика, оформлена карточкой ──
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
             decoration: BoxDecoration(
               color: cs.surfaceContainerHighest.withValues(alpha: 0.5),
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: BorderRadius.circular(12),
               border: Border.all(color: cs.outlineVariant.withValues(alpha: 0.4)),
             ),
             child: Row(
               children: [
                 Text(getLocalText.s("Direction"),
-                    style: const TextStyle(fontWeight: FontWeight.w600)),
-                const SizedBox(width: 12),
+                    style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+                const SizedBox(width: 8),
                 Expanded(
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton<String>(
                       isExpanded: true,
                       isDense: true,
+                      style: TextStyle(color: cs.onSurface, fontSize: 13),
                       value: state.groups.contains(state.selectedGroup)
                           ? state.selectedGroup
                           : null,
-                      hint: Text(getLocalText.s("Select direction")),
+                      hint: Text(getLocalText.s("Select direction"), style: const TextStyle(fontSize: 13)),
                       items: state.groups
                           .map((g) => DropdownMenuItem(
-                              value: g, child: Text(state.groupLabelOf(g))))
+                              value: g, child: Text(state.groupLabelOf(g), style: const TextStyle(fontSize: 13))))
                           .toList(),
                       onChanged: (!state.tunnelUp || state.busy || state.groups.isEmpty)
                           ? null
@@ -199,9 +200,10 @@ class HomeControls extends StatelessWidget {
                         },
                   onLongPress: () => showPingSettings(context, controller),
                   child: Padding(
-                    padding: const EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(6),
                     child: Icon(
                       controller.massPingRunning ? Icons.stop_circle_outlined : Icons.speed,
+                      size: 20,
                       color: (!state.tunnelUp || state.busy || state.nodes.isEmpty)
                           ? Theme.of(context).disabledColor
                           : cs.primary,

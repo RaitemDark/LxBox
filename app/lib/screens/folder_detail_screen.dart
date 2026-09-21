@@ -37,11 +37,13 @@ class FolderDetailScreen extends StatefulWidget {
     super.key,
     required this.entry,
     required this.controller,
+    required this.homeController,
     this.focusMemberIndex,
   });
 
   final SubscriptionEntry entry;
   final SubscriptionController controller;
+  final HomeController homeController;
 
   /// §255 — при открытии проскроллить к этому члену и мигнуть его строкой
   /// (навигация из detour-cycle sheet к ноде-виновнику). null = нет.
@@ -637,6 +639,13 @@ class _FolderDetailScreenState extends State<FolderDetailScreen>
   }
 
   void _toggleEdit() {
+    final isSystemFolder = ['Избранное', 'БС', 'Brawl', 'Белые списки'].contains(widget.entry.name);
+    if (isSystemFolder) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(getLocalText.s("System folders cannot be renamed"))),
+      );
+      return;
+    }
     if (_editing) {
       final name = _nameCtrl.text.trim();
       final idx = _index;
@@ -648,6 +657,13 @@ class _FolderDetailScreenState extends State<FolderDetailScreen>
   }
 
   Future<void> _delete() async {
+    final isSystemFolder = ['Избранное', 'БС', 'Brawl', 'Белые списки'].contains(widget.entry.name);
+    if (isSystemFolder) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(getLocalText.s("System folders cannot be deleted"))),
+      );
+      return;
+    }
     // Три исхода: cancel / вынести серверы одиночными / удалить всё.
     final choice = await showDialog<String>(
       context: context,
@@ -1092,6 +1108,7 @@ class _FolderDetailScreenState extends State<FolderDetailScreen>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isSystemFolder = ['Избранное', 'БС', 'Brawl', 'Белые списки'].contains(widget.entry.name);
     return AnimatedBuilder(
       animation: widget.entry,
       builder: (context, _) => Scaffold(
@@ -1121,11 +1138,12 @@ class _FolderDetailScreenState extends State<FolderDetailScreen>
                   ],
                 ),
           actions: [
-            IconButton(
-              tooltip: _editing ? getLocalText.s("Save") : getLocalText.s("Rename"),
-              icon: Icon(_editing ? Icons.check : Icons.edit_outlined),
-              onPressed: _toggleEdit,
-            ),
+            if (!isSystemFolder)
+              IconButton(
+                tooltip: _editing ? getLocalText.s("Save") : getLocalText.s("Rename"),
+                icon: Icon(_editing ? Icons.check : Icons.edit_outlined),
+                onPressed: _toggleEdit,
+              ),
             PopupMenuButton<String>(
               tooltip: getLocalText.s("Add servers"),
               icon: const Icon(Icons.add),
@@ -1151,11 +1169,12 @@ class _FolderDetailScreenState extends State<FolderDetailScreen>
                     child: Text(getLocalText.s("Add auto node…"))),
               ],
             ),
-            IconButton(
-              tooltip: getLocalText.s("Delete folder"),
-              icon: const Icon(Icons.delete_outline),
-              onPressed: _delete,
-            ),
+            if (!isSystemFolder)
+              IconButton(
+                tooltip: getLocalText.s("Delete folder"),
+                icon: const Icon(Icons.delete_outline),
+                onPressed: _delete,
+              ),
           ],
           bottom: TabBar(
             controller: _tabCtrl,
@@ -1252,6 +1271,9 @@ class _FolderDetailScreenState extends State<FolderDetailScreen>
     final highlighted = _highlightedMember == i;
     final keys = _memberProbeKeys();
     final probe = i < keys.length ? _probe[keys[i]] : null; // §326
+    
+    final isSystemFolder = ['Избранное', 'БС', 'Brawl', 'Белые списки'].contains(widget.entry.name);
+
     // §255 — reorder-key top-level (KeyedSubtree); GlobalKey + вспышка на
     // внутреннем AnimatedContainer (навигация из detour-cycle sheet).
     return KeyedSubtree(
@@ -1285,22 +1307,52 @@ class _FolderDetailScreenState extends State<FolderDetailScreen>
       onLongPress: () => _showMemberMenu(i),
       // §237 — тап открывает полный Node Settings (как у одиночного сервера);
       // битый член (ноды нет) — прежнее меню (Edit raw / Delete).
+      // Если это системная папка (БС, Избранное), тап по ноде СРАЗУ подключает к ней.
       onTap: m.node == null
           ? () => _showMemberMenu(i)
-          : () {
-              final idx = _index;
-              if (idx < 0) return;
-              Navigator.push(
-                context,
-                MaterialPageRoute<void>(
-                  builder: (_) => NodeSettingsScreen(
-                    entry: widget.entry,
-                    index: idx,
-                    memberIndex: i,
-                    subController: widget.controller,
+          : () async {
+              if (isSystemFolder) {
+                // Подключаемся напрямую к серверу
+                final tag = TagResolver.displayTag(_folder.tagPrefix, m.node!.tag);
+                
+                // Переключаем активную группу на общую, чтобы сервер был доступен для выбора
+                final groups = widget.homeController.state.groups;
+                if (groups.isNotEmpty) {
+                  // Выбираем первую (обычно 'Select server') если текущая не содержит узел
+                  if (!widget.homeController.state.nodes.contains(tag)) {
+                    widget.homeController.setSelectedGroup(groups.first);
+                  }
+                }
+                
+                widget.homeController.setSelectedNode(tag);
+                
+                if (!widget.homeController.state.tunnelUp) {
+                  await widget.homeController.start();
+                } else {
+                  // In-place reload чтобы быстрее переключиться
+                  await widget.homeController.reloadVpn();
+                }
+                
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(getLocalText.s("Connecting to %s...", m.node!.label.isNotEmpty ? m.node!.label : m.node!.tag))),
+                  );
+                }
+              } else {
+                final idx = _index;
+                if (idx < 0) return;
+                Navigator.push(
+                  context,
+                  MaterialPageRoute<void>(
+                    builder: (_) => NodeSettingsScreen(
+                      entry: widget.entry,
+                      index: idx,
+                      memberIndex: i,
+                      subController: widget.controller,
+                    ),
                   ),
-                ),
-              ).then((_) => mounted ? setState(() {}) : null);
+                ).then((_) => mounted ? setState(() {}) : null);
+              }
             },
       onProbeBadgeTap: () {
         final r = probe;

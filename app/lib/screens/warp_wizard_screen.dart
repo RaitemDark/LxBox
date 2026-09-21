@@ -11,6 +11,7 @@ import '../services/warp/masque_account.dart';
 import '../services/warp/warp_endpoint_picker.dart';
 import '../services/warp/scan/scan_pool.dart';
 import '../services/settings_storage.dart';
+import '../services/debug/debug_registry.dart';
 import 'folder_detail_screen.dart';
 import 'warp_experiment_screen.dart';
 import '../services/l10n/locale_controller.dart';
@@ -304,6 +305,7 @@ class _WarpWizardScreenState extends State<WarpWizardScreen> with SnackHelper {
       builder: (_) => FolderDetailScreen(
         entry: entry,
         controller: widget.subController,
+        homeController: DebugRegistry.I.home!, // Use global registry since we don't have it passed
       ),
     ));
   }
