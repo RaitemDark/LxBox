@@ -1,4 +1,4 @@
-{
+﻿{
   "\"selector\" was imported as an auto-select group: the fastest member is picked by latency tests instead of manually.": {
     "value": "«selector» импортирован как группа автовыбора: самый быстрый узел выбирается по замерам, а не вручную."
   },
@@ -4768,7 +4768,7 @@
     "value": "Выберите направление, чтобы увидеть серверы"
   ,
 ,
-" Connecting to %s...\: { \value\: \Подключение к %s...\ },
-" System folders cannot be deleted\: { \value\: \Системные папки нельзя удалить\ },
-" System folders cannot be renamed\: { \value\: \Системные папки нельзя переименовывать\ }
+  " Connecting to %s...\: { \value\: \Подключение к %s...\ },
+  " System folders cannot be deleted\: { \value\: \Системные папки нельзя удалить\ },
+  " System folders cannot be renamed\: { \value\: \Системные папки нельзя переименовывать\ }
 }
