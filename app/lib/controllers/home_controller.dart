@@ -1426,6 +1426,13 @@ class HomeController extends ChangeNotifier
     }
   }
 
+  void setSelectedNode(String nodeTag) {
+    if (!_state.tunnelUp) return;
+    final group = _state.selectedGroup;
+    if (group == null) return;
+    unawaited(selectNode(nodeTag));
+  }
+
   void setHighlightedNode(String nodeTag) {
     _emit(_state.copyWith(highlightedNode: nodeTag));
   }
