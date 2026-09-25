@@ -791,6 +791,41 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
     if (mounted) setState(() {});
   }
 
+  Future<void> _quickAddForTab(String tabName) async {
+    final ctl = TextEditingController();
+    final text = await showDialog<String>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('Добавить в $tabName'),
+        content: TextField(
+          controller: ctl,
+          autofocus: true,
+          decoration: const InputDecoration(hintText: 'Ссылка (vless://, и т.д.)'),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Отмена')),
+          FilledButton(onPressed: () => Navigator.pop(ctx, ctl.text), child: const Text('Добавить')),
+        ],
+      ),
+    );
+    ctl.dispose();
+    if (text == null || text.trim().isEmpty) return;
+
+    // Create a subscription with the tab's name, or add to existing one
+    int idx = _subController.entries.indexWhere((e) => e.name == tabName);
+    if (idx < 0) {
+      await _subController.addFolder(tabName);
+      idx = _subController.entries.length - 1;
+    }
+    
+    final err = await _subController.addMembersToFolder(idx, text.trim(), nameFallback: tabName);
+    if (err != null && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(err.render())));
+    } else {
+      await _rebuildAndClearDirty();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
@@ -811,11 +846,48 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
           anyServerNodes: _subController.entries
               .any((e) => e.nodeCount > 0 || e.list.nodes.isNotEmpty),
         );
+        
+        final isMainTab = _activeTab == 'Главная';
+        final cs = Theme.of(context).colorScheme;
+
         return Scaffold(
           appBar: AppBar(
             // l10n-exempt: brand name
-            title: Text(_activeTab == 'Главная' ? 'DARK Raitem' : _activeTab),
+            title: isMainTab 
+              ? Row(
+                  children: [
+                    Icon(Icons.shield, color: state.tunnelUp ? cs.primary : cs.onSurfaceVariant),
+                    const SizedBox(width: 8),
+                    Text(
+                      'DARK',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 2.0,
+                        color: state.tunnelUp ? cs.primary : null,
+                      ),
+                    ),
+                  ],
+                )
+              : Text(_activeTab, style: const TextStyle(fontWeight: FontWeight.bold)),
             actions: [
+              if (!isMainTab) ...[
+                IconButton(
+                  icon: Icon(_controller.massPingRunning ? Icons.stop_circle_outlined : Icons.speed),
+                  tooltip: 'Ping',
+                  onPressed: () {
+                    if (_controller.massPingRunning) {
+                      _controller.cancelMassPing();
+                    } else {
+                      unawaited(_controller.runMassUrltest(order: _nodeList.computeDisplayList(state)));
+                    }
+                  },
+                ),
+                IconButton(
+                  icon: const Icon(Icons.add),
+                  tooltip: 'Добавить сервер',
+                  onPressed: () => _quickAddForTab(_activeTab),
+                ),
+              ],
               IconButton(
                 icon: const Icon(Icons.refresh),
                 tooltip: getLocalText.s("Update all"),
@@ -867,7 +939,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
                    });
                 },
               ),
-              if (state.configRaw.isNotEmpty && !showEmptyGuide) ...[
+              if (isMainTab && state.configRaw.isNotEmpty && !showEmptyGuide) ...[
                 HomeControls(
                   controller: _controller,
                   subController: _subController,
@@ -903,20 +975,53 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
                   const SizedBox(height: 4),
                 ],
               ],
-              HomeNodeList(
-                controller: _controller,
-                subController: _subController,
-                autoUpdater: _autoUpdater,
-                filter: _filter,
-                presenter: _nodeList,
-                state: state,
-                showEmptyGuide: showEmptyGuide,
-                onRestoreFromBackup: () =>
-                    restoreFromBackup(context, _subController, _autoUpdater),
-                onTapToConnect: () => unawaited(_startWithAutoRefresh()),
-                rowKeyFor: _nodeRowKey,
-                onSelectServer: _scrollToNode,
-                onViewPool: _showPool,
+              Expanded(
+                child: HomeNodeList(
+                  controller: _controller,
+                  subController: _subController,
+                  autoUpdater: _autoUpdater,
+                  filter: _filter,
+                  presenter: _nodeList,
+                  state: state,
+                  showEmptyGuide: showEmptyGuide && isMainTab,
+                  onRestoreFromBackup: () =>
+                      restoreFromBackup(context, _subController, _autoUpdater),
+                  onTapToConnect: () => unawaited(_startWithAutoRefresh()),
+                  rowKeyFor: _nodeRowKey,
+                  onSelectServer: (tag) async {
+                    if (isMainTab) {
+                      _scrollToNode(tag);
+                    } else {
+                      // One-tap connect logic for specific tabs
+                      _controller.setSelectedNode(tag);
+                      
+                      // Ensure we are in a valid group
+                      final groups = _controller.state.groups;
+                      if (groups.isNotEmpty) {
+                        _controller.setSelectedGroup(groups.first);
+                      }
+                      
+                      if (!state.tunnelUp) {
+                        await _controller.start();
+                      } else {
+                        await _controller.reloadVpn();
+                      }
+                      
+                      if (mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Подключение...')),
+                        );
+                      }
+                      
+                      // Go back to main tab to see the connection status
+                      setState(() {
+                        _navIndex = 0;
+                        _nodeList.activeTab = 'Главная';
+                      });
+                    }
+                  },
+                  onViewPool: _showPool,
+                ),
               ),
             ],
           ),
