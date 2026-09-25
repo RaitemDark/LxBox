@@ -25,7 +25,6 @@ import 'settings_screen.dart';
 import 'speed_test_screen.dart';
 import 'stats_screen.dart';
 import 'home/widgets/detour_cycle_sheet.dart';
-import 'home/widgets/traffic_bar.dart';
 import 'owner_navigation.dart';
 import 'subscriptions_screen.dart';
 import 'home/widgets/progress_banner.dart';
@@ -930,28 +929,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
   /// Открывает папку серверов по точному имени (используется нижней панелью
   /// для "Избранное"/"БС"). Если папки с таким именем ещё нет —
   /// подсказывает создать её на экране Servers.
-  void _openFolderByName(String name) {
-    SubscriptionEntry? found;
-    for (final e in _subController.entries) {
-      if (e.list is FolderServers && e.name == name) {
-        found = e;
-        break;
-      }
-    }
-    if (found == null) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(getLocalText.s('Folder "%s" has not been created yet — add it on the Servers screen', name)),
-      ));
-      return;
-    }
-    Navigator.of(context).push(MaterialPageRoute(
-      builder: (_) => FolderDetailScreen(
-        entry: found!,
-        controller: _subController,
-        homeController: _controller,
-      ),
-    ));
-  }
 
   /// Rebuild config → reconnect (если up) или start (если down). §107:
   /// dirty-флаг сбрасывает только успешный rebuild (внутри `_rebuildConfig`);
