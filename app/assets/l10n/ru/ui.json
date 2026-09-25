@@ -4775,5 +4775,14 @@
   },
   "Update all": {
     "value": "Обновить все"
+  },
+  "Add to %s": {
+    "value": "Добавить в %s"
+  },
+  "Link (vless://, etc.)": {
+    "value": "Ссылка (vless://, и т.д.)"
+  },
+  "Connecting...": {
+    "value": "Подключение..."
   }
 }

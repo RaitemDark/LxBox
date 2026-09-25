@@ -796,15 +796,15 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
     final text = await showDialog<String>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text('Добавить в $tabName'),
+        title: Text(getLocalText.s('Add to %s', tabName)),
         content: TextField(
           controller: ctl,
           autofocus: true,
-          decoration: const InputDecoration(hintText: 'Ссылка (vless://, и т.д.)'),
+          decoration: InputDecoration(hintText: getLocalText.s('Link (vless://, etc.)')),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Отмена')),
-          FilledButton(onPressed: () => Navigator.pop(ctx, ctl.text), child: const Text('Добавить')),
+          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(getLocalText.s('Cancel'))),
+          FilledButton(onPressed: () => Navigator.pop(ctx, ctl.text), child: Text(getLocalText.s('Add'))),
         ],
       ),
     );
@@ -872,6 +872,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
             actions: [
               if (!isMainTab) ...[
                 IconButton(
+                  // l10n-exempt: standard protocol/tool name
                   icon: Icon(_controller.massPingRunning ? Icons.stop_circle_outlined : Icons.speed),
                   tooltip: 'Ping',
                   onPressed: () {
@@ -884,7 +885,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
                 ),
                 IconButton(
                   icon: const Icon(Icons.add),
-                  tooltip: 'Добавить сервер',
+                  tooltip: getLocalText.s('Add server'),
                   onPressed: () => _quickAddForTab(_activeTab),
                 ),
               ],
@@ -1009,7 +1010,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
                       
                       if (context.mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Подключение...')),
+                          SnackBar(content: Text(getLocalText.s('Connecting...'))),
                         );
                         // Go back to main tab to see the connection status
                         setState(() {
