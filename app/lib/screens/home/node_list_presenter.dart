@@ -107,6 +107,7 @@ class NodeListPresenter {
   final HomeController controller;
   final SubscriptionController subController;
   final NodeFilterViewModel filter;
+  String activeTab = 'Главная';
 
   // §070 — UI-cache для frozen sort при `state.resortOnManualPing == false`.
   // См. spec'у — manual single ping не двигает порядок, batch / group switch /
@@ -233,8 +234,12 @@ class NodeListPresenter {
         .where((t) {
           if (state.isSystemControlTag(t)) return true;
           final sources = _sourcesOfTag(t);
-          if (sources.isEmpty) return true;
-          final isHidden = sources.every((sId) {
+          if (sources.isEmpty) return activeTab == 'Главная';
+
+          bool isHiddenCategory = false;
+          bool matchesTab = false;
+
+          for (final sId in sources) {
             SubscriptionEntry? entry;
             for (final e in subController.entries) {
               if (e.id == sId) {
@@ -242,9 +247,17 @@ class NodeListPresenter {
                 break;
               }
             }
-            return entry != null && entry.list is FolderServers && hiddenFolders.contains(entry.name);
-          });
-          return !isHidden;
+            if (entry != null) {
+              final name = entry.name;
+              if (hiddenFolders.contains(name)) isHiddenCategory = true;
+              if (activeTab == 'Избранное' && name == 'Избранное') matchesTab = true;
+              if (activeTab == 'БС' && (name == 'БС' || name == 'Белые списки')) matchesTab = true;
+              if (activeTab == 'Brawl' && name == 'Brawl') matchesTab = true;
+            }
+          }
+
+          if (activeTab == 'Главная') return !isHiddenCategory;
+          return matchesTab;
         })
         .toList();
     final f = buildNodeFilter(state);

@@ -144,15 +144,27 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
   late final NodeListPresenter _nodeList;
 
   /// Derived UI flag. §076 banner gate:
-  /// (а) `_subController.configDirty` — ВСЕГДА показываем banner (независимо
-  ///     от tunnel state). Юзер видит pending changes даже когда VPN down,
-  ///     может Apply из banner.
-  /// (б) `state.configChangedNeedRestart && tunnelUp` — saved config обновлён
-  ///     во время работы tunnel, running config устарел, нужен restart.
   bool get _needsRestart {
     final state = _controller.state;
     return _subController.configDirty ||
         (state.tunnelUp && state.configChangedNeedRestart);
+  }
+
+  int _navIndex = 0;
+  String get _activeTab {
+    switch (_navIndex) {
+      case 1: return 'Избранное';
+      case 2: return 'БС';
+      case 3: return 'Brawl';
+      default: return 'Главная';
+    }
+  }
+
+  Future<void> _updateAll() async {
+    _autoUpdater.resetAllFailCounts();
+    await _autoUpdater.maybeUpdateAll(UpdateTrigger.manual, force: true);
+    if (!mounted) return;
+    await _rebuildAndClearDirty();
   }
 
   /// Для side-effect'ов на transition tunnel (SnackBar при → revoked,
@@ -787,9 +799,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
     return AnimatedBuilder(
       animation: Listenable.merge([_controller, _subController]),
       builder: (context, _) {
-        // Debug API `POST /action/preview-empty-state?on=true` имитирует
-        // empty-state без потери данных: для UI configRaw/nodes выглядят
-        // пустыми, реальный _controller.state не трогается.
         final realState = _controller.state;
         final state = _controller.previewEmpty
             ? realState.copyWith(configRaw: '', nodes: const [])
@@ -797,11 +806,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
         final startActive = !state.tunnelUp;
         final startEnabled = !state.busy && !state.tunnelUp && state.configRaw.isNotEmpty;
         final stopEnabled = !state.busy && state.tunnelUp;
-        // §328 — «нет серверов» считается по payload-нодам (конфиг + entries),
-        // а не по наличию файла конфига: шаблонная сборка при нуле серверов
-        // оставляет configRaw непустым навсегда. `e.nodeCount` — персистентный
-        // кэш: у подписок `list.nodes` до rehydration пуст, по нему одному
-        // гайд мигал бы на каждом старте.
+
         final showEmptyGuide = showAddServerGuide(
           tunnelUp: state.tunnelUp,
           configEmpty: state.configRaw.isEmpty,
@@ -810,31 +815,37 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
               .any((e) => e.nodeCount > 0 || e.list.nodes.isNotEmpty),
         );
         return Scaffold(
-          // l10n-exempt: brand name, идентичен во всех локалях
-          appBar: AppBar(title: const Text('DARK Raitem')),
+          appBar: AppBar(
+            title: Text(_activeTab == 'Главная' ? 'DARK Raitem' : _activeTab),
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.refresh),
+                tooltip: getLocalText.s("Update all"),
+                onPressed: _subController.busy ? null : () => unawaited(_updateAll()),
+              )
+            ],
+          ),
           drawer: HomeDrawer(
             controller: _controller,
             subController: _subController,
             autoUpdater: _autoUpdater,
           ),
           bottomNavigationBar: NavigationBar(
-            selectedIndex: 0,
+            selectedIndex: _navIndex == 4 ? 0 : _navIndex,
             onDestinationSelected: (index) {
-              switch (index) {
-                case 1:
-                  _openFolderByName('Избранное');
-                case 2:
-                  _openFolderByName('БС');
-                case 3:
-                  _openFolderByName('Brawl');
-                case 4:
-                  Navigator.of(context).push(MaterialPageRoute(
-                    builder: (_) => SubscriptionsScreen(
-                      subController: _subController,
-                      homeController: _controller,
-                      autoUpdater: _autoUpdater,
-                    ),
-                  ));
+              if (index == 4) {
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (_) => SubscriptionsScreen(
+                    subController: _subController,
+                    homeController: _controller,
+                    autoUpdater: _autoUpdater,
+                  ),
+                ));
+              } else {
+                setState(() {
+                  _navIndex = index;
+                  _nodeList.activeTab = _activeTab;
+                });
               }
             },
             destinations: const [
@@ -842,30 +853,28 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
               NavigationDestination(icon: Icon(Icons.star), label: 'Избранное'),
               NavigationDestination(icon: Icon(Icons.shield_outlined), label: 'БС'),
               NavigationDestination(icon: Icon(Icons.sports_esports), label: 'Brawl'),
-              NavigationDestination(icon: Icon(Icons.dns), label: 'Все конфиги'),
+              NavigationDestination(icon: Icon(Icons.dns), label: 'Конфиги'),
             ],
           ),
           body: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Баннер "обнаружен режим белых списков" — не зависит от
-              // остального состояния экрана, показывается всегда сверху,
-              // когда обнаружено ограничение сети.
               _NetworkStatusBanner(
                 level: _networkAccess,
                 onCheckNow: () => unawaited(_runWhitelistCheck()),
-                onOpenWhitelists: () => _openFolderByName('БС'),
+                onOpenWhitelists: () {
+                   setState(() {
+                     _navIndex = 2;
+                     _nodeList.activeTab = _activeTab;
+                   });
+                },
               ),
-              // Empty state (§328 — нет серверов, не «нет конфига») → guide +
-              // CTA берёт на себя весь экран; controls/header не рисуем,
-              // чтобы disabled-кнопка не путала первого пользователя.
               if (state.configRaw.isNotEmpty && !showEmptyGuide) ...[
                 HomeControls(
                   controller: _controller,
                   subController: _subController,
                   presenter: _nodeList,
-                  autoApplying: _autoApplying, // §338
-
+                  autoApplying: _autoApplying,
                   connectingAnimChild: StatusChip(
                     state: state,
                     isRevoked: state.tunnel == TunnelStatus.revoked,
@@ -877,37 +886,21 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
                   startEnabled: startEnabled,
                   stopEnabled: stopEnabled,
                   needsRestart: _needsRestart,
-                  // §116 — таймер теперь в BannerStack; здесь только clear.
                   errorTimerOnDismiss: _controller.clearError,
-                  onStartWithAutoRefresh: () =>
-                      unawaited(_startWithAutoRefresh()),
+                  onStartWithAutoRefresh: () => unawaited(_startWithAutoRefresh()),
                   onRebuildAndClearDirty: _rebuildAndClearDirty,
                   onRebuildAndReconnect: _rebuildAndReconnect,
                   onRebuildAndStart: _rebuildAndStart,
                 ),
-                // §095 Filter mode — при открытой фильтр-панели прячем
-                // стат-полосу + Nodes-хедер, освобождая зону под ноды.
-                if (state.tunnelUp && !_filter.panelExpanded)
-                  TrafficBar(
-                    state: state,
-                    controller: _controller,
-                    subController: _subController,
-                  ),
-                if (_subController.busy &&
-                    _subController.progressMessage != null)
-                  ProgressBanner(
-                      message:
-                          _subController.progressMessage!.render()),
-                // §095 — NODES-строка только когда подключено И фильтр закрыт.
-                // STOP-режим: нод нет → фильтровать нечего → строку прячем.
+                if (_subController.busy && _subController.progressMessage != null)
+                  ProgressBanner(message: _subController.progressMessage!.render()),
                 if (state.tunnelUp && !_filter.panelExpanded) ...[
                   const SizedBox(height: 12),
                   NodesHeader(
                     controller: _controller,
                     subController: _subController,
                     filter: _filter,
-                    onSortLongPress: () =>
-                        showSortOptionsMenu(context, _controller),
+                    onSortLongPress: () => showSortOptionsMenu(context, _controller),
                   ),
                   const SizedBox(height: 4),
                 ],
@@ -923,9 +916,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
                 onRestoreFromBackup: () =>
                     restoreFromBackup(context, _subController, _autoUpdater),
                 onTapToConnect: () => unawaited(_startWithAutoRefresh()),
-                rowKeyFor: _nodeRowKey, // §203
-                onSelectServer: _scrollToNode, // §203
-                onViewPool: _showPool, // §208
+                rowKeyFor: _nodeRowKey,
+                onSelectServer: _scrollToNode,
+                onViewPool: _showPool,
               ),
             ],
           ),
