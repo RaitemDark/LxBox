@@ -813,6 +813,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
         );
         return Scaffold(
           appBar: AppBar(
+            // l10n-exempt: brand name
             title: Text(_activeTab == 'Главная' ? 'DARK Raitem' : _activeTab),
             actions: [
               IconButton(
