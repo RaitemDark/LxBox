@@ -4761,9 +4761,6 @@
   "✳ Resolve only%s": {
     "value": "✳ Только резолв%s"
   },
-  "Folder \"%s\" has not been created yet — add it on the Servers screen": {
-    "value": "Папка «%s» ещё не создана — добавьте её на экране Servers"
-  },
   "Select a direction to see its servers": {
     "value": "Выберите направление, чтобы увидеть серверы"
   },
@@ -4775,5 +4772,8 @@
   },
   "System folders cannot be renamed": {
     "value": "Системные папки нельзя переименовывать"
+  },
+  "Update all": {
+    "value": "Обновить все"
   }
 }
