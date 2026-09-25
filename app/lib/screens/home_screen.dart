@@ -859,6 +859,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
                     Icon(Icons.shield, color: state.tunnelUp ? cs.primary : cs.onSurfaceVariant),
                     const SizedBox(width: 8),
                     Text(
+                      // l10n-exempt: brand name
                       'DARK',
                       style: TextStyle(
                         fontWeight: FontWeight.w900,
@@ -872,8 +873,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
             actions: [
               if (!isMainTab) ...[
                 IconButton(
-                  // l10n-exempt: standard protocol/tool name
                   icon: Icon(_controller.massPingRunning ? Icons.stop_circle_outlined : Icons.speed),
+                  // l10n-exempt: standard protocol/tool name
                   tooltip: 'Ping',
                   onPressed: () {
                     if (_controller.massPingRunning) {
