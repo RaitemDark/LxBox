@@ -1007,16 +1007,15 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
                         await _controller.reloadVpn();
                       }
                       
-                      if (mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Подключение...')),
-                        );
-                        // Go back to main tab to see the connection status
-                        setState(() {
-                          _navIndex = 0;
-                          _nodeList.activeTab = 'Главная';
-                        });
-                      }
+                      if (!mounted) return;
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Подключение...')),
+                      );
+                      // Go back to main tab to see the connection status
+                      setState(() {
+                        _navIndex = 0;
+                        _nodeList.activeTab = 'Главная';
+                      });
                     }
                   },
                   onViewPool: _showPool,
