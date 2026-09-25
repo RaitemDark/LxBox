@@ -97,7 +97,7 @@ class HomeControls extends StatelessWidget {
                 child: Column(
                   children: [
                     _buildRoundConnectButton(context, toggleEnabled, cs),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 8),
                     connectingAnimChild,
                   ],
                 ),
@@ -110,7 +110,7 @@ class HomeControls extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 8),
           // §116 — единый banner-механизм: проекция состояния → BannerStack.
           // Три исторических плашки (settings_changed / restart / last_error)
           // + config_load_error деривятся в activeBanners.
@@ -227,15 +227,15 @@ class HomeControls extends StatelessWidget {
       button: true,
       label: connected ? getLocalText.s("Stop") : getLocalText.s("Start"),
       child: SizedBox(
-        width: 130,
-        height: 130,
+        width: 100,
+        height: 100,
         child: Stack(
           alignment: Alignment.center,
           children: [
             if (connected)
               Container(
-                width: 130,
-                height: 130,
+                width: 100,
+                height: 100,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: cs.primary.withValues(alpha: 0.10),
@@ -263,11 +263,11 @@ class HomeControls extends StatelessWidget {
                       }
                     : null,
                 child: SizedBox(
-                  width: 96,
-                  height: 96,
+                  width: 72,
+                  height: 72,
                   child: Icon(
                     Icons.power_settings_new_rounded,
-                    size: 34,
+                    size: 30,
                     color: toggleEnabled ? ringColor : cs.outline.withValues(alpha: 0.4),
                   ),
                 ),
