@@ -1011,13 +1011,12 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(content: Text('Подключение...')),
                         );
+                        // Go back to main tab to see the connection status
+                        setState(() {
+                          _navIndex = 0;
+                          _nodeList.activeTab = 'Главная';
+                        });
                       }
-                      
-                      // Go back to main tab to see the connection status
-                      setState(() {
-                        _navIndex = 0;
-                        _nodeList.activeTab = 'Главная';
-                      });
                     }
                   },
                   onViewPool: _showPool,
