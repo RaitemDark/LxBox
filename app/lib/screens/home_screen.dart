@@ -841,11 +841,13 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
       } else if (_subController.entries[idx].list is FolderServers) {
         // adding vless to folder
         final err = await _subController.addMembersToFolder(idx, text.trim(), nameFallback: tabName);
-        if (err != null && mounted) {
+        if (err != null && context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(err.render())));
         }
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Cannot add to this type of item')));
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Cannot add to this type of item')));
+        }
       }
     }
 
