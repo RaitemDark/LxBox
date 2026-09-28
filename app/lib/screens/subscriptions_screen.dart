@@ -63,6 +63,7 @@ class SubscriptionsScreen extends StatefulWidget {
 class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
   final _inputController = TextEditingController();
   bool _autoUpdateEnabled = true;
+  Set<String> _selectedIds = {};
 
   /// §393 D1 — источники-цепочки. Рисуются СТРОКАМИ ОБЩЕГО СПИСКА наравне с
   /// подписками ([_rows]), но живут в своём storage-ключе (`chains[]`), а не в
@@ -596,6 +597,161 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
     }
   }
 
+  void _toggleSelect(String id) {
+    setState(() {
+      if (_selectedIds.contains(id)) {
+        _selectedIds.remove(id);
+      } else {
+        _selectedIds.add(id);
+      }
+    });
+  }
+
+  void _clearSelection() {
+    setState(() {
+      _selectedIds.clear();
+    });
+  }
+
+  Future<void> _deleteSelected(SubscriptionController ctrl) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dCtx) => AlertDialog(
+        title: Text(getLocalText.s("Delete selected?")),
+        content: Text(getLocalText.s("Remove %d items?", _selectedIds.length)),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(dCtx, false), child: Text(getLocalText.s("Cancel"))),
+          TextButton(
+            onPressed: () => Navigator.pop(dCtx, true),
+            style: TextButton.styleFrom(foregroundColor: Theme.of(context).colorScheme.error),
+            child: Text(getLocalText.s("Delete")),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true) {
+      final indexes = _selectedIds.map((id) => ctrl.entries.indexWhere((e) => e.id == id)).where((i) => i >= 0).toList();
+      indexes.sort((a, b) => b.compareTo(a)); // sort descending
+      for (final idx in indexes) {
+        await ctrl.removeAt(idx);
+      }
+      _clearSelection();
+    }
+  }
+
+  Future<void> _moveSelectedToFolder(SubscriptionController ctrl) async {
+    final userServers = ctrl.entries.where((e) => _selectedIds.contains(e.id) && e.list is UserServer).toList();
+    if (userServers.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(getLocalText.s("Only individual servers can be moved."))));
+      return;
+    }
+    final folderIndex = await showFolderPicker(context, ctrl);
+    if (folderIndex == null || !mounted) return;
+    
+    final targetFolderId = ctrl.entries[folderIndex].id;
+    final indexes = userServers.map((s) => ctrl.entries.indexOf(s)).where((i) => i >= 0).toList();
+    indexes.sort((a, b) => b.compareTo(a));
+    
+    for (final idx in indexes) {
+      final targetIdx = ctrl.entries.indexWhere((e) => e.id == targetFolderId);
+      if (targetIdx >= 0) {
+        await ctrl.moveServerToFolder(idx, targetIdx);
+      }
+    }
+    if (mounted) _clearSelection();
+  }
+
+  AppBar _buildAppBar(SubscriptionController ctrl) {
+    if (_selectedIds.isNotEmpty) {
+      return AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.close),
+          onPressed: _clearSelection,
+        ),
+        title: Text('${_selectedIds.length}'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.drive_file_move_outline),
+            tooltip: getLocalText.s("Move to folder…"),
+            onPressed: () => _moveSelectedToFolder(ctrl),
+          ),
+          IconButton(
+            icon: Icon(Icons.delete_outline, color: Theme.of(context).colorScheme.error),
+            tooltip: getLocalText.s("Delete"),
+            onPressed: () => _deleteSelected(ctrl),
+          ),
+        ],
+      );
+    }
+
+    return AppBar(
+      title: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(getLocalText.s("Servers")),
+          Text(getLocalText.s("Subscriptions & proxy"),
+              style: const TextStyle(
+                  fontSize: 12, fontWeight: FontWeight.normal)),
+        ],
+      ),
+      actions: [
+        IconButton(
+          tooltip: getLocalText.s("Update all & generate"),
+          onPressed: ctrl.busy ? null : () => unawaited(_updateAll()),
+          icon: const Icon(Icons.refresh),
+        ),
+        PopupMenuButton<String>(
+          onSelected: (v) {
+            // §074: «Add server» — duplicate access к wizard'у
+            // (long-press на «+» — discoverability через accidental,
+            // overflow menu — explicit affordance).
+            if (v == 'wizard') _openAddServerWizard();
+            if (v == 'warp') _openWarpWizard();
+            if (v == 'paste') unawaited(_pasteFromClipboard());
+            if (v == 'qr') unawaited(_scanQrCode());
+            if (v == 'file') unawaited(_importFromFile());
+            if (v == 'folder') unawaited(_createFolder());
+            if (v == 'chain') unawaited(_addChain());
+            if (v == 'auto_update') unawaited(_toggleAutoUpdate());
+            if (v == 'sub_settings') _openSubscriptionSettings();
+          },
+          itemBuilder: (_) => [
+            // Раскладка утверждена оператором 24.08: четыре смысловые
+            // секции — создать / получить готовое / импортировать / подписки.
+            PopupMenuItem(value: 'wizard', child: Text(getLocalText.s("Add server…"))),
+            // §393 C7 — цепочка это ТРЕТИЙ ТИП ИСТОЧНИКА (маршрут через
+            // несколько хопов подряд): создание рядом с сервером, а не среди
+            // Направлений (§393 L5).
+            PopupMenuItem(
+                value: 'chain',
+                child: Text(getLocalText.s("Add hop chain…"))),
+            PopupMenuItem(value: 'folder', child: Text(getLocalText.s("New folder…"))),
+            const PopupMenuDivider(),
+            PopupMenuItem(value: 'warp', child: Text(getLocalText.s("Get WARP"))),
+            const PopupMenuDivider(),
+            PopupMenuItem(value: 'paste', child: Text(getLocalText.s("Paste from clipboard"))),
+            // §375 — на устройстве без камеры (Android TV) пункта нет:
+            // альтернативы у сканирования не существует, и пункт,
+            // который всегда отвечает «нельзя», — мусор в меню.
+            if (_hasCamera ?? true)
+              PopupMenuItem(value: 'qr', child: Text(getLocalText.s("Scan QR code"))),
+            PopupMenuItem(value: 'file', child: Text(getLocalText.s("Import from file…"))),
+            const PopupMenuDivider(),
+            CheckedPopupMenuItem<String>(
+              value: 'auto_update',
+              checked: _autoUpdateEnabled,
+              child: Text(getLocalText.s("Auto-update subscriptions")),
+            ),
+            PopupMenuItem(
+              value: 'sub_settings',
+              child: Text(getLocalText.s("Subscription settings…")),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
@@ -618,72 +774,7 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
             }
           },
           child: Scaffold(
-            appBar: AppBar(
-              title: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(getLocalText.s("Servers")),
-                  Text(getLocalText.s("Subscriptions & proxy"),
-                      style: const TextStyle(
-                          fontSize: 12, fontWeight: FontWeight.normal)),
-                ],
-              ),
-              actions: [
-                IconButton(
-                  tooltip: getLocalText.s("Update all & generate"),
-                  onPressed: ctrl.busy ? null : () => unawaited(_updateAll()),
-                  icon: const Icon(Icons.refresh),
-                ),
-                PopupMenuButton<String>(
-                  onSelected: (v) {
-                    // §074: «Add server» — duplicate access к wizard'у
-                    // (long-press на «+» — discoverability через accidental,
-                    // overflow menu — explicit affordance).
-                    if (v == 'wizard') _openAddServerWizard();
-                    if (v == 'warp') _openWarpWizard();
-                    if (v == 'paste') unawaited(_pasteFromClipboard());
-                    if (v == 'qr') unawaited(_scanQrCode());
-                    if (v == 'file') unawaited(_importFromFile());
-                    if (v == 'folder') unawaited(_createFolder());
-                    if (v == 'chain') unawaited(_addChain());
-                    if (v == 'auto_update') unawaited(_toggleAutoUpdate());
-                    if (v == 'sub_settings') _openSubscriptionSettings();
-                  },
-                  itemBuilder: (_) => [
-                    // Раскладка утверждена оператором 24.08: четыре смысловые
-                    // секции — создать / получить готовое / импортировать / подписки.
-                    PopupMenuItem(value: 'wizard', child: Text(getLocalText.s("Add server…"))),
-                    // §393 C7 — цепочка это ТРЕТИЙ ТИП ИСТОЧНИКА (маршрут через
-                    // несколько хопов подряд): создание рядом с сервером, а не среди
-                    // Направлений (§393 L5).
-                    PopupMenuItem(
-                        value: 'chain',
-                        child: Text(getLocalText.s("Add hop chain…"))),
-                    PopupMenuItem(value: 'folder', child: Text(getLocalText.s("New folder…"))),
-                    const PopupMenuDivider(),
-                    PopupMenuItem(value: 'warp', child: Text(getLocalText.s("Get WARP"))),
-                    const PopupMenuDivider(),
-                    PopupMenuItem(value: 'paste', child: Text(getLocalText.s("Paste from clipboard"))),
-                    // §375 — на устройстве без камеры (Android TV) пункта нет:
-                    // альтернативы у сканирования не существует, и пункт,
-                    // который всегда отвечает «нельзя», — мусор в меню.
-                    if (_hasCamera ?? true)
-                      PopupMenuItem(value: 'qr', child: Text(getLocalText.s("Scan QR code"))),
-                    PopupMenuItem(value: 'file', child: Text(getLocalText.s("Import from file…"))),
-                    const PopupMenuDivider(),
-                    CheckedPopupMenuItem<String>(
-                      value: 'auto_update',
-                      checked: _autoUpdateEnabled,
-                      child: Text(getLocalText.s("Auto-update subscriptions")),
-                    ),
-                    PopupMenuItem(
-                      value: 'sub_settings',
-                      child: Text(getLocalText.s("Subscription settings…")),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+            appBar: _buildAppBar(ctrl),
             body: Column(
               children: [
                 _buildInputBar(ctrl),
@@ -858,14 +949,29 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
                   )
                 : null,
             child: SubscriptionEntryTile(
+              selected: _selectedIds.contains(entry.id),
               dragIndex: i,
               entry: entry,
               onToggle: () {
+                if (_selectedIds.isNotEmpty) {
+                  _toggleSelect(entry.id);
+                  return;
+                }
                 unawaited(widget.subController.toggleAt(at));
               },
               onLaunchUrl: _launchUrl,
-              onLongPress: (context) => _showContextMenu(context, at, entry),
+              onLongPress: (context) {
+                if (_selectedIds.isEmpty) {
+                  _toggleSelect(entry.id);
+                } else {
+                  _showContextMenu(context, at, entry);
+                }
+              },
               onTap: (context) {
+                if (_selectedIds.isNotEmpty) {
+                  _toggleSelect(entry.id);
+                  return;
+                }
                 // §234 — папка открывает свой экран (члены + settings).
                 if (entry.list is FolderServers) {
                   Navigator.push(

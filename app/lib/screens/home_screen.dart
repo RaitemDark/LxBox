@@ -521,6 +521,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
           'https://gitverse.ru/api/repos/Pizduk/PizdukVPN/raw/branch/master/WlSubPiz.txt'),
       ('🏳️📲', 'БС-Автовыбор',
           'https://gitverse.ru/api/repos/Pizduk/PizdukVPN/raw/branch/master/WLAutoPiz.txt'),
+      ('🎮', 'Brawl',
+          'https://s3.twcstorage.ru/cd58536-mhand-bucket/vless/vless_mhand.txt'),
       ('🌐', 'DARK Server',
           'https://yax.nenadoblokirowatgnidda.ru/exec?url=http%3A%2F%2F77.110.104.181%3A5002%2Fsub%2FdGdydSwxNzg4NjA1Mzc5L6CcjFOqBZ'),
     ];
