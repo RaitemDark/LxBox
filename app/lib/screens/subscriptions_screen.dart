@@ -63,7 +63,7 @@ class SubscriptionsScreen extends StatefulWidget {
 class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
   final _inputController = TextEditingController();
   bool _autoUpdateEnabled = true;
-  Set<String> _selectedIds = {};
+  final Set<String> _selectedIds = {};
 
   /// §393 D1 — источники-цепочки. Рисуются СТРОКАМИ ОБЩЕГО СПИСКА наравне с
   /// подписками ([_rows]), но живут в своём storage-ключе (`chains[]`), а не в
