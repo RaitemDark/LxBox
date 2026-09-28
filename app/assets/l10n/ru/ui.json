@@ -4784,5 +4784,14 @@
   },
   "Connecting...": {
     "value": "Подключение..."
+  },
+  "Delete selected?": {
+    "value": "Удалить выбранное?"
+  },
+  "Only individual servers can be moved.": {
+    "value": "Переносить можно только отдельные серверы."
+  },
+  "Remove %d items?": {
+    "value": "Удалить элементы (%d)?"
   }
 }
