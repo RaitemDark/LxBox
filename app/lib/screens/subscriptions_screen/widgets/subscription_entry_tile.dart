@@ -17,6 +17,7 @@ class SubscriptionEntryTile extends StatelessWidget {
     required this.onLaunchUrl,
     required this.onLongPress,
     required this.onTap,
+    this.selected = false,
   });
 
   final SubscriptionEntry entry;
@@ -27,11 +28,14 @@ class SubscriptionEntryTile extends StatelessWidget {
   final void Function(String url) onLaunchUrl;
   final void Function(BuildContext context) onLongPress;
   final void Function(BuildContext context) onTap;
+  final bool selected;
 
   @override
   Widget build(BuildContext context) {
     final enabled = entry.enabled;
     final tile = ListTile(
+      selected: selected,
+      selectedTileColor: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.3),
       contentPadding: EdgeInsets.zero,
       leading: SizedBox(
         width: 40,

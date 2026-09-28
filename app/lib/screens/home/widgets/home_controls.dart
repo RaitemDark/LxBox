@@ -227,48 +227,74 @@ class HomeControls extends StatelessWidget {
       button: true,
       label: connected ? getLocalText.s("Stop") : getLocalText.s("Start"),
       child: SizedBox(
-        width: 100,
-        height: 100,
+        width: 130,
+        height: 130,
         child: Stack(
           alignment: Alignment.center,
           children: [
             if (connected)
-              Container(
-                width: 100,
-                height: 100,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: cs.primary.withValues(alpha: 0.10),
+              TweenAnimationBuilder<double>(
+                tween: Tween<double>(begin: 0.8, end: 1.0),
+                duration: const Duration(milliseconds: 800),
+                curve: Curves.fastOutSlowIn,
+                builder: (context, scale, child) {
+                  return Transform.scale(
+                    scale: scale,
+                    child: Container(
+                      width: 130,
+                      height: 130,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: cs.primary.withValues(alpha: 0.15),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              width: connected ? 104 : 96,
+              height: connected ? 104 : 96,
+              decoration: BoxDecoration(
+                color: cs.surface,
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: ringColor.withValues(alpha: connected ? 0.8 : 0.6), 
+                  width: connected ? 2.5 : 1.5,
                 ),
+                boxShadow: connected ? [
+                  BoxShadow(
+                    color: cs.primary.withValues(alpha: 0.3),
+                    blurRadius: 12,
+                    spreadRadius: 2,
+                  )
+                ] : [],
               ),
-            Material(
-              color: cs.surface,
-              shape: CircleBorder(
-                side: BorderSide(color: ringColor.withValues(alpha: 0.6), width: 1.5),
-              ),
-              child: InkWell(
-                // §372 — D-pad: на Android TV фокус при открытии экрана должен
-                // стоять на главном действии, иначе первое нажатие пульта
-                // уходит в никуда и выглядит как «кнопки не работают».
-                autofocus: true,
-                customBorder: const CircleBorder(),
-                onTap: toggleEnabled
-                    ? () {
-                        HapticService.I.onConnectTap();
-                        if (state.tunnelUp) {
-                          confirmStop(context, controller, state);
-                        } else {
-                          onStartWithAutoRefresh();
+              child: Material(
+                color: Colors.transparent,
+                shape: const CircleBorder(),
+                child: InkWell(
+                  autofocus: true,
+                  customBorder: const CircleBorder(),
+                  onTap: toggleEnabled
+                      ? () {
+                          HapticService.I.onConnectTap();
+                          if (state.tunnelUp) {
+                            confirmStop(context, controller, state);
+                          } else {
+                            onStartWithAutoRefresh();
+                          }
                         }
-                      }
-                    : null,
-                child: SizedBox(
-                  width: 72,
-                  height: 72,
-                  child: Icon(
-                    Icons.power_settings_new_rounded,
-                    size: 30,
-                    color: toggleEnabled ? ringColor : cs.outline.withValues(alpha: 0.4),
+                      : null,
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 300),
+                    transitionBuilder: (child, anim) => ScaleTransition(scale: anim, child: child),
+                    child: Icon(
+                      Icons.power_settings_new_rounded,
+                      key: ValueKey(connected),
+                      size: connected ? 38 : 34,
+                      color: toggleEnabled ? ringColor : cs.outline.withValues(alpha: 0.4),
+                    ),
                   ),
                 ),
               ),
