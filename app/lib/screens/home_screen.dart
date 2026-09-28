@@ -816,16 +816,39 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
     // Create a subscription with the tab's name, or add to existing one
     int idx = _subController.entries.indexWhere((e) => e.name == tabName);
     if (idx < 0) {
-      await _subController.addFolder(tabName);
-      idx = _subController.entries.length - 1;
-    }
-    
-    final err = await _subController.addMembersToFolder(idx, text.trim(), nameFallback: tabName);
-    if (err != null && mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(err.render())));
+      if (text.startsWith('http')) {
+        // If it's an online subscription, add it directly with the tab name as a hint
+        await _subController.addFromInput(text.trim());
+        // find newly added and rename it
+        if (_subController.lastError == null && _subController.entries.isNotEmpty) {
+          final newIdx = _subController.entries.length - 1;
+          await _subController.renameAt(newIdx, tabName);
+        }
+      } else {
+        // Just vless link -> create folder
+        await _subController.addFolder(tabName);
+        idx = _subController.entries.length - 1;
+        final err = await _subController.addMembersToFolder(idx, text.trim(), nameFallback: tabName);
+        if (err != null && mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(err.render())));
+        }
+      }
     } else {
-      await _rebuildAndClearDirty();
+      if (_subController.entries[idx].list is SubscriptionServers && text.startsWith('http')) {
+        // replacing online sub source
+        await _subController.updateSourceAt(idx, httpUrl: text.trim());
+      } else if (_subController.entries[idx].list is FolderServers) {
+        // adding vless to folder
+        final err = await _subController.addMembersToFolder(idx, text.trim(), nameFallback: tabName);
+        if (err != null && mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(err.render())));
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Cannot add to this type of item')));
+      }
     }
+
+    if (mounted) await _rebuildAndClearDirty();
   }
 
   @override
