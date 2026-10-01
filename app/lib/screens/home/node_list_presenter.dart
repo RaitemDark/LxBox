@@ -226,7 +226,6 @@ class NodeListPresenter {
   /// Возвращает `(matching, nonMatching)`.
   (List<String>, List<String>) splitNodes(
       List<String> sortedNodes, HomeState state) {
-    const hiddenFolders = {'Избранное', 'БС', 'Brawl', 'Белые списки'};
     final pool = sortedNodes
         .where((t) =>
             state.isSystemControlTag(t) || // §359
