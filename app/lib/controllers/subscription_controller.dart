@@ -810,7 +810,7 @@ class SubscriptionController extends ChangeNotifier {
             list: dlServer, nodeCount: dlServer.nodes.length));
         await _persist();
       } else {
-        switch (await _addJsonNodes(trimmed, origin: origin)) {
+        switch (await _addJsonNodes(trimmed, origin: origin, nameHint: nameHint)) {
           case _JsonAdd.added:
             await _persist();
           case _JsonAdd.empty:
@@ -840,8 +840,78 @@ class SubscriptionController extends ChangeNotifier {
   /// записи на элемент («v1 behavior parity»). Вставленный файл — один
   /// источник, и обновляться он должен целиком.
   Future<_JsonAdd> _addJsonNodes(String text,
-      {UserSource origin = UserSource.paste}) async {
+      {UserSource origin = UserSource.paste, String? nameHint}) async {
     final decoded = decode(text);
+    if (decoded is DirectNodesConfig) {
+      final nodes = decoded.nodes;
+      if (nodes.isEmpty) {
+        _lastError = const ErrMsg(ErrKey.noValidOutboundsInJson);
+        return _JsonAdd.empty;
+      }
+      if (nodes.length > 1) {
+        final url = 'file:${newUuidV4()}';
+        await HttpCache.save(url, text, const {});
+        final list = SubscriptionServers(
+          id: newUuidV4(),
+          name: nameHint ?? '',
+          enabled: true,
+          tagPrefix: '',
+          detourPolicy: DetourPolicy.defaults,
+          url: url,
+        );
+        _entries.add(SubscriptionEntry(list: list, nodeCount: nodes.length));
+      } else {
+        final us = _autoEmoji(UserServer(
+          id: newUuidV4(),
+          name: '',
+          enabled: true,
+          tagPrefix: '',
+          detourPolicy: DetourPolicy.defaults,
+          origin: origin,
+          createdAt: DateTime.now(),
+          rawBody: text,
+          nodes: nodes,
+        ));
+        _entries.add(SubscriptionEntry(list: us, nodeCount: us.nodes.length));
+      }
+      return _JsonAdd.added;
+    }
+
+    if (decoded is UriLines) {
+      final nodes = parseAll(decoded);
+      if (nodes.isEmpty) {
+        _lastError = const ErrMsg(ErrKey.noValidOutboundsInJson);
+        return _JsonAdd.empty;
+      }
+      if (nodes.length > 1) {
+        final url = 'file:${newUuidV4()}';
+        await HttpCache.save(url, text, const {});
+        final list = SubscriptionServers(
+          id: newUuidV4(),
+          name: nameHint ?? '',
+          enabled: true,
+          tagPrefix: '',
+          detourPolicy: DetourPolicy.defaults,
+          url: url,
+        );
+        _entries.add(SubscriptionEntry(list: list, nodeCount: nodes.length));
+      } else {
+        final us = _autoEmoji(UserServer(
+          id: newUuidV4(),
+          name: '',
+          enabled: true,
+          tagPrefix: '',
+          detourPolicy: DetourPolicy.defaults,
+          origin: origin,
+          createdAt: DateTime.now(),
+          rawBody: text,
+          nodes: nodes,
+        ));
+        _entries.add(SubscriptionEntry(list: us, nodeCount: us.nodes.length));
+      }
+      return _JsonAdd.added;
+    }
+
     if (decoded is! JsonConfig) return _JsonAdd.notJson;
     switch (decoded.flavor) {
       case JsonFlavor.singboxOutbound:
