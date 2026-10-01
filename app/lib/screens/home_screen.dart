@@ -540,8 +540,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
     }
     try {
       await _subController.addFolder('Избранное');
-      await _subController.addFolder('БС');
-      await _subController.addFolder('Brawl');
     } catch (e) {
       AppLog.I.warning('Bootstrap folders skipped: $e');
     }

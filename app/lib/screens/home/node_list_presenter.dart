@@ -248,11 +248,26 @@ class NodeListPresenter {
               }
             }
             if (entry != null) {
-              final name = entry.name;
-              if (hiddenFolders.contains(name)) isHiddenCategory = true;
-              if (activeTab == 'Избранное' && name == 'Избранное') matchesTab = true;
-              if (activeTab == 'БС' && (name == 'БС' || name == 'Белые списки')) matchesTab = true;
-              if (activeTab == 'Brawl' && name == 'Brawl') matchesTab = true;
+              final name = entry.name.toLowerCase();
+              final dispName = entry.displayName.toLowerCase();
+              final target = activeTab.toLowerCase();
+
+              if (name.contains('избранное') || dispName.contains('избранное') ||
+                  name.contains('бс') || dispName.contains('бс') ||
+                  name.contains('белые списки') || dispName.contains('белые списки') ||
+                  name.contains('brawl') || dispName.contains('brawl')) {
+                isHiddenCategory = true;
+              }
+
+              if (target == 'избранное' && (name.contains('избранное') || dispName.contains('избранное'))) {
+                matchesTab = true;
+              }
+              if (target == 'бс' && (name.contains('бс') || dispName.contains('бс') || name.contains('белые списки') || dispName.contains('белые списки'))) {
+                matchesTab = true;
+              }
+              if (target == 'brawl' && (name.contains('brawl') || dispName.contains('brawl'))) {
+                matchesTab = true;
+              }
             }
           }
 

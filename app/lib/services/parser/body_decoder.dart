@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'amnezia_link.dart';
+import 'clash_yaml_parser.dart';
 import 'uri_utils.dart';
 
 /// Результат декодирования тела подписки (§3.2 спеки 026).
@@ -85,6 +86,14 @@ DecodedBody decode(String body) {
   // (`:` вне base64-алфавита), но явная ветка должна идти первой.
   if (original.trimLeft().startsWith('vpn://')) {
     return decodeAmneziaLink(original);
+  }
+
+  // Step 0.5: Clash YAML parsing (proxies:)
+  if (original.contains('proxies:')) {
+    final uris = convertClashYamlToUris(original);
+    if (uris.isNotEmpty) {
+      return UriLines(uris, 0);
+    }
   }
 
   // Step 1: base64 attempt. Только если body выглядит как base64 (буквы/+/=//).
