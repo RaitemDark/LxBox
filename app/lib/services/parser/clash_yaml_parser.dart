@@ -117,7 +117,7 @@ NodeSpec? clashProxyToNode(Map proxy) {
 
       final query = queryParams.entries.map((e) => '${e.key}=${Uri.encodeComponent(e.value)}').join('&');
       final uri = 'vless://$uuid@$server:$port?$query#${Uri.encodeComponent(name)}';
-      return parseVlessUri(uri);
+      return parseUri(uri);
 
     case 'vmess':
       final uuid = proxy['uuid']?.toString() ?? '';
@@ -147,7 +147,7 @@ NodeSpec? clashProxyToNode(Map proxy) {
         'sni': sni,
       };
       final b64 = base64.encode(utf8.encode(jsonEncode(vmessMap)));
-      return parseVmessUri('vmess://$b64');
+      return parseUri('vmess://$b64');
 
     case 'trojan':
       final password = proxy['password']?.toString() ?? proxy['uuid']?.toString() ?? '';
@@ -160,7 +160,7 @@ NodeSpec? clashProxyToNode(Map proxy) {
       };
       if (sni.isNotEmpty) queryParams['sni'] = sni;
       final query = queryParams.entries.map((e) => '${e.key}=${Uri.encodeComponent(e.value)}').join('&');
-      return parseTrojanUri('trojan://$password@$server:$port?$query#${Uri.encodeComponent(name)}');
+      return parseUri('trojan://$password@$server:$port?$query#${Uri.encodeComponent(name)}');
 
     case 'ss':
     case 'shadowsocks':
@@ -168,7 +168,7 @@ NodeSpec? clashProxyToNode(Map proxy) {
       final password = proxy['password']?.toString() ?? '';
       if (cipher.isEmpty || password.isEmpty) return null;
       final userpass = base64.encode(utf8.encode('$cipher:$password'));
-      return parseShadowsocksUri('ss://$userpass@$server:$port#${Uri.encodeComponent(name)}');
+      return parseUri('ss://$userpass@$server:$port#${Uri.encodeComponent(name)}');
 
     case 'hysteria2':
     case 'hy2':
@@ -180,7 +180,7 @@ NodeSpec? clashProxyToNode(Map proxy) {
       if (proxy['obfs'] != null) queryParams['obfs'] = proxy['obfs'].toString();
       if (proxy['obfs-password'] != null) queryParams['obfs-password'] = proxy['obfs-password'].toString();
       final query = queryParams.isEmpty ? '' : '?${queryParams.entries.map((e) => '${e.key}=${Uri.encodeComponent(e.value)}').join('&')}';
-      return parseHysteria2Uri('hysteria2://$password@$server:$port$query#${Uri.encodeComponent(name)}');
+      return parseUri('hysteria2://$password@$server:$port$query#${Uri.encodeComponent(name)}');
 
     case 'tuic':
       final uuid = proxy['uuid']?.toString() ?? '';
@@ -191,7 +191,7 @@ NodeSpec? clashProxyToNode(Map proxy) {
       if (sni.isNotEmpty) queryParams['sni'] = sni;
       if (proxy['congestion-controller'] != null) queryParams['congestion_control'] = proxy['congestion-controller'].toString();
       final query = queryParams.isEmpty ? '' : '?${queryParams.entries.map((e) => '${e.key}=${Uri.encodeComponent(e.value)}').join('&')}';
-      return parseTuicUri('tuic://$token@$server:$port$query#${Uri.encodeComponent(name)}');
+      return parseUri('tuic://$token@$server:$port$query#${Uri.encodeComponent(name)}');
 
     case 'wireguard':
     case 'wg':
