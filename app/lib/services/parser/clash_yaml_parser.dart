@@ -6,11 +6,26 @@ List<String> convertClashYamlToUris(String yamlText) {
   try {
     final doc = loadYaml(yamlText);
     if (doc is! Map) return const [];
-    final proxies = doc['proxies'];
-    if (proxies is! List) return const [];
+    
+    final rawProxies = <dynamic>[];
+    
+    // 1. Прямые прокси в `proxies:`
+    if (doc['proxies'] is List) {
+      rawProxies.addAll(doc['proxies'] as List);
+    }
+    
+    // 2. Провайдеры в `proxy-providers:` (например, warp-local с payload:)
+    if (doc['proxy-providers'] is Map) {
+      final providers = doc['proxy-providers'] as Map;
+      for (final p in providers.values) {
+        if (p is Map && p['payload'] is List) {
+          rawProxies.addAll(p['payload'] as List);
+        }
+      }
+    }
 
     final uris = <String>[];
-    for (final raw in proxies) {
+    for (final raw in rawProxies) {
       if (raw is! Map) continue;
       final uri = clashProxyToUri(raw);
       if (uri != null && uri.isNotEmpty) {
@@ -32,6 +47,29 @@ String? clashProxyToUri(Map proxy) {
   if (server.isEmpty || port.isEmpty) return null;
 
   switch (type) {
+    case 'masque':
+      final privKey = proxy['private-key']?.toString() ?? '';
+      final pubKey = proxy['public-key']?.toString() ?? '';
+      final ip = proxy['ip']?.toString() ?? '';
+      final ipv6 = proxy['ipv6']?.toString() ?? '';
+      final address = [ip, ipv6].where((e) => e.isNotEmpty).join(',');
+      final vhttp = proxy['network']?.toString() ?? proxy['vhttp']?.toString() ?? 'h2';
+      final sni = proxy['sni']?.toString() ?? '';
+      final mtu = proxy['mtu']?.toString() ?? '1280';
+
+      if (privKey.isEmpty || pubKey.isEmpty || address.isEmpty) return null;
+
+      final queryParams = <String, String>{
+        'publickey': pubKey,
+        'address': address,
+        'vhttp': vhttp,
+        'mtu': mtu,
+      };
+      if (sni.isNotEmpty) queryParams['sni'] = sni;
+
+      final query = queryParams.entries.map((e) => '${e.key}=${Uri.encodeComponent(e.value)}').join('&');
+      return 'masque://${Uri.encodeComponent(privKey)}@$server:$port?$query#${Uri.encodeComponent(name)}';
+
     case 'vless':
       final uuid = proxy['uuid']?.toString() ?? '';
       if (uuid.isEmpty) return null;

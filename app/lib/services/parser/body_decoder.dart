@@ -88,8 +88,8 @@ DecodedBody decode(String body) {
     return decodeAmneziaLink(original);
   }
 
-  // Step 0.5: Clash YAML parsing (proxies:)
-  if (original.contains('proxies:')) {
+  // Step 0.5: Clash YAML parsing (proxies: / proxy-providers:)
+  if (original.contains('proxies:') || original.contains('proxy-providers:')) {
     final uris = convertClashYamlToUris(original);
     if (uris.isNotEmpty) {
       return UriLines(uris, 0);
