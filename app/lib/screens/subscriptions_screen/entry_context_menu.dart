@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -316,7 +317,7 @@ Future<void> showEditSourceDialog(
                       final f = outcome.single;
                       String text;
                       if (f.bytes != null && f.bytes!.isNotEmpty) {
-                        text = String.fromCharCodes(f.bytes!);
+                        text = utf8.decode(f.bytes!, allowMalformed: true);
                       } else if (f.path != null) {
                         text = await File(f.path!).readAsString();
                       } else {

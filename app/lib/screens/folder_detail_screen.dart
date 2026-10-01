@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import '../models/node_spec.dart';
 import '../services/node_identity.dart';
@@ -762,7 +763,7 @@ class _FolderDetailScreenState extends State<FolderDetailScreen>
       for (final file in outcome.files) {
         String text;
         if (file.bytes != null && file.bytes!.isNotEmpty) {
-          text = String.fromCharCodes(file.bytes!);
+          text = utf8.decode(file.bytes!, allowMalformed: true);
         } else if (file.path != null) {
           text = await File(file.path!).readAsString();
         } else {

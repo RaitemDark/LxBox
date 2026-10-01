@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
@@ -529,7 +530,7 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
 
   static Future<String?> _readPickedFile(PlatformFile file) async {
     if (file.bytes != null && file.bytes!.isNotEmpty) {
-      return String.fromCharCodes(file.bytes!);
+      return utf8.decode(file.bytes!, allowMalformed: true);
     }
     if (file.path != null) return File(file.path!).readAsString();
     return null;
