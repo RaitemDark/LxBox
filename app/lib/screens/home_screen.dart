@@ -830,7 +830,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
         await _subController.addFolder(tabName);
         idx = _subController.entries.length - 1;
         final err = await _subController.addMembersToFolder(idx, text.trim(), nameFallback: tabName);
-        if (err != null && mounted) {
+        if (err != null && context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(err.render())));
         }
       }
