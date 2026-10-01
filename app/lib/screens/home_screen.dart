@@ -830,7 +830,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
         await _subController.addFolder(tabName);
         idx = _subController.entries.length - 1;
         final err = await _subController.addMembersToFolder(idx, text.trim(), nameFallback: tabName);
-        if (err != null && context.mounted) {
+        if (!mounted) return;
+        if (err != null) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(err.render())));
         }
       }
@@ -841,17 +842,18 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
       } else if (_subController.entries[idx].list is FolderServers) {
         // adding vless to folder
         final err = await _subController.addMembersToFolder(idx, text.trim(), nameFallback: tabName);
-        if (err != null && context.mounted) {
+        if (!mounted) return;
+        if (err != null) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(err.render())));
         }
       } else {
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Cannot add to this type of item')));
-        }
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(getLocalText.s('Cannot add to this type of item'))));
       }
     }
 
-    if (mounted) await _rebuildAndClearDirty();
+    if (!mounted) return;
+    await _rebuildAndClearDirty();
   }
 
   @override
