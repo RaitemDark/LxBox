@@ -177,16 +177,6 @@ bool _isPlausiblePayload(String s) {
       s.contains('[Interface]');
 }
 
-String _firstNonCommentLine(String s) {
-  for (final raw in s.split(RegExp(r'\r?\n'))) {
-    final l = raw.trim();
-    if (l.isEmpty) continue;
-    if (l.startsWith('#') || l.startsWith('//') || l.startsWith(';')) continue;
-    return l;
-  }
-  return '';
-}
-
 JsonFlavor _detectFlavor(Object v) {
   if (v is List && v.isNotEmpty) {
     final first = v.first;

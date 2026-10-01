@@ -189,8 +189,12 @@ String? clashProxyToUri(Map proxy) {
       if (reserved is List && reserved.length == 3) {
         reservedStr = '&reserved=${reserved.join(',')}';
       }
+      var pskStr = '';
+      if (presharedKey.isNotEmpty) {
+        pskStr = '&preshared_key=${Uri.encodeComponent(presharedKey)}';
+      }
 
-      return 'wg://$publicKey@$server:$port?private_key=$secretKey&ip=$ip&mtu=$mtu$reservedStr#${Uri.encodeComponent(name)}';
+      return 'wg://$publicKey@$server:$port?private_key=$secretKey&ip=$ip&mtu=$mtu$reservedStr$pskStr#${Uri.encodeComponent(name)}';
 
     case 'socks5':
     case 'socks':
