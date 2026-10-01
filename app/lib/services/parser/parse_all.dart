@@ -15,6 +15,7 @@ import 'uri_parsers.dart';
 /// синтетического URI. URI-строки и JSON несут имена сами — hint игнорируют.
 List<NodeSpec> parseAll(DecodedBody decoded, {String? nameHint}) {
   return switch (decoded) {
+    DirectNodesConfig(nodes: final n) => n,
     // §302 — источник ноды для UI (вкладка Source на экране ноды): для
     // URI-тел это сама строка. У JSON-веток источник проставляет парсер
     // (там rawUri — синтетическая заглушка, см. json_parsers).

@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'package:yaml/yaml.dart';
+import '../../models/node_spec.dart';
+import 'uri_utils.dart';
 
-/// §Clash — Конвертер параметров proxies из Clash YAML формата в канонические URIs
-List<String> convertClashYamlToUris(String yamlText) {
+/// §Clash — Конвертер параметров proxies из Clash YAML формата в `List<NodeSpec>`
+List<NodeSpec> convertClashYamlToNodes(String yamlText) {
   try {
     final doc = loadYaml(yamlText);
     if (doc is! Map) return const [];
@@ -24,27 +26,28 @@ List<String> convertClashYamlToUris(String yamlText) {
       }
     }
 
-    final uris = <String>[];
+    final nodes = <NodeSpec>[];
     for (final raw in rawProxies) {
       if (raw is! Map) continue;
-      final uri = clashProxyToUri(raw);
-      if (uri != null && uri.isNotEmpty) {
-        uris.add(uri);
+      final node = clashProxyToNode(raw);
+      if (node != null) {
+        nodes.add(node);
       }
     }
-    return uris;
+    return nodes;
   } catch (_) {
     return const [];
   }
 }
 
-String? clashProxyToUri(Map proxy) {
+NodeSpec? clashProxyToNode(Map proxy) {
   final name = proxy['name']?.toString() ?? 'Proxy';
   final type = proxy['type']?.toString().toLowerCase() ?? '';
   final server = proxy['server']?.toString() ?? '';
-  final port = proxy['port']?.toString() ?? '';
+  final portStr = proxy['port']?.toString() ?? '';
+  final port = int.tryParse(portStr) ?? 443;
 
-  if (server.isEmpty || port.isEmpty) return null;
+  if (server.isEmpty || portStr.isEmpty) return null;
 
   switch (type) {
     case 'masque':
@@ -53,22 +56,34 @@ String? clashProxyToUri(Map proxy) {
       final ip = proxy['ip']?.toString() ?? '';
       final ipv6 = proxy['ipv6']?.toString() ?? '';
       final address = [ip, ipv6].where((e) => e.isNotEmpty).join(',');
+      final localAddresses = address
+          .split(',')
+          .map((e) => e.trim())
+          .where((e) => e.isNotEmpty)
+          .map(ensureCidr)
+          .toList();
       final vhttp = proxy['network']?.toString() ?? proxy['vhttp']?.toString() ?? 'h2';
       final sni = proxy['sni']?.toString() ?? '';
-      final mtu = proxy['mtu']?.toString() ?? '1280';
+      final mtu = int.tryParse(proxy['mtu']?.toString() ?? '') ?? 1280;
 
-      if (privKey.isEmpty || pubKey.isEmpty || address.isEmpty) return null;
+      if (privKey.isEmpty || pubKey.isEmpty || localAddresses.isEmpty) return null;
 
-      final queryParams = <String, String>{
-        'publickey': pubKey,
-        'address': address,
-        'vhttp': vhttp,
-        'mtu': mtu,
-      };
-      if (sni.isNotEmpty) queryParams['sni'] = sni;
+      final tag = tagFromLabel(name, 'masque', server, port);
 
-      final query = queryParams.entries.map((e) => '${e.key}=${Uri.encodeComponent(e.value)}').join('&');
-      return 'masque://${Uri.encodeComponent(privKey)}@$server:$port?$query#${Uri.encodeComponent(name)}';
+      return MasqueSpec(
+        id: newUuidV4(),
+        tag: tag,
+        label: name,
+        server: server,
+        port: port,
+        rawUri: '',
+        privateKeyDer: privKey,
+        publicKeyDer: pubKey,
+        localAddresses: localAddresses,
+        vhttp: vhttp,
+        sni: sni,
+        mtu: mtu,
+      );
 
     case 'vless':
       final uuid = proxy['uuid']?.toString() ?? '';
@@ -100,7 +115,8 @@ String? clashProxyToUri(Map proxy) {
       }
 
       final query = queryParams.entries.map((e) => '${e.key}=${Uri.encodeComponent(e.value)}').join('&');
-      return 'vless://$uuid@$server:$port?$query#${Uri.encodeComponent(name)}';
+      final uri = 'vless://$uuid@$server:$port?$query#${Uri.encodeComponent(name)}';
+      return parseVlessUri(uri);
 
     case 'vmess':
       final uuid = proxy['uuid']?.toString() ?? '';
@@ -119,7 +135,7 @@ String? clashProxyToUri(Map proxy) {
         'v': '2',
         'ps': name,
         'add': server,
-        'port': port,
+        'port': portStr,
         'id': uuid,
         'aid': proxy['alterId']?.toString() ?? '0',
         'net': network,
@@ -130,7 +146,7 @@ String? clashProxyToUri(Map proxy) {
         'sni': sni,
       };
       final b64 = base64.encode(utf8.encode(jsonEncode(vmessMap)));
-      return 'vmess://$b64';
+      return parseVmessUri('vmess://$b64');
 
     case 'trojan':
       final password = proxy['password']?.toString() ?? proxy['uuid']?.toString() ?? '';
@@ -143,7 +159,7 @@ String? clashProxyToUri(Map proxy) {
       };
       if (sni.isNotEmpty) queryParams['sni'] = sni;
       final query = queryParams.entries.map((e) => '${e.key}=${Uri.encodeComponent(e.value)}').join('&');
-      return 'trojan://$password@$server:$port?$query#${Uri.encodeComponent(name)}';
+      return parseTrojanUri('trojan://$password@$server:$port?$query#${Uri.encodeComponent(name)}');
 
     case 'ss':
     case 'shadowsocks':
@@ -151,7 +167,7 @@ String? clashProxyToUri(Map proxy) {
       final password = proxy['password']?.toString() ?? '';
       if (cipher.isEmpty || password.isEmpty) return null;
       final userpass = base64.encode(utf8.encode('$cipher:$password'));
-      return 'ss://$userpass@$server:$port#${Uri.encodeComponent(name)}';
+      return parseShadowsocksUri('ss://$userpass@$server:$port#${Uri.encodeComponent(name)}');
 
     case 'hysteria2':
     case 'hy2':
@@ -163,7 +179,7 @@ String? clashProxyToUri(Map proxy) {
       if (proxy['obfs'] != null) queryParams['obfs'] = proxy['obfs'].toString();
       if (proxy['obfs-password'] != null) queryParams['obfs-password'] = proxy['obfs-password'].toString();
       final query = queryParams.isEmpty ? '' : '?${queryParams.entries.map((e) => '${e.key}=${Uri.encodeComponent(e.value)}').join('&')}';
-      return 'hysteria2://$password@$server:$port$query#${Uri.encodeComponent(name)}';
+      return parseHysteria2Uri('hysteria2://$password@$server:$port$query#${Uri.encodeComponent(name)}');
 
     case 'tuic':
       final uuid = proxy['uuid']?.toString() ?? '';
@@ -174,7 +190,7 @@ String? clashProxyToUri(Map proxy) {
       if (sni.isNotEmpty) queryParams['sni'] = sni;
       if (proxy['congestion-controller'] != null) queryParams['congestion_control'] = proxy['congestion-controller'].toString();
       final query = queryParams.isEmpty ? '' : '?${queryParams.entries.map((e) => '${e.key}=${Uri.encodeComponent(e.value)}').join('&')}';
-      return 'tuic://$token@$server:$port$query#${Uri.encodeComponent(name)}';
+      return parseTuicUri('tuic://$token@$server:$port$query#${Uri.encodeComponent(name)}');
 
     case 'wireguard':
     case 'wg':
@@ -182,35 +198,42 @@ String? clashProxyToUri(Map proxy) {
       final publicKey = proxy['public-key']?.toString() ?? '';
       final ip = proxy['ip']?.toString() ?? proxy['ipv6']?.toString() ?? '10.0.0.2';
       final presharedKey = proxy['preshared-key']?.toString() ?? '';
-      final mtu = proxy['mtu']?.toString() ?? '1420';
+      final mtu = int.tryParse(proxy['mtu']?.toString() ?? '') ?? 1420;
       final reserved = proxy['reserved'];
-      
-      var reservedStr = '';
-      if (reserved is List && reserved.length == 3) {
-        reservedStr = '&reserved=${reserved.join(',')}';
-      }
-      var pskStr = '';
-      if (presharedKey.isNotEmpty) {
-        pskStr = '&preshared_key=${Uri.encodeComponent(presharedKey)}';
-      }
 
-      return 'wg://$publicKey@$server:$port?private_key=$secretKey&ip=$ip&mtu=$mtu$reservedStr$pskStr#${Uri.encodeComponent(name)}';
+      if (secretKey.isEmpty || publicKey.isEmpty) return null;
 
-    case 'socks5':
-    case 'socks':
-      final user = proxy['username']?.toString() ?? '';
-      final pass = proxy['password']?.toString() ?? '';
-      final auth = user.isNotEmpty ? '$user:$pass@' : '';
-      return 'socks://$auth$server:$port#${Uri.encodeComponent(name)}';
+      final normPriv = normalizeWGKey(secretKey) ?? secretKey;
+      final normPub = normalizeWGKey(publicKey) ?? publicKey;
 
-    case 'http':
-    case 'https':
-      final user = proxy['username']?.toString() ?? '';
-      final pass = proxy['password']?.toString() ?? '';
-      final auth = user.isNotEmpty ? '$user:$pass@' : '';
-      final tls = type == 'https' || proxy['tls'] == true;
-      final scheme = tls ? 'https' : 'http';
-      return '$scheme://$auth$server:$port#${Uri.encodeComponent(name)}';
+      final localAddresses = [ip]
+          .where((e) => e.isNotEmpty)
+          .map(ensureCidr)
+          .toList();
+
+      final peer = WireguardPeer(
+        publicKey: normPub,
+        preSharedKey: presharedKey.isNotEmpty ? (normalizeWGKey(presharedKey) ?? presharedKey) : '',
+        endpointHost: server,
+        endpointPort: port,
+        allowedIps: const ['0.0.0.0/0', '::/0'],
+        reserved: reserved is List ? parseReserved(reserved.join(',')) : null,
+      );
+
+      final tag = tagFromLabel(name, 'wireguard', server, port);
+
+      return WireguardSpec(
+        id: newUuidV4(),
+        tag: tag,
+        label: name,
+        server: server,
+        port: port,
+        rawUri: '',
+        privateKey: normPriv,
+        localAddresses: localAddresses,
+        peers: [peer],
+        mtu: mtu,
+      );
 
     default:
       return null;

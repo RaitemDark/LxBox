@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
 
+import '../../models/node_spec.dart';
 import 'amnezia_link.dart';
 import 'clash_yaml_parser.dart';
 import 'uri_utils.dart';
@@ -9,6 +10,11 @@ import 'uri_utils.dart';
 /// Sealed — парсер делает exhaustive switch по результату.
 sealed class DecodedBody {
   const DecodedBody();
+}
+
+final class DirectNodesConfig extends DecodedBody {
+  final List<NodeSpec> nodes;
+  const DirectNodesConfig(this.nodes);
 }
 
 final class UriLines extends DecodedBody {
@@ -70,14 +76,6 @@ enum JsonFlavor {
 }
 
 /// Декодирует body подписки. Не throws.
-///
-/// Алгоритм:
-/// 0. Начинается с `vpn://` → Amnezia-ссылка (§110, `decodeAmneziaLink`).
-/// 1. Пробуем base64 (все варианты). Успех + валидный UTF-8 → заменяем body.
-/// 2. Trim начинается с `{` / `[` → `jsonDecode` + определяем flavor.
-/// 3. Первая непустая строка `[Interface]` → IniConfig.
-/// 4. Иначе — разбить на строки, выкинуть пустые и комментарии.
-/// 5. Пусто → DecodeFailure.
 DecodedBody decode(String body) {
   final original = body.trimRight();
   if (original.isEmpty) return const DecodeFailure('empty body');
@@ -90,9 +88,9 @@ DecodedBody decode(String body) {
 
   // Step 0.5: Clash YAML parsing (proxies: / proxy-providers:)
   if (original.contains('proxies:') || original.contains('proxy-providers:')) {
-    final uris = convertClashYamlToUris(original);
-    if (uris.isNotEmpty) {
-      return UriLines(uris, 0);
+    final nodes = convertClashYamlToNodes(original);
+    if (nodes.isNotEmpty) {
+      return DirectNodesConfig(nodes);
     }
   }
 
@@ -181,25 +179,16 @@ JsonFlavor _detectFlavor(Object v) {
   if (v is List && v.isNotEmpty) {
     final first = v.first;
     if (first is Map && first['outbounds'] is List) {
-      // §368 §7.1 — массив конфигов бывает и Xray, и sing-box: обе формы это
-      // List элементов с `outbounds`. Различаем по содержимому массива —
-      // элементы Xray несут `protocol`, sing-box `type`.
       return _looksLikeSingboxOutbounds(first['outbounds'] as List)
           ? JsonFlavor.singboxMulti
           : JsonFlavor.xrayArray;
     }
-    // §368 — массив sing-box outbound'ов. Раньше падал в `unknown` (0 узлов на
-    // всех путях, кроме вставки из буфера, где контроллер разбирал его сам).
     if (first is Map && first['type'] is String) return JsonFlavor.singboxArray;
     return JsonFlavor.unknown;
   }
   if (v is Map) {
-    // `type` проверяем ПЕРВЫМ: одиночный `selector` несёт и `type`, и
-    // `outbounds` — он outbound, а не конфиг.
     if (v['type'] is String) return JsonFlavor.singboxOutbound;
     if (v['proxies'] is List) return JsonFlavor.clashYaml;
-    // §368 — полный конфиг. `endpoints` (sing-box ≥1.11) равноправен: конфиг
-    // может состоять из одних WireGuard-узлов.
     if (v['outbounds'] is List || v['endpoints'] is List) {
       return JsonFlavor.singboxConfig;
     }
@@ -207,12 +196,6 @@ JsonFlavor _detectFlavor(Object v) {
   return JsonFlavor.unknown;
 }
 
-/// §368 §7.1 — чей это `outbounds[]`. Смотрим первый элемент-объект: `type` —
-/// sing-box, `protocol` — Xray.
-///
-/// Ни того ни другого (или пустой массив) → **не** sing-box: ветка `xrayArray`
-/// существует и работает, и менять её классификацию по неоднозначному входу
-/// нельзя.
 bool _looksLikeSingboxOutbounds(List outbounds) {
   for (final o in outbounds) {
     if (o is! Map) continue;
