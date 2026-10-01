@@ -126,8 +126,8 @@ DecodedBody _classifyPlain(String body) {
   }
 
   // INI branch
-  if (_firstNonCommentLine(trimmed).trim().toLowerCase() == '[interface]' &&
-      trimmed.contains('[Peer]')) {
+  final lowerBody = trimmed.toLowerCase();
+  if (lowerBody.contains('[interface]') && lowerBody.contains('[peer]')) {
     return IniConfig(trimmed);
   }
 

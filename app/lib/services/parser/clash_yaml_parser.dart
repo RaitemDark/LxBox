@@ -117,6 +117,7 @@ String? clashProxyToUri(Map proxy) {
 
     case 'hysteria2':
     case 'hy2':
+    case 'hysteria':
       final password = proxy['password']?.toString() ?? proxy['auth']?.toString() ?? '';
       final sni = proxy['sni']?.toString() ?? proxy['servername']?.toString() ?? '';
       final queryParams = <String, String>{};
@@ -136,6 +137,38 @@ String? clashProxyToUri(Map proxy) {
       if (proxy['congestion-controller'] != null) queryParams['congestion_control'] = proxy['congestion-controller'].toString();
       final query = queryParams.isEmpty ? '' : '?${queryParams.entries.map((e) => '${e.key}=${Uri.encodeComponent(e.value)}').join('&')}';
       return 'tuic://$token@$server:$port$query#${Uri.encodeComponent(name)}';
+
+    case 'wireguard':
+    case 'wg':
+      final secretKey = proxy['private-key']?.toString() ?? '';
+      final publicKey = proxy['public-key']?.toString() ?? '';
+      final ip = proxy['ip']?.toString() ?? proxy['ipv6']?.toString() ?? '10.0.0.2';
+      final presharedKey = proxy['preshared-key']?.toString() ?? '';
+      final mtu = proxy['mtu']?.toString() ?? '1420';
+      final reserved = proxy['reserved'];
+      
+      var reservedStr = '';
+      if (reserved is List && reserved.length == 3) {
+        reservedStr = '&reserved=${reserved.join(',')}';
+      }
+
+      return 'wg://$publicKey@$server:$port?private_key=$secretKey&ip=$ip&mtu=$mtu$reservedStr#${Uri.encodeComponent(name)}';
+
+    case 'socks5':
+    case 'socks':
+      final user = proxy['username']?.toString() ?? '';
+      final pass = proxy['password']?.toString() ?? '';
+      final auth = user.isNotEmpty ? '$user:$pass@' : '';
+      return 'socks://$auth$server:$port#${Uri.encodeComponent(name)}';
+
+    case 'http':
+    case 'https':
+      final user = proxy['username']?.toString() ?? '';
+      final pass = proxy['password']?.toString() ?? '';
+      final auth = user.isNotEmpty ? '$user:$pass@' : '';
+      final tls = type == 'https' || proxy['tls'] == true;
+      final scheme = tls ? 'https' : 'http';
+      return '$scheme://$auth$server:$port#${Uri.encodeComponent(name)}';
 
     default:
       return null;
