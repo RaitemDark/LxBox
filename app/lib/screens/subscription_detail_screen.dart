@@ -1131,6 +1131,7 @@ class _SubscriptionDetailScreenState extends State<SubscriptionDetailScreen>
     if (_rawSource.isEmpty) return '';
     final d = decode(_rawSource);
     return switch (d) {
+      DirectNodesConfig() => _rawSource,
       UriLines(lines: final l) => l.join('\n'),
       IniConfig(text: final t) => t,
       AmneziaConfig(iniTexts: final ts) => ts.join('\n\n'),

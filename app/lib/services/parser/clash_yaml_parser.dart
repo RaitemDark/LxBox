@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:yaml/yaml.dart';
 import '../../models/node_spec.dart';
+import 'uri_parsers.dart';
 import 'uri_utils.dart';
 
 /// §Clash — Конвертер параметров proxies из Clash YAML формата в `List<NodeSpec>`
