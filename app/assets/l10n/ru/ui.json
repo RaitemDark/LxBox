@@ -4793,5 +4793,8 @@
   },
   "Remove %d items?": {
     "value": "Удалить элементы (%d)?"
+  },
+  "Cannot add to this type of item": {
+    "value": "Невозможно добавить к этому типу элемента"
   }
 }
