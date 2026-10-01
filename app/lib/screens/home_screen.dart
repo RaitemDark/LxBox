@@ -460,6 +460,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
     try {
       await Future.wait([_subController.rehydrationDone, _controllerInit]);
       if (mounted) {
+        await _ensureEssentialSubscriptions();
         final hasEntries = _subController.entries.isNotEmpty;
         final emptyConfig = _controller.state.configRaw.isEmpty;
         final tunnelUp = _controller.state.tunnelUp;
@@ -507,10 +508,47 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
   /// РОВНО ОДИН РАЗ за всё время жизни приложения — дальше флаг в SettingsStorage
   /// не даёт повторить добавление на каждом запуске (в т.ч. для друзей,
   /// ставящих то же приложение с нуля).
-  Future<void> _seedDefaultDataIfFirstRun() async {
-    // Cleanup any unwanted seeds from older runs
-    _cleanupUnwantedSeeds();
+  Future<void> _ensureEssentialSubscriptions() async {
+    // 1. Remove unwanted old seeds
+    final unwanted = {
+      'https://gitverse.ru/api/repos/Pizduk/PizdukVPN/raw/branch/master/WLAutoPiz.txt',
+      'https://gitverse.ru/api/repos/Pizduk/PizdukVPN/raw/branch/master/AutoPizduk.txt',
+    };
+    for (var i = _subController.entries.length - 1; i >= 0; i--) {
+      final entry = _subController.entries[i];
+      if (unwanted.contains(entry.url)) {
+        await _subController.removeAt(i);
+      }
+    }
 
+    // 2. Ensure Brawl subscription exists
+    final hasBrawl = _subController.entries.any((e) =>
+        e.url.contains('vless_mhand.txt') || e.name.toLowerCase().contains('brawl'));
+    if (!hasBrawl) {
+      try {
+        await _subController.addFromInput('https://s3.twcstorage.ru/cd58536-mhand-bucket/vless/vless_mhand.txt');
+        if (_subController.entries.isNotEmpty) {
+          await _subController.renameAt(_subController.entries.length - 1, '🎮 Brawl');
+        }
+      } catch (e) {
+        AppLog.I.warning('Ensure Brawl sub failed: $e');
+      }
+    }
+
+    // 3. Remove empty default folders named 'Brawl' or 'БС' or 'Белые списки' if subscriptions exist
+    for (var i = _subController.entries.length - 1; i >= 0; i--) {
+      final entry = _subController.entries[i];
+      if (entry.list is FolderServers) {
+        final folder = entry.list as FolderServers;
+        final name = entry.name.toLowerCase();
+        if (folder.members.isEmpty && (name == 'brawl' || name == 'бс' || name == 'белые списки')) {
+          await _subController.deleteFolderAt(i, keepServers: false);
+        }
+      }
+    }
+  }
+
+  Future<void> _seedDefaultDataIfFirstRun() async {
     final already = await SettingsStorage.getVar('dark_bootstrap_seeded', 'false');
     if (already == 'true') return;
     // §101 review pattern: bootstrap не должен падать при сетевой ошибке —
@@ -543,19 +581,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
       AppLog.I.warning('Bootstrap folders skipped: $e');
     }
     await SettingsStorage.setVar('dark_bootstrap_seeded', 'true');
-  }
-
-  void _cleanupUnwantedSeeds() {
-    final unwanted = {
-      'https://gitverse.ru/api/repos/Pizduk/PizdukVPN/raw/branch/master/WLAutoPiz.txt',
-      'https://gitverse.ru/api/repos/Pizduk/PizdukVPN/raw/branch/master/AutoPizduk.txt',
-    };
-    for (var i = _subController.entries.length - 1; i >= 0; i--) {
-      final entry = _subController.entries[i];
-      if (unwanted.contains(entry.url)) {
-        _subController.removeAt(i);
-      }
-    }
   }
 
   Future<void> _loadHapticPref() async {
