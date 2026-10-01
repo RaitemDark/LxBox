@@ -508,6 +508,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
   /// не даёт повторить добавление на каждом запуске (в т.ч. для друзей,
   /// ставящих то же приложение с нуля).
   Future<void> _seedDefaultDataIfFirstRun() async {
+    // Cleanup any unwanted seeds from older runs
+    _cleanupUnwantedSeeds();
+
     final already = await SettingsStorage.getVar('dark_bootstrap_seeded', 'false');
     if (already == 'true') return;
     // §101 review pattern: bootstrap не должен падать при сетевой ошибке —
@@ -516,12 +519,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
     const seeds = <(String emoji, String label, String url)>[
       ('🏴', 'Подписка ЧС',
           'https://gitverse.ru/api/repos/Pizduk/PizdukVPN/raw/branch/master/sub.txt'),
-      ('🏴📲', 'ЧС-Автовыбор',
-          'https://gitverse.ru/api/repos/Pizduk/PizdukVPN/raw/branch/master/AutoPizduk.txt'),
       ('🏳️', 'Подписка БС',
           'https://gitverse.ru/api/repos/Pizduk/PizdukVPN/raw/branch/master/WlSubPiz.txt'),
-      ('🏳️📲', 'БС-Автовыбор',
-          'https://gitverse.ru/api/repos/Pizduk/PizdukVPN/raw/branch/master/WLAutoPiz.txt'),
       ('🎮', 'Brawl',
           'https://s3.twcstorage.ru/cd58536-mhand-bucket/vless/vless_mhand.txt'),
       ('🌐', 'DARK Server',
@@ -544,6 +543,19 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
       AppLog.I.warning('Bootstrap folders skipped: $e');
     }
     await SettingsStorage.setVar('dark_bootstrap_seeded', 'true');
+  }
+
+  void _cleanupUnwantedSeeds() {
+    final unwanted = {
+      'https://gitverse.ru/api/repos/Pizduk/PizdukVPN/raw/branch/master/WLAutoPiz.txt',
+      'https://gitverse.ru/api/repos/Pizduk/PizdukVPN/raw/branch/master/AutoPizduk.txt',
+    };
+    for (var i = _subController.entries.length - 1; i >= 0; i--) {
+      final entry = _subController.entries[i];
+      if (unwanted.contains(entry.url)) {
+        _subController.removeAt(i);
+      }
+    }
   }
 
   Future<void> _loadHapticPref() async {

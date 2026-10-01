@@ -194,8 +194,16 @@ class NodeListPresenter {
   /// §091/§235 — какие источники (подписки + папки) владеют тегом
   /// (prefix-based). Тонкая обёртка над pure helper'ом `sourcesOfTag`
   /// (см. `home/source_lookup.dart`).
-  Set<String> _sourcesOfTag(String tag) =>
-      sourcesOfTag(tag, subController.entries);
+  Set<String> _sourcesOfTag(String tag) {
+    final result = sourcesOfTag(tag, subController.entries);
+    if (result.isNotEmpty) return result;
+
+    final owner = ownerOfTag(tag, subController.entries);
+    if (owner != null && owner.entryIndex < subController.entries.length) {
+      return {subController.entries[owner.entryIndex].id};
+    }
+    return const {};
+  }
 
   /// §085 R3 — единый `NodeFilter` из view-model + state-зависимых lookup'ов.
   /// Используется и `computeDisplayList`, и node-list (был дубль §078).
