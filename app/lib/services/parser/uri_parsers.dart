@@ -42,7 +42,7 @@ NodeSpec? parseUri(String uri) {
   // vpn:// проверяется своим потолком (maxAmneziaLinkLength): профиль везёт
   // целый конфиг и штатно перерастает общий лимит — под ним ссылка молча
   // терялась, хотя десктоп её принимал (§103 §9.B12).
-  if (scheme != 'vpn' && uri.length > maxURILength) return null;
+  if (scheme != 'vpn' && scheme != 'wireguard' && scheme != 'wg' && scheme != 'awg' && uri.length > maxURILength) return null;
   try {
     switch (scheme) {
       // §322 — синтетическая схема узла автовыбора. Не протокол: несёт

@@ -1,11 +1,37 @@
 import '../../models/node_spec.dart';
-import 'uri_utils.dart';
+import 'uri_parsers.dart';
 
-/// Парсинг WireGuard / AmneziaWG INI → WireguardSpec (§3.3).
+/// Парсинг WireGuard INI → WireguardSpec через wg:// URI (§3.3).
 ///
 /// Обязательные поля: `[Interface].PrivateKey`, `[Peer].PublicKey`,
 /// `[Peer].Endpoint`. Остальные — опциональные с дефолтами.
+///
+/// §243 — [nameHint] (имя файла при импорте `.conf`) становится фрагментом
+/// синтетического URI ⇒ tag узла. Пустой/null → прежний фолбэк `WireGuard`
+/// (вставка INI-текста из буфера).
 WireguardSpec? parseWireguardIni(String config, {String? nameHint}) {
+  final uri = _iniToUri(config, nameHint);
+  if (uri == null) return null;
+  final spec = parseWireguardUri(uri);
+  if (spec == null) return null;
+  return WireguardSpec(
+    id: spec.id,
+    tag: spec.tag,
+    label: spec.label,
+    server: spec.server,
+    port: spec.port,
+    rawUri: spec.rawUri,
+    privateKey: spec.privateKey,
+    localAddresses: spec.localAddresses,
+    peers: spec.peers,
+    mtu: spec.mtu,
+    rawIni: config,
+    awg: spec.awg, // §097 — не теряем AWG при rebuild для rawIni
+    warnings: spec.warnings,
+  );
+}
+
+String? _iniToUri(String config, String? nameHint) {
   final lines = config.split(RegExp(r'\r?\n'));
   String section = '';
   String privateKey = '';
@@ -14,9 +40,11 @@ WireguardSpec? parseWireguardIni(String config, {String? nameHint}) {
   String endpoint = '';
   String allowedIps = '';
   String presharedKey = '';
-  String reserved = '';
+  String reserved = ''; // §126 — WARP client_id (reserved/client_id в [Peer])
   int mtu = 0;
   int keepalive = 0;
+  // §097 — AmneziaWG2 поля из [Interface] (Jc/Jmin/.../I1-I5; регистр value
+  // сохраняем, ключ lowercase). Прокинем в URI-query → Awg.fromQuery.
   final awg = <String, String>{};
 
   for (final line in lines) {
@@ -37,80 +65,76 @@ WireguardSpec? parseWireguardIni(String config, {String? nameHint}) {
     } else if (section == '[peer]') {
       if (k == 'publickey') publicKey = v;
       if (k == 'endpoint') endpoint = v;
+      // §103 amnezia_vpn_plain_wg — раньше AllowedIPs из INI не читался
+      // вовсе, и wireguard_parser.dart:37 молча подставлял дефолт
+      // '0.0.0.0/0, ::/0' на любой INI (даже с явным одиночным
+      // '0.0.0.0/0') — IPv4-only INI получал лишний IPv6-дефолт-роут.
       if (k == 'allowedips') allowedIps = v;
       if (k == 'presharedkey') presharedKey = v;
       if (k == 'persistentkeepalive') keepalive = int.tryParse(v) ?? 0;
+      // §126 — WARP `client_id` → reserved. Amnezia-генератор кладёт его в
+      // [Peer] как `Reserved` (или `ClientId`); парсер reserved (parseReserved)
+      // принимает и `b0,b1,b2`, и base64. Прокидываем сырым в URI-query.
       if (k == 'reserved' || k == 'client_id' || k == 'clientid') reserved = v;
     }
   }
 
   if (privateKey.isEmpty || publicKey.isEmpty || endpoint.isEmpty) return null;
 
-  final normPriv = normalizeWGKey(privateKey) ?? privateKey;
-  final normPub = normalizeWGKey(publicKey) ?? publicKey;
-
+  // endpoint → host + port (поддержка IPv6 [::1]:51820).
   String host;
-  int port = 51820;
+  String port;
   if (endpoint.startsWith('[')) {
     final close = endpoint.indexOf(']');
     host = endpoint.substring(1, close > 0 ? close : endpoint.length);
     final after = close > 0 ? endpoint.substring(close + 1) : '';
-    if (after.startsWith(':')) port = int.tryParse(after.substring(1)) ?? 51820;
+    port = after.startsWith(':') ? after.substring(1) : '51820';
   } else {
     final lastColon = endpoint.lastIndexOf(':');
-    if (lastColon > 0) {
+    final firstColon = endpoint.indexOf(':');
+    if (lastColon > 0 && firstColon == lastColon) {
       host = endpoint.substring(0, lastColon);
-      port = int.tryParse(endpoint.substring(lastColon + 1)) ?? 51820;
+      port = endpoint.substring(lastColon + 1);
+    } else if (lastColon > 0) {
+      // §219 — несколько ':' без скобок = голый IPv6. Порт здесь ПРИНЦИПИАЛЬНО
+      // неотличим от адреса (`2001:db8::1:51820` vs адрес `...::1:51820`), т.к.
+      // WireGuard требует `[IPv6]:port`. Осознанная деградация: весь endpoint —
+      // host, порт по умолчанию. Явный порт голого IPv6 сюда не долетает — это
+      // ожидаемо (некорректный по спеке формат), не баг.
+      host = endpoint;
+      port = '51820';
     } else {
       host = endpoint;
+      port = '51820';
     }
   }
 
-  final localAddresses = (address.isNotEmpty ? address : '10.0.0.2')
-      .split(',')
-      .map((e) => e.trim())
-      .where((e) => e.isNotEmpty)
-      .map(ensureCidr)
-      .toList();
+  final params = <String, String>{
+    'publickey': publicKey,
+    'privatekey': privateKey,
+    'address': address,
+  };
+  if (allowedIps.isNotEmpty) params['allowedips'] = allowedIps;
+  if (mtu > 0) params['mtu'] = mtu.toString();
+  if (presharedKey.isNotEmpty) params['presharedkey'] = presharedKey;
+  if (keepalive > 0) params['keepalive'] = keepalive.toString();
+  if (reserved.isNotEmpty) params['reserved'] = reserved; // §126
 
-  final allowed = (allowedIps.isNotEmpty ? allowedIps : '0.0.0.0/0, ::/0')
-      .split(',')
-      .map((e) => e.trim())
-      .where((e) => e.isNotEmpty)
-      .map(ensureCidr)
-      .toList();
+  // §097 — AWG-поля в query (encodeComponent ниже эскейпит i* с <>/пробелами).
+  awg.forEach((k, v) {
+    if (v.isNotEmpty) params[k] = v;
+  });
 
-  String psk = '';
-  if (presharedKey.isNotEmpty) {
-    psk = normalizeWGKey(presharedKey) ?? presharedKey;
-  }
+  final query = params.entries
+      .map((e) =>
+          '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
+      .join('&');
 
-  final peer = WireguardPeer(
-    publicKey: normPub,
-    preSharedKey: psk,
-    endpointHost: host,
-    endpointPort: port,
-    allowedIps: allowed,
-    persistentKeepalive: keepalive > 0 ? keepalive : null,
-    reserved: reserved.isNotEmpty ? parseReserved(reserved) : null,
-  );
-
-  final label = nameHint?.trim().isNotEmpty == true ? nameHint!.trim() : 'WireGuard';
-  final tag = tagFromLabel(label, 'wireguard', host, port);
-  final awgObj = awg.isNotEmpty ? Awg(awg) : null;
-
-  return WireguardSpec(
-    id: newUuidV4(),
-    tag: tag,
-    label: label,
-    server: host,
-    port: port,
-    rawUri: config,
-    privateKey: normPriv,
-    localAddresses: localAddresses,
-    peers: [peer],
-    mtu: mtu > 0 ? mtu : null,
-    rawIni: config,
-    awg: awgObj,
-  );
+  final wrappedHost = host.contains(':') && !host.startsWith('[') ? '[$host]' : host;
+  // §243 — фрагмент = имя источника (имя файла), фолбэк — прежний 'WireGuard'.
+  // encodeComponent симметричен разбору (parseWireguardUri → decodeFragment →
+  // Uri.decodeComponent): пробелы/скобки/кириллица переживают round-trip.
+  final hint = nameHint?.trim() ?? '';
+  final fragment = Uri.encodeComponent(hint.isEmpty ? 'WireGuard' : hint);
+  return 'wireguard://$wrappedHost:$port?$query#$fragment';
 }
