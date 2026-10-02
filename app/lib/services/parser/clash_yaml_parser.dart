@@ -123,10 +123,9 @@ NodeSpec? clashProxyToNode(Map proxy) {
       if (grpcOpts is Map && grpcOpts['grpc-service-name'] != null) {
         queryParams['serviceName'] = grpcOpts['grpc-service-name'].toString();
       }
-      if (reality) {
-        final ro = realityOpts as Map;
-        if (ro['public-key'] != null) queryParams['pbk'] = ro['public-key'].toString();
-        if (ro['short-id'] != null) queryParams['sid'] = ro['short-id'].toString();
+      if (realityOpts is Map) {
+        if (realityOpts['public-key'] != null) queryParams['pbk'] = realityOpts['public-key'].toString();
+        if (realityOpts['short-id'] != null) queryParams['sid'] = realityOpts['short-id'].toString();
       }
 
       final query = queryParams.entries.map((e) => '${e.key}=${Uri.encodeComponent(e.value)}').join('&');
