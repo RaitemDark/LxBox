@@ -225,8 +225,8 @@ class ThemeNotifier extends ChangeNotifier {
     final stored = prefs.getString(_key);
     _mode = switch (stored) {
       'light' => ThemeMode.light,
-      'dark' => ThemeMode.dark,
-      _ => ThemeMode.system,
+      'system' => ThemeMode.system,
+      _ => ThemeMode.dark,
     };
     notifyListeners();
   }

@@ -4,6 +4,15 @@ import '../../models/node_spec.dart';
 import 'uri_parsers.dart';
 import 'uri_utils.dart';
 
+Object? getYamlProp(Map proxy, String key) {
+  if (proxy.containsKey(key)) return proxy[key];
+  final merge = proxy['<<'];
+  if (merge is Map && merge.containsKey(key)) {
+    return merge[key];
+  }
+  return null;
+}
+
 /// §Clash — Конвертер параметров proxies из Clash YAML формата в `List<NodeSpec>`
 List<NodeSpec> convertClashYamlToNodes(String yamlText) {
   try {
@@ -13,16 +22,20 @@ List<NodeSpec> convertClashYamlToNodes(String yamlText) {
     final rawProxies = <dynamic>[];
     
     // 1. Прямые прокси в `proxies:`
-    if (doc['proxies'] is List) {
-      rawProxies.addAll(doc['proxies'] as List);
+    final directProxies = getYamlProp(doc, 'proxies');
+    if (directProxies is List) {
+      rawProxies.addAll(directProxies);
     }
     
     // 2. Провайдеры в `proxy-providers:` (например, warp-local с payload:)
-    if (doc['proxy-providers'] is Map) {
-      final providers = doc['proxy-providers'] as Map;
-      for (final p in providers.values) {
-        if (p is Map && p['payload'] is List) {
-          rawProxies.addAll(p['payload'] as List);
+    final providersMap = getYamlProp(doc, 'proxy-providers');
+    if (providersMap is Map) {
+      for (final p in providersMap.values) {
+        if (p is Map) {
+          final payload = getYamlProp(p, 'payload');
+          if (payload is List) {
+            rawProxies.addAll(payload);
+          }
         }
       }
     }
@@ -42,20 +55,20 @@ List<NodeSpec> convertClashYamlToNodes(String yamlText) {
 }
 
 NodeSpec? clashProxyToNode(Map proxy) {
-  final name = proxy['name']?.toString() ?? 'Proxy';
-  final type = proxy['type']?.toString().toLowerCase() ?? '';
-  final server = proxy['server']?.toString() ?? '';
-  final portStr = proxy['port']?.toString() ?? '';
+  final name = getYamlProp(proxy, 'name')?.toString() ?? 'Proxy';
+  final type = getYamlProp(proxy, 'type')?.toString().toLowerCase() ?? '';
+  final server = getYamlProp(proxy, 'server')?.toString() ?? '';
+  final portStr = getYamlProp(proxy, 'port')?.toString() ?? '';
   final port = int.tryParse(portStr) ?? 443;
 
   if (server.isEmpty || portStr.isEmpty) return null;
 
   switch (type) {
     case 'masque':
-      final privKey = proxy['private-key']?.toString() ?? '';
-      final pubKey = proxy['public-key']?.toString() ?? '';
-      final ip = proxy['ip']?.toString() ?? '';
-      final ipv6 = proxy['ipv6']?.toString() ?? '';
+      final privKey = getYamlProp(proxy, 'private-key')?.toString() ?? '';
+      final pubKey = getYamlProp(proxy, 'public-key')?.toString() ?? '';
+      final ip = getYamlProp(proxy, 'ip')?.toString() ?? '';
+      final ipv6 = getYamlProp(proxy, 'ipv6')?.toString() ?? '';
       final address = [ip, ipv6].where((e) => e.isNotEmpty).join(',');
       final localAddresses = address
           .split(',')
@@ -63,9 +76,9 @@ NodeSpec? clashProxyToNode(Map proxy) {
           .where((e) => e.isNotEmpty)
           .map(ensureCidr)
           .toList();
-      final vhttp = proxy['network']?.toString() ?? proxy['vhttp']?.toString() ?? 'h2';
-      final sni = proxy['sni']?.toString() ?? '';
-      final mtu = int.tryParse(proxy['mtu']?.toString() ?? '') ?? 1280;
+      final vhttp = getYamlProp(proxy, 'network')?.toString() ?? getYamlProp(proxy, 'vhttp')?.toString() ?? 'h2';
+      final sni = getYamlProp(proxy, 'sni')?.toString() ?? '';
+      final mtu = int.tryParse(getYamlProp(proxy, 'mtu')?.toString() ?? '') ?? 1280;
 
       if (privKey.isEmpty || pubKey.isEmpty || localAddresses.isEmpty) return null;
 
@@ -87,13 +100,14 @@ NodeSpec? clashProxyToNode(Map proxy) {
       );
 
     case 'vless':
-      final uuid = proxy['uuid']?.toString() ?? '';
+      final uuid = getYamlProp(proxy, 'uuid')?.toString() ?? '';
       if (uuid.isEmpty) return null;
-      final network = proxy['network']?.toString() ?? 'tcp';
-      final tls = proxy['tls'] == true;
-      final reality = proxy['reality-opts'] is Map;
+      final network = getYamlProp(proxy, 'network')?.toString() ?? 'tcp';
+      final tls = getYamlProp(proxy, 'tls') == true;
+      final realityOpts = getYamlProp(proxy, 'reality-opts');
+      final reality = realityOpts is Map;
       final security = reality ? 'reality' : (tls ? 'tls' : 'none');
-      final sni = proxy['servername']?.toString() ?? proxy['sni']?.toString() ?? '';
+      final sni = getYamlProp(proxy, 'servername')?.toString() ?? getYamlProp(proxy, 'sni')?.toString() ?? '';
       
       final queryParams = <String, String>{
         'type': network,
@@ -101,18 +115,17 @@ NodeSpec? clashProxyToNode(Map proxy) {
       };
       if (sni.isNotEmpty) queryParams['sni'] = sni;
       
-      final wsOpts = proxy['ws-opts'];
+      final wsOpts = getYamlProp(proxy, 'ws-opts');
       if (wsOpts is Map && wsOpts['path'] != null) {
         queryParams['path'] = wsOpts['path'].toString();
       }
-      final grpcOpts = proxy['grpc-opts'];
+      final grpcOpts = getYamlProp(proxy, 'grpc-opts');
       if (grpcOpts is Map && grpcOpts['grpc-service-name'] != null) {
         queryParams['serviceName'] = grpcOpts['grpc-service-name'].toString();
       }
-      if (reality) {
-        final ro = proxy['reality-opts'] as Map;
-        if (ro['public-key'] != null) queryParams['pbk'] = ro['public-key'].toString();
-        if (ro['short-id'] != null) queryParams['sid'] = ro['short-id'].toString();
+      if (reality && realityOpts is Map) {
+        if (realityOpts['public-key'] != null) queryParams['pbk'] = realityOpts['public-key'].toString();
+        if (realityOpts['short-id'] != null) queryParams['sid'] = realityOpts['short-id'].toString();
       }
 
       final query = queryParams.entries.map((e) => '${e.key}=${Uri.encodeComponent(e.value)}').join('&');
@@ -120,14 +133,14 @@ NodeSpec? clashProxyToNode(Map proxy) {
       return parseUri(uri);
 
     case 'vmess':
-      final uuid = proxy['uuid']?.toString() ?? '';
+      final uuid = getYamlProp(proxy, 'uuid')?.toString() ?? '';
       if (uuid.isEmpty) return null;
-      final network = proxy['network']?.toString() ?? 'tcp';
-      final tls = proxy['tls'] == true;
-      final sni = proxy['servername']?.toString() ?? proxy['sni']?.toString() ?? '';
+      final network = getYamlProp(proxy, 'network')?.toString() ?? 'tcp';
+      final tls = getYamlProp(proxy, 'tls') == true;
+      final sni = getYamlProp(proxy, 'servername')?.toString() ?? getYamlProp(proxy, 'sni')?.toString() ?? '';
       
       var path = '';
-      final wsOpts = proxy['ws-opts'];
+      final wsOpts = getYamlProp(proxy, 'ws-opts');
       if (wsOpts is Map && wsOpts['path'] != null) {
         path = wsOpts['path'].toString();
       }
@@ -138,7 +151,7 @@ NodeSpec? clashProxyToNode(Map proxy) {
         'add': server,
         'port': portStr,
         'id': uuid,
-        'aid': proxy['alterId']?.toString() ?? '0',
+        'aid': getYamlProp(proxy, 'alterId')?.toString() ?? '0',
         'net': network,
         'type': 'none',
         'host': sni,
@@ -150,10 +163,10 @@ NodeSpec? clashProxyToNode(Map proxy) {
       return parseUri('vmess://$b64');
 
     case 'trojan':
-      final password = proxy['password']?.toString() ?? proxy['uuid']?.toString() ?? '';
+      final password = getYamlProp(proxy, 'password')?.toString() ?? getYamlProp(proxy, 'uuid')?.toString() ?? '';
       if (password.isEmpty) return null;
-      final network = proxy['network']?.toString() ?? 'tcp';
-      final sni = proxy['servername']?.toString() ?? proxy['sni']?.toString() ?? '';
+      final network = getYamlProp(proxy, 'network')?.toString() ?? 'tcp';
+      final sni = getYamlProp(proxy, 'servername')?.toString() ?? getYamlProp(proxy, 'sni')?.toString() ?? '';
       final queryParams = <String, String>{
         'type': network,
         'security': 'tls',
@@ -164,8 +177,8 @@ NodeSpec? clashProxyToNode(Map proxy) {
 
     case 'ss':
     case 'shadowsocks':
-      final cipher = proxy['cipher']?.toString() ?? '';
-      final password = proxy['password']?.toString() ?? '';
+      final cipher = getYamlProp(proxy, 'cipher')?.toString() ?? '';
+      final password = getYamlProp(proxy, 'password')?.toString() ?? '';
       if (cipher.isEmpty || password.isEmpty) return null;
       final userpass = base64.encode(utf8.encode('$cipher:$password'));
       return parseUri('ss://$userpass@$server:$port#${Uri.encodeComponent(name)}');
@@ -173,34 +186,37 @@ NodeSpec? clashProxyToNode(Map proxy) {
     case 'hysteria2':
     case 'hy2':
     case 'hysteria':
-      final password = proxy['password']?.toString() ?? proxy['auth']?.toString() ?? '';
-      final sni = proxy['sni']?.toString() ?? proxy['servername']?.toString() ?? '';
+      final password = getYamlProp(proxy, 'password')?.toString() ?? getYamlProp(proxy, 'auth')?.toString() ?? '';
+      final sni = getYamlProp(proxy, 'sni')?.toString() ?? getYamlProp(proxy, 'servername')?.toString() ?? '';
       final queryParams = <String, String>{};
       if (sni.isNotEmpty) queryParams['sni'] = sni;
-      if (proxy['obfs'] != null) queryParams['obfs'] = proxy['obfs'].toString();
-      if (proxy['obfs-password'] != null) queryParams['obfs-password'] = proxy['obfs-password'].toString();
+      final obfs = getYamlProp(proxy, 'obfs');
+      if (obfs != null) queryParams['obfs'] = obfs.toString();
+      final obfsPass = getYamlProp(proxy, 'obfs-password');
+      if (obfsPass != null) queryParams['obfs-password'] = obfsPass.toString();
       final query = queryParams.isEmpty ? '' : '?${queryParams.entries.map((e) => '${e.key}=${Uri.encodeComponent(e.value)}').join('&')}';
       return parseUri('hysteria2://$password@$server:$port$query#${Uri.encodeComponent(name)}');
 
     case 'tuic':
-      final uuid = proxy['uuid']?.toString() ?? '';
-      final password = proxy['password']?.toString() ?? '';
+      final uuid = getYamlProp(proxy, 'uuid')?.toString() ?? '';
+      final password = getYamlProp(proxy, 'password')?.toString() ?? '';
       final token = uuid.isNotEmpty ? '$uuid:$password' : password;
-      final sni = proxy['sni']?.toString() ?? '';
+      final sni = getYamlProp(proxy, 'sni')?.toString() ?? '';
       final queryParams = <String, String>{};
       if (sni.isNotEmpty) queryParams['sni'] = sni;
-      if (proxy['congestion-controller'] != null) queryParams['congestion_control'] = proxy['congestion-controller'].toString();
+      final cc = getYamlProp(proxy, 'congestion-controller');
+      if (cc != null) queryParams['congestion_control'] = cc.toString();
       final query = queryParams.isEmpty ? '' : '?${queryParams.entries.map((e) => '${e.key}=${Uri.encodeComponent(e.value)}').join('&')}';
       return parseUri('tuic://$token@$server:$port$query#${Uri.encodeComponent(name)}');
 
     case 'wireguard':
     case 'wg':
-      final secretKey = proxy['private-key']?.toString() ?? '';
-      final publicKey = proxy['public-key']?.toString() ?? '';
-      final ip = proxy['ip']?.toString() ?? proxy['ipv6']?.toString() ?? '10.0.0.2';
-      final presharedKey = proxy['preshared-key']?.toString() ?? '';
-      final mtu = int.tryParse(proxy['mtu']?.toString() ?? '') ?? 1420;
-      final reserved = proxy['reserved'];
+      final secretKey = getYamlProp(proxy, 'private-key')?.toString() ?? '';
+      final publicKey = getYamlProp(proxy, 'public-key')?.toString() ?? '';
+      final ip = getYamlProp(proxy, 'ip')?.toString() ?? getYamlProp(proxy, 'ipv6')?.toString() ?? '10.0.0.2';
+      final presharedKey = getYamlProp(proxy, 'preshared-key')?.toString() ?? '';
+      final mtu = int.tryParse(getYamlProp(proxy, 'mtu')?.toString() ?? '') ?? 1420;
+      final reserved = getYamlProp(proxy, 'reserved');
 
       if (secretKey.isEmpty || publicKey.isEmpty) return null;
 
