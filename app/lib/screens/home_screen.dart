@@ -160,6 +160,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
 
   Future<void> _updateAll() async {
     _autoUpdater.resetAllFailCounts();
+    _controller.clearAllPingCache();
     await _autoUpdater.maybeUpdateAll(UpdateTrigger.manual, force: true);
     if (!mounted) return;
     await _rebuildAndClearDirty();

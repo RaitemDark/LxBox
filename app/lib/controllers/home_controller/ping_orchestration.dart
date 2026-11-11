@@ -272,6 +272,16 @@ mixin _PingMixin on ChangeNotifier {
   /// время running — cancel.
   ///
   /// §078: [order] — optional explicit порядок тэгов для пинга. Если не
+  /// §325 — полная очистка кэша задержек (при нажатии Обновить/Перезапуск на главном экране).
+  void clearAllPingCache() {
+    _massPingEpoch++;
+    _massPingRunning = false;
+    _emit(_state.copyWith(
+      delayByDirection: const {},
+      pingBusy: const {},
+    ));
+  }
+
   /// передан, iterates `_state.nodes` (raw config-order, backward-compat).
   /// UI обычно передаёт `displayList` из home_screen → ping идёт в порядке
   /// отображения (sort + manual + pinned + filter уже применены caller'ом),
