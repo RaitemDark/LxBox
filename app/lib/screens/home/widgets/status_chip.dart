@@ -51,18 +51,22 @@ class StatusChip extends StatelessWidget {
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       decoration: BoxDecoration(
         color: state.tunnelUp
-            ? cs.primary.withValues(alpha: 0.12)
-            : cs.surfaceContainerHighest.withValues(alpha: 0.6),
+            ? cs.primary.withValues(alpha: 0.15)
+            : cs.surfaceContainerHighest.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: state.tunnelUp ? cs.primary.withValues(alpha: 0.4) : cs.outlineVariant.withValues(alpha: 0.3),
+          width: 1,
+        ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           iconWidget,
-          const SizedBox(width: 6),
+          const SizedBox(width: 8),
           // Длинные локализованные статусы («Подключено») сжимаются вместо
           // того, чтобы выдавливать соседей.
           Flexible(
@@ -72,7 +76,8 @@ class StatusChip extends StatelessWidget {
               maxLines: 1,
               style: TextStyle(
                 fontSize: 13,
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 0.3,
                 color: color,
               ),
             ),
