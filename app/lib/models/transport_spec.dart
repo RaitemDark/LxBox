@@ -233,22 +233,44 @@ final class XhttpTransport extends TransportSpec {
     if (seqKey.isNotEmpty) m['seq_key'] = seqKey;
 
     // SPEC 103 vless/xhttp_uplink_header_placement_reset — uplink_data_
-    // placement идёт как pure passthrough (эталон Go xhttpStringFields:
-    // "uplink_data_placement" читается и эмитится без gating на mode или
-    // enum-проверки; core validates). header/cookie вне packet-up — core-side
-    // concern, не парсера.
+    // placement header/cookie requires packet-up mode in sing-box kernel.
+    // Automatically force packet-up if mode is empty, or drop placement if mode is non-packet-up
+    // to prevent kernel startup crash (outbound initialize failure).
     if (uplinkDataPlacement.isNotEmpty) {
-      m['uplink_data_placement'] = uplinkDataPlacement;
+      final modeVal = m['mode'] as String? ?? '';
+      if ((uplinkDataPlacement == 'header' || uplinkDataPlacement == 'cookie') && modeVal != 'packet-up') {
+        if (modeVal.isEmpty) {
+          m['mode'] = 'packet-up';
+          m['uplink_data_placement'] = uplinkDataPlacement;
+        } else {
+          warnings.add(const XhttpParamResetWarning(
+            'uplink_data_placement',
+            XhttpResetReason.placementRequiresPacketUp,
+          ));
+        }
+      } else {
+        m['uplink_data_placement'] = uplinkDataPlacement;
+      }
     }
     if (uplinkDataKey.isNotEmpty) m['uplink_data_key'] = uplinkDataKey;
     if (uplinkChunkSize.isNotEmpty) m['uplink_chunk_size'] = uplinkChunkSize;
 
-    // SPEC 103 vless/xhttp_uplink_get_without_packet_up_reset — GET вне
-    // packet-up тоже pure passthrough в Go (meta.go:105 валидирует на
-    // стороне ядра, не парсера); xhttp_uplink_get_packet_up_kept уже
-    // проверяет keep-путь.
+    // SPEC 103 vless/xhttp_uplink_get_without_packet_up_reset — GET requires packet-up mode.
     if (uplinkHttpMethod.isNotEmpty) {
-      m['uplink_http_method'] = uplinkHttpMethod;
+      final modeVal = m['mode'] as String? ?? '';
+      if (uplinkHttpMethod.toUpperCase() == 'GET' && modeVal != 'packet-up') {
+        if (modeVal.isEmpty) {
+          m['mode'] = 'packet-up';
+          m['uplink_http_method'] = uplinkHttpMethod;
+        } else {
+          warnings.add(const XhttpParamResetWarning(
+            'uplink_http_method',
+            XhttpResetReason.getRequiresPacketUp,
+          ));
+        }
+      } else {
+        m['uplink_http_method'] = uplinkHttpMethod;
+      }
     }
 
     if (xPaddingObfsMode) m['x_padding_obfs_mode'] = true;

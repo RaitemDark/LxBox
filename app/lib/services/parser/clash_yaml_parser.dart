@@ -108,10 +108,12 @@ NodeSpec? clashProxyToNode(Map proxy) {
       final reality = realityOpts is Map;
       final security = reality ? 'reality' : (tls ? 'tls' : 'none');
       final sni = getYamlProp(proxy, 'servername')?.toString() ?? getYamlProp(proxy, 'sni')?.toString() ?? '';
+      final fp = getYamlProp(proxy, 'client-fingerprint')?.toString() ?? getYamlProp(proxy, 'fp')?.toString() ?? 'chrome';
       
       final queryParams = <String, String>{
         'type': network,
         'security': security,
+        'fp': fp,
       };
       if (sni.isNotEmpty) queryParams['sni'] = sni;
       
@@ -167,9 +169,11 @@ NodeSpec? clashProxyToNode(Map proxy) {
       if (password.isEmpty) return null;
       final network = getYamlProp(proxy, 'network')?.toString() ?? 'tcp';
       final sni = getYamlProp(proxy, 'servername')?.toString() ?? getYamlProp(proxy, 'sni')?.toString() ?? '';
+      final fp = getYamlProp(proxy, 'client-fingerprint')?.toString() ?? getYamlProp(proxy, 'fp')?.toString() ?? 'chrome';
       final queryParams = <String, String>{
         'type': network,
         'security': 'tls',
+        'fp': fp,
       };
       if (sni.isNotEmpty) queryParams['sni'] = sni;
       final query = queryParams.entries.map((e) => '${e.key}=${Uri.encodeComponent(e.value)}').join('&');

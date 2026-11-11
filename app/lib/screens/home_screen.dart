@@ -513,6 +513,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
     final unwanted = {
       'https://gitverse.ru/api/repos/Pizduk/PizdukVPN/raw/branch/master/WLAutoPiz.txt',
       'https://gitverse.ru/api/repos/Pizduk/PizdukVPN/raw/branch/master/AutoPizduk.txt',
+      'https://gitverse.ru/api/repos/Pizduk/PizdukVPN/raw/branch/master/sub.txt',
+      'https://gitverse.ru/api/repos/Pizduk/PizdukVPN/raw/branch/master/WlSubPiz.txt',
+      'https://yax.nenadoblokirowatgnidda.ru/exec?url=http%3A%2F%2F77.110.104.181%3A5002%2Fsub%2FdGdydSwxNzg4NjA1Mzc5L6CcjFOqBZ',
     };
     for (var i = _subController.entries.length - 1; i >= 0; i--) {
       final entry = _subController.entries[i];
@@ -521,17 +524,26 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
       }
     }
 
-    // 2. Ensure Brawl subscription exists
-    final hasBrawl = _subController.entries.any((e) =>
-        e.url.contains('vless_mhand.txt') || e.name.toLowerCase().contains('brawl'));
-    if (!hasBrawl) {
-      try {
-        await _subController.addFromInput('https://s3.twcstorage.ru/cd58536-mhand-bucket/vless/vless_mhand.txt');
-        if (_subController.entries.isNotEmpty) {
-          await _subController.renameAt(_subController.entries.length - 1, '🎮 Brawl');
+    // 2. Ensure new subscriptions exist
+    const essentialSeeds = <(String emoji, String label, String url)>[
+      ('🏴', 'Подписка ЧС 1', 'https://github.com/PizdukMod/PizdukVPN/raw/refs/heads/main/sub'),
+      ('🏴', 'Подписка ЧС 2', 'https://raw.githubusercontent.com/KoT-ANTIDOT/bunker-subscriptions/refs/heads/main/mix.txt'),
+      ('🏳️', 'Подписка БС 1', 'https://github.com/PizdukMod/PizdukVPN/raw/refs/heads/main/wl'),
+      ('🏳️', 'Подписка БС 2', 'https://translate.yandex.ru/translate?url=https://raw.githubusercontent.com/KoT-ANTIDOT/bunker-subscriptions/refs/heads/main/mix.txt&lang=de-de'),
+      ('🎮', 'Brawl', 'https://s3.twcstorage.ru/cd58536-mhand-bucket/vless/vless_mhand.txt'),
+    ];
+
+    for (final (emoji, label, url) in essentialSeeds) {
+      final exists = _subController.entries.any((e) => e.url == url);
+      if (!exists) {
+        try {
+          await _subController.addFromInput(url);
+          if (_subController.lastError == null && _subController.entries.isNotEmpty) {
+            await _subController.renameAt(_subController.entries.length - 1, '$emoji $label');
+          }
+        } catch (e) {
+          AppLog.I.warning('Ensure sub failed ($label): $e');
         }
-      } catch (e) {
-        AppLog.I.warning('Ensure Brawl sub failed: $e');
       }
     }
 
@@ -551,18 +563,12 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
   Future<void> _seedDefaultDataIfFirstRun() async {
     final already = await SettingsStorage.getVar('dark_bootstrap_seeded', 'false');
     if (already == 'true') return;
-    // §101 review pattern: bootstrap не должен падать при сетевой ошибке —
-    // отсутствие интернета на первом запуске не должно блокировать сам факт
-    // открытия приложения. Каждая подписка добавляется независимо.
     const seeds = <(String emoji, String label, String url)>[
-      ('🏴', 'Подписка ЧС',
-          'https://gitverse.ru/api/repos/Pizduk/PizdukVPN/raw/branch/master/sub.txt'),
-      ('🏳️', 'Подписка БС',
-          'https://gitverse.ru/api/repos/Pizduk/PizdukVPN/raw/branch/master/WlSubPiz.txt'),
-      ('🎮', 'Brawl',
-          'https://s3.twcstorage.ru/cd58536-mhand-bucket/vless/vless_mhand.txt'),
-      ('🌐', 'DARK Server',
-          'https://yax.nenadoblokirowatgnidda.ru/exec?url=http%3A%2F%2F77.110.104.181%3A5002%2Fsub%2FdGdydSwxNzg4NjA1Mzc5L6CcjFOqBZ'),
+      ('🏴', 'Подписка ЧС 1', 'https://github.com/PizdukMod/PizdukVPN/raw/refs/heads/main/sub'),
+      ('🏴', 'Подписка ЧС 2', 'https://raw.githubusercontent.com/KoT-ANTIDOT/bunker-subscriptions/refs/heads/main/mix.txt'),
+      ('🏳️', 'Подписка БС 1', 'https://github.com/PizdukMod/PizdukVPN/raw/refs/heads/main/wl'),
+      ('🏳️', 'Подписка БС 2', 'https://translate.yandex.ru/translate?url=https://raw.githubusercontent.com/KoT-ANTIDOT/bunker-subscriptions/refs/heads/main/mix.txt&lang=de-de'),
+      ('🎮', 'Brawl', 'https://s3.twcstorage.ru/cd58536-mhand-bucket/vless/vless_mhand.txt'),
     ];
     for (final (emoji, label, url) in seeds) {
       try {
@@ -829,6 +835,37 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
     if (mounted) setState(() {});
   }
 
+  Future<void> _clearCategory(String tabName) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('Очистить $tabName?'),
+        content: Text('Удалить все сервера и подписки категории $tabName?'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Отмена')),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: FilledButton.styleFrom(backgroundColor: Theme.of(ctx).colorScheme.error),
+            child: const Text('Удалить все'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+
+    final target = tabName.toLowerCase();
+    for (var i = _subController.entries.length - 1; i >= 0; i--) {
+      final entry = _subController.entries[i];
+      final name = entry.name.toLowerCase();
+      final dispName = entry.displayName.toLowerCase();
+      if (name.contains(target) || dispName.contains(target)) {
+        await _subController.removeAt(i);
+      }
+    }
+
+    if (mounted) await _rebuildAndClearDirty();
+  }
+
   Future<void> _quickAddForTab(String tabName) async {
     final ctl = TextEditingController();
     final text = await showDialog<String>(
@@ -945,6 +982,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
                     if (_controller.massPingRunning) {
                       _controller.cancelMassPing();
                     } else {
+                      _controller.setSortMode(NodeSortMode.ping);
                       unawaited(_controller.runMassUrltest(order: _nodeList.computeDisplayList(state)));
                     }
                   },
@@ -953,6 +991,24 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
                   icon: const Icon(Icons.add),
                   tooltip: getLocalText.s('Add server'),
                   onPressed: () => _quickAddForTab(_activeTab),
+                ),
+                PopupMenuButton<String>(
+                  // l10n-exempt: menu title
+                  tooltip: 'Options',
+                  onSelected: (v) {
+                    if (v == 'sort_ping') _controller.setSortMode(NodeSortMode.ping);
+                    if (v == 'sort_name') _controller.setSortMode(NodeSortMode.name);
+                    if (v == 'clear') _clearCategory(_activeTab);
+                  },
+                  itemBuilder: (_) => [
+                    PopupMenuItem(value: 'sort_ping', child: Text(getLocalText.s("Sort by ping"))),
+                    PopupMenuItem(value: 'sort_name', child: Text(getLocalText.s("Sort by name"))),
+                    const PopupMenuDivider(),
+                    PopupMenuItem(
+                      value: 'clear',
+                      child: Text(getLocalText.s("Clear folder"), style: TextStyle(color: Theme.of(context).colorScheme.error)),
+                    ),
+                  ],
                 ),
               ],
               IconButton(
