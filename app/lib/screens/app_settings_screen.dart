@@ -324,6 +324,36 @@ class _AppSettingsScreenState extends State<AppSettingsScreen> with WidgetsBindi
     await applyAllowRotationSetting();
   }
 
+  Future<void> _resetToDefaults() async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(getLocalText.s("Reset settings to defaults?")),
+        content: Text(getLocalText.s("This will restore dark theme, default settings, and default subscriptions.")),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(getLocalText.s("Cancel"))),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: TextButton.styleFrom(foregroundColor: Theme.of(ctx).colorScheme.error),
+            child: Text(getLocalText.s("Reset")),
+          ),
+        ],
+      ),
+    );
+    if (confirm != true || !mounted) return;
+
+    await themeNotifier.setMode(ThemeMode.dark);
+    await SettingsStorage.setVar('dark_bootstrap_seeded', 'false');
+    await SettingsStorage.setAutoPingOnStart(true);
+    await SettingsStorage.setAutoReloadOnChange(false);
+    
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(getLocalText.s("Settings reset to defaults"))),
+      );
+    }
+  }
+
   /// §032 Quick Connect — кнопка «Add tile» в General-табе.
   /// На API 33+ система сама покажет prompt; на более старых — даём
   /// текстовую инструкцию (drag через шторку).
@@ -650,6 +680,7 @@ class _AppSettingsScreenState extends State<AppSettingsScreen> with WidgetsBindi
       allowRotation: _allowRotation,
       autoReloadOnChange: _autoReloadOnChange, // §338
       padding: _tabPadding(context),
+      onResetToDefaults: () => unawaited(_resetToDefaults()),
       onAutoStartChanged: (val) {
         setState(() => _autoStart = val);
         // §189 — через NativePrefs (JSON-истина + зеркало в native).

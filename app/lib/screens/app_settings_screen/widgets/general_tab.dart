@@ -28,6 +28,7 @@ class GeneralTab extends StatelessWidget {
     required this.onAutoReloadOnChangeChanged,
     required this.onAddQuickSettingsTile,
     required this.onOpenBackup,
+    required this.onResetToDefaults,
   });
 
   final bool loaded;
@@ -49,6 +50,7 @@ class GeneralTab extends StatelessWidget {
   final ValueChanged<bool> onAutoReloadOnChangeChanged;
   final VoidCallback onAddQuickSettingsTile;
   final VoidCallback onOpenBackup;
+  final VoidCallback onResetToDefaults;
 
   @override
   Widget build(BuildContext context) {
@@ -197,6 +199,18 @@ class GeneralTab extends StatelessWidget {
           trailing: const Icon(Icons.chevron_right),
           contentPadding: EdgeInsets.zero,
           onTap: onOpenBackup,
+        ),
+        const Divider(height: 32),
+        Text(getLocalText.s("Reset"),
+            style: Theme.of(context).textTheme.titleMedium),
+        const SizedBox(height: 8),
+        ListTile(
+          leading: Icon(Icons.restore, color: Theme.of(context).colorScheme.error),
+          title: Text(getLocalText.s("Reset settings to defaults"),
+              style: TextStyle(color: Theme.of(context).colorScheme.error)),
+          subtitle: Text(getLocalText.s("Restore original app preferences, dark theme, and default subscriptions.")),
+          contentPadding: EdgeInsets.zero,
+          onTap: onResetToDefaults,
         ),
       ],
     );

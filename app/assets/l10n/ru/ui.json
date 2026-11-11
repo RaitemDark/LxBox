@@ -4796,5 +4796,20 @@
   },
   "Cannot add to this type of item": {
     "value": "Невозможно добавить к этому типу элемента"
+  },
+  "Reset settings to defaults?": {
+    "value": "Сбросить настройки на дефолтные?"
+  },
+  "This will restore dark theme, default settings, and default subscriptions.": {
+    "value": "Восстанавливает темную тему, исходные настройки и подписки."
+  },
+  "Reset settings to defaults": {
+    "value": "Сбросить настройки"
+  },
+  "Restore original app preferences, dark theme, and default subscriptions.": {
+    "value": "Восстанавливает исходные настройки приложения, темную тему и стандартные подписки."
+  },
+  "Settings reset to defaults": {
+    "value": "Настройки сброшены на дефолтные"
   }
 }
