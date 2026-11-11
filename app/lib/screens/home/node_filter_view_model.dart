@@ -186,7 +186,7 @@ class NodeFilterViewModel extends ChangeNotifier {
   /// выключен: значение видно как настоящее, а не серый hint, при этом фильтр
   /// не активен пока юзер его не включит. Дефолт нормализуется обратно в «пусто»
   /// при capture, чтобы не плодить orphan-записи per-direction (см. [_capture]).
-  static const defaultPingText = '200';
+  static const defaultPingText = '280';
 
   final TextEditingController pingController =
       TextEditingController(text: defaultPingText);
