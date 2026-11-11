@@ -331,6 +331,45 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
     ));
   }
 
+  /// ⚡ Автогенерация WARP/Telegram в 1 клик
+  Future<void> _autoGenerateWarpTelegram() async {
+    try {
+      final messenger = ScaffoldMessenger.of(context);
+      messenger.showSnackBar(
+        SnackBar(content: Text(getLocalText.s("Generating WARP/Telegram node..."))),
+      );
+      final acc = await widget.subController.addMasque();
+      if (acc == null) {
+        if (mounted) {
+          messenger.showSnackBar(
+            SnackBar(content: Text(getLocalText.s("Failed to generate WARP node"))),
+          );
+        }
+        return;
+      }
+      await _regenerateAndSave();
+      if (!mounted) return;
+
+      final entries = widget.subController.entries;
+      if (entries.isNotEmpty) {
+        final last = entries.last;
+        if (last.list.nodes.isNotEmpty) {
+          final node = last.list.nodes.first;
+          widget.homeController.setSelectedNode(node.tag);
+          messenger.showSnackBar(
+            SnackBar(content: Text(getLocalText.s("Node %s generated and selected!", node.label))),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e')),
+        );
+      }
+    }
+  }
+
   Future<void> _add() async {
     final text = _inputController.text.trim();
     if (text.isEmpty) {
@@ -706,6 +745,7 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
             // §074: «Add server» — duplicate access к wizard'у
             // (long-press на «+» — discoverability через accidental,
             // overflow menu — explicit affordance).
+            if (v == 'auto_warp') unawaited(_autoGenerateWarpTelegram());
             if (v == 'wizard') _openAddServerWizard();
             if (v == 'warp') _openWarpWizard();
             if (v == 'paste') unawaited(_pasteFromClipboard());
@@ -719,6 +759,8 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
           itemBuilder: (_) => [
             // Раскладка утверждена оператором 24.08: четыре смысловые
             // секции — создать / получить готовое / импортировать / подписки.
+            PopupMenuItem(value: 'auto_warp', child: Text(getLocalText.s("⚡ Автогенерация WARP/Telegram"))),
+            const PopupMenuDivider(),
             PopupMenuItem(value: 'wizard', child: Text(getLocalText.s("Add server…"))),
             // §393 C7 — цепочка это ТРЕТИЙ ТИП ИСТОЧНИКА (маршрут через
             // несколько хопов подряд): создание рядом с сервером, а не среди
