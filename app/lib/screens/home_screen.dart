@@ -835,6 +835,92 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
     if (mounted) setState(() {});
   }
 
+  Set<String> _tabSelectedTags = {};
+
+  void _toggleTabSelection(String tag) {
+    setState(() {
+      if (_tabSelectedTags.contains(tag)) {
+        _tabSelectedTags.remove(tag);
+      } else {
+        _tabSelectedTags.add(tag);
+      }
+    });
+  }
+
+  void _clearTabSelection() {
+    setState(() {
+      _tabSelectedTags.clear();
+    });
+  }
+
+  Future<void> _deleteSelectedTabNodes() async {
+    if (_tabSelectedTags.isEmpty) return;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dCtx) => AlertDialog(
+        title: Text(getLocalText.s("Delete selected?")),
+        content: Text(getLocalText.s("Remove %d items?", _tabSelectedTags.length)),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(dCtx, false), child: Text(getLocalText.s("Cancel"))),
+          FilledButton(
+            onPressed: () => Navigator.pop(dCtx, true),
+            style: FilledButton.styleFrom(backgroundColor: Theme.of(dCtx).colorScheme.error),
+            child: Text(getLocalText.s("Delete")),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+
+    for (final tag in _tabSelectedTags) {
+      final owner = ownerOfTag(tag, _subController.entries);
+      if (owner != null && owner.entryIndex < _subController.entries.length) {
+        final entryIndex = owner.entryIndex;
+        final entry = _subController.entries[entryIndex];
+        if (entry.list is FolderServers && owner.memberIndex != null) {
+          await _subController.deleteFolderMember(entryIndex, owner.memberIndex!);
+        } else if (entry.list is UserServer) {
+          await _subController.removeAt(entryIndex);
+        } else if (entry.list is SubscriptionServers) {
+          final node = entry.list.nodes.where((n) => n.tag == TagResolver.stripPrefix(tag, entry.list.tagPrefix)).firstOrNull;
+          if (node != null) {
+            await _subController.toggleNodeDisabled(entryIndex, nodeIdentityHash(node));
+          }
+        }
+      }
+    }
+
+    setState(() => _tabSelectedTags.clear());
+    await _rebuildAndClearDirty();
+  }
+
+  Future<void> _moveSelectedTabNodesToFolder() async {
+    if (_tabSelectedTags.isEmpty) return;
+    final folderIndex = await showFolderPicker(context, _subController);
+    if (folderIndex == null || !mounted) return;
+
+    final targetFolderId = _subController.entries[folderIndex].id;
+
+    for (final tag in _tabSelectedTags) {
+      final owner = ownerOfTag(tag, _subController.entries);
+      if (owner != null && owner.entryIndex < _subController.entries.length) {
+        final entryIndex = owner.entryIndex;
+        final entry = _subController.entries[entryIndex];
+        final targetIdx = _subController.entries.indexWhere((e) => e.id == targetFolderId);
+        if (targetIdx >= 0) {
+          if (entry.list is UserServer) {
+            await _subController.moveServerToFolder(entryIndex, targetIdx);
+          } else if (entry.list is FolderServers && owner.memberIndex != null) {
+            await _subController.moveMemberToFolder(entryIndex, owner.memberIndex!, targetIdx);
+          }
+        }
+      }
+    }
+
+    if (mounted) setState(() => _tabSelectedTags.clear());
+    await _rebuildAndClearDirty();
+  }
+
   Future<void> _clearCategory(String tabName) async {
     final confirmed = await showDialog<bool>(
       context: context,
@@ -954,26 +1040,44 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
 
         return Scaffold(
           appBar: AppBar(
-            // l10n-exempt: brand name
-            title: isMainTab 
-              ? Row(
-                  children: [
-                    Icon(Icons.shield, color: state.tunnelUp ? cs.primary : cs.onSurfaceVariant),
-                    const SizedBox(width: 8),
-                    Text(
-                      // l10n-exempt: brand name
-                      'DARK',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: 2.0,
-                        color: state.tunnelUp ? cs.primary : null,
-                      ),
-                    ),
-                  ],
-                )
-              : Text(_activeTab, style: const TextStyle(fontWeight: FontWeight.bold)),
+            leading: (!isMainTab && _tabSelectedTags.isNotEmpty)
+                ? IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: _clearTabSelection,
+                  )
+                : null,
+            title: (!isMainTab && _tabSelectedTags.isNotEmpty)
+                ? Text('${_tabSelectedTags.length}')
+                : (isMainTab 
+                    ? Row(
+                        children: [
+                          Icon(Icons.shield, color: state.tunnelUp ? cs.primary : cs.onSurfaceVariant),
+                          const SizedBox(width: 8),
+                          Text(
+                            // l10n-exempt: brand name
+                            'DARK',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 2.0,
+                              color: state.tunnelUp ? cs.primary : null,
+                            ),
+                          ),
+                        ],
+                      )
+                    : Text(_activeTab, style: const TextStyle(fontWeight: FontWeight.bold))),
             actions: [
-              if (!isMainTab) ...[
+              if (!isMainTab && _tabSelectedTags.isNotEmpty) ...[
+                IconButton(
+                  icon: const Icon(Icons.drive_file_move_outline),
+                  tooltip: getLocalText.s('Move to folder…'),
+                  onPressed: () => unawaited(_moveSelectedTabNodesToFolder()),
+                ),
+                IconButton(
+                  icon: Icon(Icons.delete_outline, color: Theme.of(context).colorScheme.error),
+                  tooltip: getLocalText.s('Delete'),
+                  onPressed: () => unawaited(_deleteSelectedTabNodes()),
+                ),
+              ] else if (!isMainTab) ...[
                 IconButton(
                   icon: Icon(_controller.massPingRunning ? Icons.stop_circle_outlined : Icons.speed),
                   // l10n-exempt: standard protocol/tool name
@@ -1107,11 +1211,21 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
                   presenter: _nodeList,
                   state: state,
                   showEmptyGuide: showEmptyGuide && isMainTab,
+                  selectedTags: _tabSelectedTags,
+                  onLongPressServer: (tag) {
+                    if (!isMainTab) {
+                      _toggleTabSelection(tag);
+                    }
+                  },
                   onRestoreFromBackup: () =>
                       restoreFromBackup(context, _subController, _autoUpdater),
                   onTapToConnect: () => unawaited(_startWithAutoRefresh()),
                   rowKeyFor: _nodeRowKey,
                   onSelectServer: (tag) async {
+                    if (!isMainTab && _tabSelectedTags.isNotEmpty) {
+                      _toggleTabSelection(tag);
+                      return;
+                    }
                     if (isMainTab) {
                       _scrollToNode(tag);
                     } else {

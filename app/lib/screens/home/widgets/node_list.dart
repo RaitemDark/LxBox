@@ -71,6 +71,8 @@ class HomeNodeList extends StatelessWidget {
     required this.rowKeyFor,
     required this.onSelectServer,
     required this.onViewPool,
+    this.selectedTags = const {},
+    this.onLongPressServer,
   });
 
   final HomeController controller;
@@ -79,6 +81,8 @@ class HomeNodeList extends StatelessWidget {
   final NodeFilterViewModel filter;
   final NodeListPresenter presenter;
   final HomeState state;
+  final Set<String> selectedTags;
+  final void Function(String tag)? onLongPressServer;
 
   /// §328 — результат [showAddServerGuide], посчитан в `_HomeScreenState.build`
   /// (там же гейтит контролы — решение одно на весь экран).
@@ -289,13 +293,17 @@ class HomeNodeList extends StatelessWidget {
         final protoType = protoSrc != null ? cache.protocolOf(protoSrc) : null;
         final transport = protoSrcNode?.transportLabel;
         final security = protoSrcNode?.securityLabel;
+        final isSelected = selectedTags.contains(tag);
         final row = DecoratedBox(
           decoration: BoxDecoration(
+            color: isSelected ? Theme.of(ctx).colorScheme.primaryContainer.withValues(alpha: 0.3) : null,
             border: Border(
               bottom: BorderSide(color: dividerColor, width: 1),
             ),
           ),
-          child: NodeRow(
+          child: InkWell(
+            onLongPress: onLongPressServer != null ? () => onLongPressServer!(tag) : null,
+            child: NodeRow(
             item: NodeViewItem(
               tag: tag,
               active: tag == state.activeInGroup,
