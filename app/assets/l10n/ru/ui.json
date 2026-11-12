@@ -4811,5 +4811,23 @@
   },
   "Settings reset to defaults": {
     "value": "Настройки сброшены на дефолтные"
+  },
+  "Clear folder": {
+    "value": "Очистить папочку"
+  },
+  "Failed to generate WARP node": {
+    "value": "Не удалось сгенерировать узел WARP"
+  },
+  "Generating WARP/Telegram node...": {
+    "value": "Генерация узла WARP/Telegram..."
+  },
+  "Node %s generated and selected!": {
+    "value": "Узел %s сгенерирован и выбран!"
+  },
+  "Sort by name": {
+    "value": "Сортировать по имени"
+  },
+  "⚡ Автогенерация WARP/Telegram": {
+    "value": "⚡ Автогенерация WARP/Telegram"
   }
 }
