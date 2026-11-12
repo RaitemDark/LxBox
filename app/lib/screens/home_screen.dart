@@ -533,7 +533,11 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
     // 2. Ensure active subscriptions exist
     const essentialSeeds = <(String emoji, String label, String url)>[
       ('🏴', 'Подписка ЧС', 'https://github.com/PizdukMod/PizdukVPN/raw/refs/heads/main/sub'),
+      ('🏴', 'Aetris ЧС', 'https://raw.githubusercontent.com/flaafix/AetrisVPN-black-list/refs/heads/main/configs.txt'),
       ('🏳️', 'Подписка БС', 'https://github.com/PizdukMod/PizdukVPN/raw/refs/heads/main/wl'),
+      ('🏳️', 'Aetris БС', 'https://raw.githubusercontent.com/flaafix/AetrisVPN/refs/heads/main/AetrisVPN.txt'),
+      ('🏳️', 'Aetris БС Зеркало', 'https://gitverse.ru/api/repos/flaafix/AetrisVPN/raw/branch/master/AetrisVPN.txt'),
+      ('✨', 'Aetris БС Лайт', 'https://raw.githubusercontent.com/flaafix/AetrisVPN-white-list-lite/refs/heads/main/AetrisVPN.txt'),
       ('🎮', 'Brawl', 'https://s3.twcstorage.ru/cd58536-mhand-bucket/vless/vless_mhand.txt'),
     ];
 
@@ -581,7 +585,11 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
     if (already == 'true') return;
     const seeds = <(String emoji, String label, String url)>[
       ('🏴', 'Подписка ЧС', 'https://github.com/PizdukMod/PizdukVPN/raw/refs/heads/main/sub'),
+      ('🏴', 'Aetris ЧС', 'https://raw.githubusercontent.com/flaafix/AetrisVPN-black-list/refs/heads/main/configs.txt'),
       ('🏳️', 'Подписка БС', 'https://github.com/PizdukMod/PizdukVPN/raw/refs/heads/main/wl'),
+      ('🏳️', 'Aetris БС', 'https://raw.githubusercontent.com/flaafix/AetrisVPN/refs/heads/main/AetrisVPN.txt'),
+      ('🏳️', 'Aetris БС Зеркало', 'https://gitverse.ru/api/repos/flaafix/AetrisVPN/raw/branch/master/AetrisVPN.txt'),
+      ('✨', 'Aetris БС Лайт', 'https://raw.githubusercontent.com/flaafix/AetrisVPN-white-list-lite/refs/heads/main/AetrisVPN.txt'),
       ('🎮', 'Brawl', 'https://s3.twcstorage.ru/cd58536-mhand-bucket/vless/vless_mhand.txt'),
     ];
     for (final (emoji, label, url) in seeds) {
