@@ -4829,5 +4829,8 @@
   },
   "⚡ Автогенерация WARP/Telegram": {
     "value": "⚡ Автогенерация WARP/Telegram"
+  },
+  "Remove all items in %s?": {
+    "value": "Удалить все элементы в %s?"
   }
 }

@@ -364,7 +364,7 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e')),
+          SnackBar(content: Text(getLocalText.s("Error: %s", formatUserError(e).render()))),
         );
       }
     }

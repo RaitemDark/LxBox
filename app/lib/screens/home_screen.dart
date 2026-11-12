@@ -930,14 +930,14 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text('Очистить $tabName?'),
-        content: Text('Удалить все сервера и подписки категории $tabName?'),
+        title: Text(getLocalText.s("Clear folder")),
+        content: Text(getLocalText.s("Remove all items in %s?", tabName)),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Отмена')),
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(getLocalText.s("Cancel"))),
           FilledButton(
             onPressed: () => Navigator.pop(ctx, true),
             style: FilledButton.styleFrom(backgroundColor: Theme.of(ctx).colorScheme.error),
-            child: const Text('Удалить все'),
+            child: Text(getLocalText.s("Delete")),
           ),
         ],
       ),
