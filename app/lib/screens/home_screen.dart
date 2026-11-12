@@ -520,6 +520,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
       'https://gitverse.ru/api/repos/Pizduk/PizdukVPN/raw/branch/master/sub.txt',
       'https://gitverse.ru/api/repos/Pizduk/PizdukVPN/raw/branch/master/WlSubPiz.txt',
       'https://yax.nenadoblokirowatgnidda.ru/exec?url=http%3A%2F%2F77.110.104.181%3A5002%2Fsub%2FdGdydSwxNzg4NjA1Mzc5L6CcjFOqBZ',
+      'https://raw.githubusercontent.com/KoT-ANTIDOT/bunker-subscriptions/refs/heads/main/mix.txt',
+      'https://translate.yandex.ru/translate?url=https://raw.githubusercontent.com/KoT-ANTIDOT/bunker-subscriptions/refs/heads/main/mix.txt&lang=de-de',
     };
     for (var i = _subController.entries.length - 1; i >= 0; i--) {
       final entry = _subController.entries[i];
@@ -528,12 +530,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
       }
     }
 
-    // 2. Ensure new subscriptions exist
+    // 2. Ensure active subscriptions exist
     const essentialSeeds = <(String emoji, String label, String url)>[
-      ('🏴', 'Подписка ЧС 1', 'https://github.com/PizdukMod/PizdukVPN/raw/refs/heads/main/sub'),
-      ('🏴', 'Подписка ЧС 2', 'https://raw.githubusercontent.com/KoT-ANTIDOT/bunker-subscriptions/refs/heads/main/mix.txt'),
-      ('🏳️', 'Подписка БС 1', 'https://github.com/PizdukMod/PizdukVPN/raw/refs/heads/main/wl'),
-      ('🏳️', 'Подписка БС 2', 'https://translate.yandex.ru/translate?url=https://raw.githubusercontent.com/KoT-ANTIDOT/bunker-subscriptions/refs/heads/main/mix.txt&lang=de-de'),
+      ('🏴', 'Подписка ЧС', 'https://github.com/PizdukMod/PizdukVPN/raw/refs/heads/main/sub'),
+      ('🏳️', 'Подписка БС', 'https://github.com/PizdukMod/PizdukVPN/raw/refs/heads/main/wl'),
       ('🎮', 'Brawl', 'https://s3.twcstorage.ru/cd58536-mhand-bucket/vless/vless_mhand.txt'),
     ];
 
@@ -551,7 +551,19 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
       }
     }
 
-    // 3. Remove empty default folders named 'Brawl' or 'БС' or 'Белые списки' if subscriptions exist
+    // 3. Ensure embedded Kiberportal v12.40 config is loaded
+    final hasKiberportal = _subController.entries.any((e) =>
+        e.name.contains('Киберпортал'));
+    if (!hasKiberportal) {
+      try {
+        final yamlStr = await DefaultAssetBundle.of(context).loadString('assets/kiberportal_v1240.yaml');
+        await _subController.addFromInput(yamlStr, nameHint: '🛡️ Киберпортал v12.40');
+      } catch (e) {
+        AppLog.I.warning('Ensure Kiberportal asset failed: $e');
+      }
+    }
+
+    // 4. Remove empty default folders named 'Brawl' or 'БС' or 'Белые списки' if subscriptions exist
     for (var i = _subController.entries.length - 1; i >= 0; i--) {
       final entry = _subController.entries[i];
       if (entry.list is FolderServers) {
@@ -568,10 +580,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
     final already = await SettingsStorage.getVar('dark_bootstrap_seeded', 'false');
     if (already == 'true') return;
     const seeds = <(String emoji, String label, String url)>[
-      ('🏴', 'Подписка ЧС 1', 'https://github.com/PizdukMod/PizdukVPN/raw/refs/heads/main/sub'),
-      ('🏴', 'Подписка ЧС 2', 'https://raw.githubusercontent.com/KoT-ANTIDOT/bunker-subscriptions/refs/heads/main/mix.txt'),
-      ('🏳️', 'Подписка БС 1', 'https://github.com/PizdukMod/PizdukVPN/raw/refs/heads/main/wl'),
-      ('🏳️', 'Подписка БС 2', 'https://translate.yandex.ru/translate?url=https://raw.githubusercontent.com/KoT-ANTIDOT/bunker-subscriptions/refs/heads/main/mix.txt&lang=de-de'),
+      ('🏴', 'Подписка ЧС', 'https://github.com/PizdukMod/PizdukVPN/raw/refs/heads/main/sub'),
+      ('🏳️', 'Подписка БС', 'https://github.com/PizdukMod/PizdukVPN/raw/refs/heads/main/wl'),
       ('🎮', 'Brawl', 'https://s3.twcstorage.ru/cd58536-mhand-bucket/vless/vless_mhand.txt'),
     ];
     for (final (emoji, label, url) in seeds) {
