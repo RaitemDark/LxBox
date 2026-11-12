@@ -52,9 +52,8 @@ class TlsSpec {
       m['certificate_public_key_sha256'] =
           List<String>.from(certificatePublicKeySha256);
     }
-    final fp = (fingerprint != null && fingerprint!.isNotEmpty) ? fingerprint : 'chrome';
-    if (!quic && reality == null) {
-      m['utls'] = {'enabled': true, 'fingerprint': fp};
+    if (!quic && fingerprint != null && fingerprint!.isNotEmpty) {
+      m['utls'] = {'enabled': true, 'fingerprint': fingerprint};
     }
     if (!quic && reality != null) {
       m['reality'] = reality!.toSingbox();
