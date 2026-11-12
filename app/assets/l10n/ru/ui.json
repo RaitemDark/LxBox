@@ -4832,5 +4832,8 @@
   },
   "Remove all items in %s?": {
     "value": "Удалить все элементы в %s?"
+  },
+  "Gosuslugi, Banks, Ozon and WB go DIRECT — VPN does not block them.": {
+    "value": "ГосУслуги, Банки, Ozon и WB идут напрямую — VPN им не мешает."
   }
 }
