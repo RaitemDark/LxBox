@@ -213,25 +213,6 @@ class HomeControls extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(height: 8),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4),
-            child: Row(
-              children: [
-                Icon(Icons.info_outline, size: 14, color: cs.primary),
-                const SizedBox(width: 6),
-                Expanded(
-                  child: Text(
-                    getLocalText.s("Gosuslugi, Banks, Ozon and WB go DIRECT — VPN does not block them."),
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: cs.onSurfaceVariant.withValues(alpha: 0.85),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
         ],
       ),
     );
