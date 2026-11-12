@@ -232,8 +232,10 @@ XhttpTransport xhttpFromMap(
   var mode = (m['mode'] ?? '').trim();
   final uplinkPlacement = _pick(m, 'uplinkDataPlacement', 'uplink_data_placement');
   final uplinkMethod = _pick(m, 'uplinkHTTPMethod', 'uplink_http_method');
-  if (((uplinkPlacement == 'header' || uplinkPlacement == 'cookie') || uplinkMethod.toUpperCase() == 'GET') && mode.isEmpty) {
-    mode = 'packet-up';
+  if (mode.isEmpty) {
+    if (uplinkPlacement == 'header' || uplinkPlacement == 'cookie' || uplinkMethod.toUpperCase() == 'GET') {
+      mode = 'packet-up';
+    }
   }
 
   return XhttpTransport(
