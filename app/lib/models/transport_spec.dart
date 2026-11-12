@@ -232,45 +232,14 @@ final class XhttpTransport extends TransportSpec {
         const {'path', 'query', 'header', 'cookie'});
     if (seqKey.isNotEmpty) m['seq_key'] = seqKey;
 
-    // SPEC 103 vless/xhttp_uplink_header_placement_reset — uplink_data_
-    // placement header/cookie requires packet-up mode in sing-box kernel.
-    // Automatically force packet-up if mode is empty, or drop placement if mode is non-packet-up
-    // to prevent kernel startup crash (outbound initialize failure).
     if (uplinkDataPlacement.isNotEmpty) {
-      final modeVal = m['mode'] as String? ?? '';
-      if ((uplinkDataPlacement == 'header' || uplinkDataPlacement == 'cookie') && modeVal != 'packet-up') {
-        if (modeVal.isEmpty) {
-          m['mode'] = 'packet-up';
-          m['uplink_data_placement'] = uplinkDataPlacement;
-        } else {
-          warnings.add(const XhttpParamResetWarning(
-            'uplink_data_placement',
-            XhttpResetReason.placementRequiresPacketUp,
-          ));
-        }
-      } else {
-        m['uplink_data_placement'] = uplinkDataPlacement;
-      }
+      m['uplink_data_placement'] = uplinkDataPlacement;
     }
     if (uplinkDataKey.isNotEmpty) m['uplink_data_key'] = uplinkDataKey;
     if (uplinkChunkSize.isNotEmpty) m['uplink_chunk_size'] = uplinkChunkSize;
 
-    // SPEC 103 vless/xhttp_uplink_get_without_packet_up_reset — GET requires packet-up mode.
     if (uplinkHttpMethod.isNotEmpty) {
-      final modeVal = m['mode'] as String? ?? '';
-      if (uplinkHttpMethod.toUpperCase() == 'GET' && modeVal != 'packet-up') {
-        if (modeVal.isEmpty) {
-          m['mode'] = 'packet-up';
-          m['uplink_http_method'] = uplinkHttpMethod;
-        } else {
-          warnings.add(const XhttpParamResetWarning(
-            'uplink_http_method',
-            XhttpResetReason.getRequiresPacketUp,
-          ));
-        }
-      } else {
-        m['uplink_http_method'] = uplinkHttpMethod;
-      }
+      m['uplink_http_method'] = uplinkHttpMethod;
     }
 
     if (xPaddingObfsMode) m['x_padding_obfs_mode'] = true;

@@ -229,11 +229,17 @@ XhttpTransport xhttpFromMap(
   // node_parser_transport.go:280-330) — никакого фолбэка на sni, в отличие
   // от ws. Фолбэк давал разные конфиги/identity-хеши на пустом host=.
   final host = (m['host'] ?? '').trim();
+  var mode = (m['mode'] ?? '').trim();
+  final uplinkPlacement = _pick(m, 'uplinkDataPlacement', 'uplink_data_placement');
+  final uplinkMethod = _pick(m, 'uplinkHTTPMethod', 'uplink_http_method');
+  if (((uplinkPlacement == 'header' || uplinkPlacement == 'cookie') || uplinkMethod.toUpperCase() == 'GET') && mode.isEmpty) {
+    mode = 'packet-up';
+  }
 
   return XhttpTransport(
     path: path,
     host: host,
-    mode: (m['mode'] ?? '').trim(),
+    mode: mode,
     xPaddingBytes: _pick(m, 'xPaddingBytes', 'x_padding_bytes'),
     noGrpcHeader: _truthy(m['noGRPCHeader'] ?? m['no_grpc_header']),
     headers: headers,
