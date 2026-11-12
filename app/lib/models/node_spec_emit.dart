@@ -56,11 +56,10 @@ Outbound emitVless(VlessSpec s, TemplateVars vars) {
   }
   if (s.packetEncoding.isNotEmpty) out['packet_encoding'] = s.packetEncoding;
 
-  // §335 — постквантовый слой VLESS. Плоское поле верхнего уровня (в Xray-JSON
-  // оно вложено в users[0], у ядра — рядом с uuid). Пишем только непустое и не
-  // "none": обычные узлы не должны измениться ни на байт. Значение как есть —
-  // битую строку отвергнет ядро на check с указанием сегмента.
-  if (s.encryption.isNotEmpty && s.encryption != 'none') {
+  // §335 — постквантовый слой VLESS. Эмитим только при наличии не менее 4
+  // сегментов (method.appearance.rtt.key) — битую 1-3 сегментную строку ядро
+  // роняет fatal (parse encryption: invalid encryption string).
+  if (s.encryption.isNotEmpty && s.encryption != 'none' && s.encryption.split('.').length >= 4) {
     out['encryption'] = s.encryption;
   }
 
@@ -81,7 +80,7 @@ String toUriVless(VlessSpec s) {
   // §335 — без обратной записи поле теряется на round-trip (§302-правила и
   // ручное редактирование ходят через эмит-URI), и узел снова становится
   // мёртвым — уже без внешней причины.
-  if (s.encryption.isNotEmpty && s.encryption != 'none') {
+  if (s.encryption.isNotEmpty && s.encryption != 'none' && s.encryption.split('.').length >= 4) {
     q['encryption'] = s.encryption;
   }
 
