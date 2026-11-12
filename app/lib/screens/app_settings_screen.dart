@@ -344,7 +344,7 @@ class _AppSettingsScreenState extends State<AppSettingsScreen> with WidgetsBindi
 
     await themeNotifier.setMode(ThemeMode.dark);
     await SettingsStorage.setVar('dark_bootstrap_seeded', 'false');
-    await SettingsStorage.setAutoPingOnStart(true);
+    await SettingsStorage.setVar('auto_ping_on_start', 'true');
     await SettingsStorage.setAutoReloadOnChange(false);
     
     if (mounted) {

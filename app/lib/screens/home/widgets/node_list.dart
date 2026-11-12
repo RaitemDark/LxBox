@@ -369,7 +369,8 @@ class HomeNodeList extends StatelessWidget {
                     openDependents: true)
                 : null,
           ),
-        );
+        ),
+      );
         // §203 — GlobalKey на сам row (для Scrollable.ensureVisible); reorder-key
         // остаётся ValueKey('node-$tag') (его требует ReorderableListView).
         final keyedRow = KeyedSubtree(key: rowKeyFor(tag), child: row);

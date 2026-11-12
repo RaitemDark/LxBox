@@ -28,6 +28,10 @@ import 'owner_navigation.dart';
 import 'subscriptions_screen.dart';
 import 'home/widgets/progress_banner.dart';
 import 'home/widgets/nodes_header.dart';
+import 'home/source_lookup.dart';
+import '../services/node_identity.dart';
+import '../services/tag_resolver.dart';
+import 'subscriptions_screen/folder_picker.dart';
 import 'home/widgets/home_drawer.dart';
 import 'home/widgets/home_controls.dart';
 import 'home/widgets/node_list.dart';
@@ -836,7 +840,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
     if (mounted) setState(() {});
   }
 
-  Set<String> _tabSelectedTags = {};
+  final Set<String> _tabSelectedTags = {};
 
   void _toggleTabSelection(String tag) {
     setState(() {
@@ -879,13 +883,14 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
         final entryIndex = owner.entryIndex;
         final entry = _subController.entries[entryIndex];
         if (entry.list is FolderServers && owner.memberIndex != null) {
-          await _subController.deleteFolderMember(entryIndex, owner.memberIndex!);
+          await _subController.removeMemberAt(entryIndex, owner.memberIndex!);
         } else if (entry.list is UserServer) {
           await _subController.removeAt(entryIndex);
         } else if (entry.list is SubscriptionServers) {
-          final node = entry.list.nodes.where((n) => n.tag == TagResolver.stripPrefix(tag, entry.list.tagPrefix)).firstOrNull;
+          final list = entry.list as SubscriptionServers;
+          final node = list.nodes.where((n) => n.tag == TagResolver.stripPrefix(tag, list.tagPrefix)).firstOrNull;
           if (node != null) {
-            await _subController.toggleNodeDisabled(entryIndex, nodeIdentityHash(node));
+            await _subController.disableNodesAt(entryIndex, [nodeIdentityHash(node)]);
           }
         }
       }
@@ -1087,7 +1092,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
                     if (_controller.massPingRunning) {
                       _controller.cancelMassPing();
                     } else {
-                      _controller.setSortMode(NodeSortMode.ping);
+                      _controller.setSortMode(NodeSortMode.latencyAsc);
                       unawaited(_controller.runMassUrltest(order: _nodeList.computeDisplayList(state)));
                     }
                   },
@@ -1101,8 +1106,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
                   // l10n-exempt: menu title
                   tooltip: 'Options',
                   onSelected: (v) {
-                    if (v == 'sort_ping') _controller.setSortMode(NodeSortMode.ping);
-                    if (v == 'sort_name') _controller.setSortMode(NodeSortMode.name);
+                    if (v == 'sort_ping') _controller.setSortMode(NodeSortMode.latencyAsc);
+                    if (v == 'sort_name') _controller.setSortMode(NodeSortMode.nameAsc);
                     if (v == 'clear') _clearCategory(_activeTab);
                   },
                   itemBuilder: (_) => [
