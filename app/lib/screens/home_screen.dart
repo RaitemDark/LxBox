@@ -531,6 +531,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
     }
 
     // 2. Ensure active subscriptions exist
+    // l10n-exempt: seed labels
     const essentialSeeds = <(String emoji, String label, String url)>[
       ('🏴', 'Подписка ЧС', 'https://github.com/PizdukMod/PizdukVPN/raw/refs/heads/main/sub'),
       ('🏴', 'Aetris ЧС', 'https://raw.githubusercontent.com/flaafix/AetrisVPN-black-list/refs/heads/main/configs.txt'),
@@ -583,6 +584,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
   Future<void> _seedDefaultDataIfFirstRun() async {
     final already = await SettingsStorage.getVar('dark_bootstrap_seeded', 'false');
     if (already == 'true') return;
+    // l10n-exempt: seed labels
     const seeds = <(String emoji, String label, String url)>[
       ('🏴', 'Подписка ЧС', 'https://github.com/PizdukMod/PizdukVPN/raw/refs/heads/main/sub'),
       ('🏴', 'Aetris ЧС', 'https://raw.githubusercontent.com/flaafix/AetrisVPN-black-list/refs/heads/main/configs.txt'),
