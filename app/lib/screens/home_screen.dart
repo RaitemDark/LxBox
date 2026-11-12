@@ -523,6 +523,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
       'https://yax.nenadoblokirowatgnidda.ru/exec?url=http%3A%2F%2F77.110.104.181%3A5002%2Fsub%2FdGdydSwxNzg4NjA1Mzc5L6CcjFOqBZ',
       'https://raw.githubusercontent.com/KoT-ANTIDOT/bunker-subscriptions/refs/heads/main/mix.txt',
       'https://translate.yandex.ru/translate?url=https://raw.githubusercontent.com/KoT-ANTIDOT/bunker-subscriptions/refs/heads/main/mix.txt&lang=de-de',
+      'https://gitverse.ru/api/repos/flaafix/AetrisVPN/raw/branch/master/AetrisVPN.txt',
     };
     for (var i = _subController.entries.length - 1; i >= 0; i--) {
       final entry = _subController.entries[i];
@@ -538,7 +539,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
       ('🏴', 'Aetris ЧС', 'https://raw.githubusercontent.com/flaafix/AetrisVPN-black-list/refs/heads/main/configs.txt'),
       ('🏳️', 'Подписка БС', 'https://github.com/PizdukMod/PizdukVPN/raw/refs/heads/main/wl'),
       ('🏳️', 'Aetris БС', 'https://raw.githubusercontent.com/flaafix/AetrisVPN/refs/heads/main/AetrisVPN.txt'),
-      ('🏳️', 'Aetris БС Зеркало', 'https://gitverse.ru/api/repos/flaafix/AetrisVPN/raw/branch/master/AetrisVPN.txt'),
       ('✨', 'Aetris БС Лайт', 'https://raw.githubusercontent.com/flaafix/AetrisVPN-white-list-lite/refs/heads/main/AetrisVPN.txt'),
       ('🎮', 'Brawl', 'https://s3.twcstorage.ru/cd58536-mhand-bucket/vless/vless_mhand.txt'),
     ];
@@ -591,7 +591,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
       ('🏴', 'Aetris ЧС', 'https://raw.githubusercontent.com/flaafix/AetrisVPN-black-list/refs/heads/main/configs.txt'),
       ('🏳️', 'Подписка БС', 'https://github.com/PizdukMod/PizdukVPN/raw/refs/heads/main/wl'),
       ('🏳️', 'Aetris БС', 'https://raw.githubusercontent.com/flaafix/AetrisVPN/refs/heads/main/AetrisVPN.txt'),
-      ('🏳️', 'Aetris БС Зеркало', 'https://gitverse.ru/api/repos/flaafix/AetrisVPN/raw/branch/master/AetrisVPN.txt'),
       ('✨', 'Aetris БС Лайт', 'https://raw.githubusercontent.com/flaafix/AetrisVPN-white-list-lite/refs/heads/main/AetrisVPN.txt'),
       ('🎮', 'Brawl', 'https://s3.twcstorage.ru/cd58536-mhand-bucket/vless/vless_mhand.txt'),
     ];
