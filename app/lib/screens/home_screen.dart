@@ -561,7 +561,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
         e.name.contains('Киберпортал'));
     if (!hasKiberportal) {
       try {
-        final yamlStr = await DefaultAssetBundle.of(context).loadString('assets/kiberportal_v1240.yaml');
+        final yamlStr = await rootBundle.loadString('assets/kiberportal_v1240.yaml');
         await _subController.addFromInput(yamlStr, nameHint: '🛡️ Киберпортал v12.40');
       } catch (e) {
         AppLog.I.warning('Ensure Kiberportal asset failed: $e');

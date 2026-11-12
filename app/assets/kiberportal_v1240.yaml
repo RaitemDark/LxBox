@@ -1,0 +1,977 @@
+# 12.40
+mixed-port: 7890
+allow-lan: true
+mode: rule
+log-level: info
+ipv6: false
+unified-delay: false
+tcp-concurrent: true
+external-controller: "127.0.0.1:9090"
+profile:
+  store-fake-ip: true
+  store-selected: true
+dns:
+  enable: true
+  ipv6: false
+  respect-rules: true
+  enhanced-mode: fake-ip
+  fake-ip-range: 198.18.0.1/16
+  fake-ip-filter:
+  - "*.lan"
+  - "*.localdomain"
+  - "*.example"
+  - "*.invalid"
+  - "*.localhost"
+  - "*.test"
+  - "*.local"
+  - "*.home.arpa"
+  - "connectivitycheck.gstatic.com"
+  - "connectivitycheck.android.com"
+  - "msftconnecttest.com"
+  - "msftncsi.com"
+  default-nameserver:
+  - 77.88.8.8
+  - 77.88.8.1
+  direct-nameserver:
+  - "tls://77.88.8.8#DIRECT"
+  - "tls://77.88.8.1#DIRECT"
+  - "https://77.88.8.8/dns-query#DIRECT"
+  nameserver:
+  - "tls://77.88.8.8#skip-cert-verify=true"
+  - "tls://77.88.8.1#skip-cert-verify=true"
+  - "https://1.1.1.1/dns-query#Режим"
+  - "https://8.8.8.8/dns-query#Режим"
+  nameserver-policy:
+    raw.githubusercontent.com,cdn.jsdelivr.net,github.com:
+    - "tls://77.88.8.8#DIRECT"
+    - "tls://77.88.8.1#DIRECT"
+    - "https://77.88.8.8/dns-query#DIRECT"
+    "rule-set:category-ru,whitelist,private-domains":
+    - "tls://77.88.8.8#DIRECT"
+    - "tls://77.88.8.1#DIRECT"
+    - "https://77.88.8.8/dns-query#DIRECT"
+    +.gitverse.ru,+.gidroksi.fun,+.cyb-portal.org,+.githubusercontent.com,+.github.com,+.jsdelivr.net:
+    - "tls://77.88.8.8#DIRECT"
+    - "tls://77.88.8.1#DIRECT"
+    - "https://77.88.8.8/dns-query#DIRECT"
+    "connectivitycheck.gstatic.com,connectivitycheck.android.com,+.msftconnecttest.com,+.msftncsi.com":
+    - "tls://77.88.8.8#DIRECT"
+    - "tls://77.88.8.1#DIRECT"
+    - "https://77.88.8.8/dns-query#DIRECT"
+  prefer-h3: false
+  proxy-server-nameserver:
+  - "tls://77.88.8.8#DIRECT"
+  - "tls://77.88.8.1#DIRECT"
+  - "https://77.88.8.8/dns-query#DIRECT"
+  use-hosts: true
+  use-system-hosts: true
+sniffer:
+  enable: true
+  force-dns-mapping: true
+  override-destination: false
+  parse-pure-ip: true
+  skip-dst-address:
+  - 0.0.0.0/8
+  - 10.0.0.0/8
+  - 100.64.0.0/10
+  - 127.0.0.0/8
+  - 169.254.0.0/16
+  - 172.16.0.0/12
+  - 192.0.0.0/24
+  - 192.0.2.0/24
+  - 192.88.99.0/24
+  - 192.168.0.0/16
+  - 198.18.0.0/15
+  - 198.51.100.0/24
+  - 203.0.113.0/24
+  - 224.0.0.0/3
+  - "::/127"
+  - "fc00::/7"
+  - "fe80::/10"
+  - "ff00::/8"
+  sniff:
+    HTTP:
+      override-destination: true
+      ports:
+      - 80
+      - 8080-8880
+    TLS:
+      override-destination: true
+      ports:
+      - 443
+      - 8443
+proxy-providers:
+  reserve:
+    type: inline
+    payload:
+    - name: "РЕЗЕРВ (Reality, впиши свой VPS)"
+      type: vless
+      server: 203.0.113.1
+      port: 443
+      uuid: a8b3c290-c690-4e72-b554-7e2c5d89c198
+      network: tcp
+      tls: true
+      flow: xtls-rprx-vision
+      servername: www.microsoft.com
+      reality-opts:
+        public-key: AtDSXCXi35YEXczhsywMsM51D-HlzFkTMP-Xllis7mM
+        short-id: 260bedd5
+      client-fingerprint: chrome
+      udp: true
+  warp-via-inno:
+    type: inline
+    payload:
+    - type: masque
+      private-key: MHcCAQEEIE8RsKH/2gwsGUbcrTCRaaH6JllTCRFXq+WZf7z0/LtuoAoGCCqGSM49AwEHoUQDQgAE4RUR3IFwpjVlUhJGxGAGbZiaQqHwoTJbpsDk9m5wMu7hQ4sMtPtBLApLS1NpIyNZRp0aG8thz8zEROMDVODjrg==
+      public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIaU7MToJm9NKp8YfGxR6r+/h4mcG7SxI8tsW8OR1A5tv/zCzVbCRRh2t87/kxnP6lAy0lkr7qYwu+ox+k3dr6w==
+      ip: 172.16.0.2/32
+      mtu: 1280
+      udp: true
+      remote-dns-resolve: true
+      dns: &id002
+      - 8.8.8.8
+      - 8.8.4.4
+      - 1.1.1.1
+      - 1.0.0.1
+      network: h2
+      handshake-timeout: 15
+      congestion-controller: bbr
+      name: "[Inno] WARP-WB 1"
+      server: 162.159.199.199
+      port: 443
+      sni: www.wildberries.ru
+      dialer-proxy: "ВХОД ИННО"
+    - type: masque
+      private-key: MHcCAQEEIE8RsKH/2gwsGUbcrTCRaaH6JllTCRFXq+WZf7z0/LtuoAoGCCqGSM49AwEHoUQDQgAE4RUR3IFwpjVlUhJGxGAGbZiaQqHwoTJbpsDk9m5wMu7hQ4sMtPtBLApLS1NpIyNZRp0aG8thz8zEROMDVODjrg==
+      public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIaU7MToJm9NKp8YfGxR6r+/h4mcG7SxI8tsW8OR1A5tv/zCzVbCRRh2t87/kxnP6lAy0lkr7qYwu+ox+k3dr6w==
+      ip: 172.16.0.2/32
+      mtu: 1280
+      udp: true
+      remote-dns-resolve: true
+      dns: *id002
+      network: h2
+      handshake-timeout: 15
+      congestion-controller: bbr
+      name: "[Inno] WARP-OZON 3"
+      server: 162.159.198.100
+      port: 8443
+      sni: www.ozon.ru
+      dialer-proxy: "ВХОД ИННО"
+  warp-via-casc:
+    type: inline
+    payload:
+    - type: masque
+      private-key: MHcCAQEEIE8RsKH/2gwsGUbcrTCRaaH6JllTCRFXq+WZf7z0/LtuoAoGCCqGSM49AwEHoUQDQgAE4RUR3IFwpjVlUhJGxGAGbZiaQqHwoTJbpsDk9m5wMu7hQ4sMtPtBLApLS1NpIyNZRp0aG8thz8zEROMDVODjrg==
+      public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIaU7MToJm9NKp8YfGxR6r+/h4mcG7SxI8tsW8OR1A5tv/zCzVbCRRh2t87/kxnP6lAy0lkr7qYwu+ox+k3dr6w==
+      ip: 172.16.0.2/32
+      mtu: 1280
+      udp: true
+      remote-dns-resolve: true
+      dns: *id002
+      network: h2
+      handshake-timeout: 15
+      congestion-controller: bbr
+      name: "[Casc] WARP-WB 1"
+      server: 162.159.199.199
+      port: 443
+      sni: www.wildberries.ru
+      dialer-proxy: "ВХОД КАСКАД"
+    - type: masque
+      private-key: MHcCAQEEIE8RsKH/2gwsGUbcrTCRaaH6JllTCRFXq+WZf7z0/LtuoAoGCCqGSM49AwEHoUQDQgAE4RUR3IFwpjVlUhJGxGAGbZiaQqHwoTJbpsDk9m5wMu7hQ4sMtPtBLApLS1NpIyNZRp0aG8thz8zEROMDVODjrg==
+      public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIaU7MToJm9NKp8YfGxR6r+/h4mcG7SxI8tsW8OR1A5tv/zCzVbCRRh2t87/kxnP6lAy0lkr7qYwu+ox+k3dr6w==
+      ip: 172.16.0.2/32
+      mtu: 1280
+      udp: true
+      remote-dns-resolve: true
+      dns: *id002
+      network: h2
+      handshake-timeout: 15
+      congestion-controller: bbr
+      name: "[Casc] WARP-OZON 3"
+      server: 162.159.198.100
+      port: 8443
+      sni: www.ozon.ru
+      dialer-proxy: "ВХОД КАСКАД"
+  warp-direct:
+    type: inline
+    override:
+      additional-prefix: "[D] "
+    payload:
+    - type: masque
+      private-key: MHcCAQEEIE8RsKH/2gwsGUbcrTCRaaH6JllTCRFXq+WZf7z0/LtuoAoGCCqGSM49AwEHoUQDQgAE4RUR3IFwpjVlUhJGxGAGbZiaQqHwoTJbpsDk9m5wMu7hQ4sMtPtBLApLS1NpIyNZRp0aG8thz8zEROMDVODjrg==
+      public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIaU7MToJm9NKp8YfGxR6r+/h4mcG7SxI8tsW8OR1A5tv/zCzVbCRRh2t87/kxnP6lAy0lkr7qYwu+ox+k3dr6w==
+      ip: 172.16.0.2/32
+      mtu: 1280
+      udp: true
+      remote-dns-resolve: true
+      dns: *id002
+      network: h2
+      handshake-timeout: 8
+      congestion-controller: bbr
+      name: WARP-WB 1
+      server: 162.159.199.199
+      port: 443
+      sni: www.wildberries.ru
+    - type: masque
+      private-key: MHcCAQEEIE8RsKH/2gwsGUbcrTCRaaH6JllTCRFXq+WZf7z0/LtuoAoGCCqGSM49AwEHoUQDQgAE4RUR3IFwpjVlUhJGxGAGbZiaQqHwoTJbpsDk9m5wMu7hQ4sMtPtBLApLS1NpIyNZRp0aG8thz8zEROMDVODjrg==
+      public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIaU7MToJm9NKp8YfGxR6r+/h4mcG7SxI8tsW8OR1A5tv/zCzVbCRRh2t87/kxnP6lAy0lkr7qYwu+ox+k3dr6w==
+      ip: 172.16.0.2/32
+      mtu: 1280
+      udp: true
+      remote-dns-resolve: true
+      dns: *id002
+      network: h2
+      handshake-timeout: 8
+      congestion-controller: bbr
+      name: WARP-OZON 1
+      server: 162.159.199.251
+      port: 443
+      sni: www.ozon.ru
+    - type: masque
+      private-key: MHcCAQEEIE8RsKH/2gwsGUbcrTCRaaH6JllTCRFXq+WZf7z0/LtuoAoGCCqGSM49AwEHoUQDQgAE4RUR3IFwpjVlUhJGxGAGbZiaQqHwoTJbpsDk9m5wMu7hQ4sMtPtBLApLS1NpIyNZRp0aG8thz8zEROMDVODjrg==
+      public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIaU7MToJm9NKp8YfGxR6r+/h4mcG7SxI8tsW8OR1A5tv/zCzVbCRRh2t87/kxnP6lAy0lkr7qYwu+ox+k3dr6w==
+      ip: 172.16.0.2/32
+      mtu: 1280
+      udp: true
+      remote-dns-resolve: true
+      dns: *id002
+      network: h2
+      handshake-timeout: 8
+      congestion-controller: bbr
+      name: WARP-AVITO 1
+      server: 162.159.198.210
+      port: 443
+      sni: www.avito.ru
+    - type: masque
+      private-key: MHcCAQEEIE8RsKH/2gwsGUbcrTCRaaH6JllTCRFXq+WZf7z0/LtuoAoGCCqGSM49AwEHoUQDQgAE4RUR3IFwpjVlUhJGxGAGbZiaQqHwoTJbpsDk9m5wMu7hQ4sMtPtBLApLS1NpIyNZRp0aG8thz8zEROMDVODjrg==
+      public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIaU7MToJm9NKp8YfGxR6r+/h4mcG7SxI8tsW8OR1A5tv/zCzVbCRRh2t87/kxnP6lAy0lkr7qYwu+ox+k3dr6w==
+      ip: 172.16.0.2/32
+      mtu: 1280
+      udp: true
+      remote-dns-resolve: true
+      dns: *id002
+      network: h2
+      handshake-timeout: 8
+      congestion-controller: bbr
+      name: WARP-WB 3
+      server: 162.159.198.149
+      port: 8443
+      sni: www.wildberries.ru
+    - type: masque
+      private-key: MHcCAQEEIE8RsKH/2gwsGUbcrTCRaaH6JllTCRFXq+WZf7z0/LtuoAoGCCqGSM49AwEHoUQDQgAE4RUR3IFwpjVlUhJGxGAGbZiaQqHwoTJbpsDk9m5wMu7hQ4sMtPtBLApLS1NpIyNZRp0aG8thz8zEROMDVODjrg==
+      public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIaU7MToJm9NKp8YfGxR6r+/h4mcG7SxI8tsW8OR1A5tv/zCzVbCRRh2t87/kxnP6lAy0lkr7qYwu+ox+k3dr6w==
+      ip: 172.16.0.2/32
+      mtu: 1280
+      udp: true
+      remote-dns-resolve: true
+      dns: *id002
+      network: h2
+      handshake-timeout: 8
+      congestion-controller: bbr
+      name: WARP-OZON 2
+      server: 162.159.198.2
+      port: 443
+      sni: www.ozon.ru
+    - type: masque
+      private-key: MHcCAQEEIE8RsKH/2gwsGUbcrTCRaaH6JllTCRFXq+WZf7z0/LtuoAoGCCqGSM49AwEHoUQDQgAE4RUR3IFwpjVlUhJGxGAGbZiaQqHwoTJbpsDk9m5wMu7hQ4sMtPtBLApLS1NpIyNZRp0aG8thz8zEROMDVODjrg==
+      public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIaU7MToJm9NKp8YfGxR6r+/h4mcG7SxI8tsW8OR1A5tv/zCzVbCRRh2t87/kxnP6lAy0lkr7qYwu+ox+k3dr6w==
+      ip: 172.16.0.2/32
+      mtu: 1280
+      udp: true
+      remote-dns-resolve: true
+      dns: *id002
+      network: h2
+      handshake-timeout: 8
+      congestion-controller: bbr
+      name: WARP-AVITO 2
+      server: 162.159.199.2
+      port: 8443
+      sni: www.avito.ru
+    - type: masque
+      private-key: MHcCAQEEIE8RsKH/2gwsGUbcrTCRaaH6JllTCRFXq+WZf7z0/LtuoAoGCCqGSM49AwEHoUQDQgAE4RUR3IFwpjVlUhJGxGAGbZiaQqHwoTJbpsDk9m5wMu7hQ4sMtPtBLApLS1NpIyNZRp0aG8thz8zEROMDVODjrg==
+      public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIaU7MToJm9NKp8YfGxR6r+/h4mcG7SxI8tsW8OR1A5tv/zCzVbCRRh2t87/kxnP6lAy0lkr7qYwu+ox+k3dr6w==
+      ip: 172.16.0.2/32
+      mtu: 1280
+      udp: true
+      remote-dns-resolve: true
+      dns: *id002
+      network: h2
+      handshake-timeout: 8
+      congestion-controller: bbr
+      name: WARP-OZON 3
+      server: 162.159.198.100
+      port: 8443
+      sni: www.ozon.ru
+  sub6:
+    type: http
+    proxy: BOOT
+    interval: 43500
+    header: &id003
+      User-Agent:
+      - clash.meta
+    exclude-filter: "(?i)expire|traffic|remaining|остал|истек|Каскад|➜"
+    exclude-type: ss
+    override:
+      udp: true
+      client-fingerprint: chrome
+      proxy-name:
+      - pattern: "^(.*?GidroksiFree)\\s*(#\\d+).*$"
+        target: $1 $2
+    url: "https://gidroksi.fun/black-list"
+    path: ./proxy_providers/sub6.yml
+  sub4:
+    type: http
+    proxy: BOOT
+    interval: 43200
+    header: *id003
+    exclude-filter: "(?i)expire|traffic|remaining|остал|истек|Каскад|➜"
+    exclude-type: ss
+    override:
+      udp: true
+      client-fingerprint: chrome
+      additional-prefix: "[MIFA] "
+    url: "https://gist.githubusercontent.com/Diman331/8c868070c0b5a5ec0c7d94507717b67b/raw/subscription.txt"
+    path: ./proxy_providers/sub4.yml
+  sub10:
+    type: http
+    proxy: BOOT
+    interval: 44100
+    header: *id003
+    exclude-filter: "(?i)expire|traffic|remaining|остал|истек|Каскад|➜"
+    exclude-type: ss
+    override:
+      udp: true
+      client-fingerprint: chrome
+      additional-prefix: "[AET-BL] "
+    url: "https://raw.githubusercontent.com/flaafix/AetrisVPN-black-list/main/configs.txt"
+    path: ./proxy_providers/sub10.yml
+  sub11:
+    type: http
+    proxy: BOOT
+    interval: 3600
+    header:
+      User-Agent:
+      - Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Mobile Safari/537.36
+    exclude-filter: "(?i)expire|traffic|remaining|остал|истек|Каскад|➜"
+    exclude-type: ss
+    override:
+      udp: true
+      client-fingerprint: chrome
+      additional-prefix: "[ZIENG] "
+    url: "https://raw.githubusercontent.com/zieng2/wl/main/vless_universal.txt"
+    path: ./proxy_providers/sub11.yml
+  rjsxrd:
+    type: http
+    proxy: BOOT
+    interval: 21600
+    header: *id003
+    exclude-filter: "(?i)expire|traffic|remaining|остал|истек"
+    exclude-type: ss
+    override:
+      udp: true
+      client-fingerprint: chrome
+      additional-prefix: "[RJX] "
+    url: "https://raw.githubusercontent.com/whoahaow/rjsxrd/refs/heads/main/githubmirror/bypass/bypass-1.txt"
+    path: ./proxy_providers/rjsxrd.yml
+  inno-sub6:
+    type: http
+    proxy: BOOT
+    interval: 45000
+    header: *id003
+    exclude-filter: "(?i)expire|traffic|remaining|остал|истек"
+    exclude-type: ss
+    override:
+      udp: true
+      client-fingerprint: chrome
+      dialer-proxy: "ВХОД РУ"
+      additional-prefix: "[INNO] "
+      proxy-name:
+      - pattern: "^(.*?GidroksiFree)\\s*(#\\d+).*$"
+        target: $1 $2
+    url: "https://gidroksi.fun/black-list"
+    path: ./proxy_providers/inno6.yml
+  inno-sub4:
+    type: http
+    proxy: BOOT
+    interval: 46800
+    header: *id003
+    exclude-filter: "(?i)expire|traffic|remaining|остал|истек"
+    exclude-type: ss
+    override:
+      udp: true
+      client-fingerprint: chrome
+      dialer-proxy: "ВХОД РУ"
+      additional-prefix: "[INNO-MIFA] "
+    url: "https://gist.githubusercontent.com/Diman331/8c868070c0b5a5ec0c7d94507717b67b/raw/subscription.txt"
+    path: ./proxy_providers/inno4.yml
+  lwwl:
+    type: http
+    proxy: BOOT
+    url: "https://pozor.bond/sub/vzal49dpeu1f"
+    path: ./proxy_providers/lwwl.yml
+    interval: 43200
+    header:
+      User-Agent:
+      - clash.meta
+    exclude-filter: "(?i)expire|traffic|remaining|остал|истек"
+    exclude-type: ss
+    override:
+      udp: true
+      client-fingerprint: chrome
+      additional-prefix: "[LWWL] "
+rule-providers:
+  ai:
+    type: http
+    proxy: BOOT
+    behavior: classical
+    format: yaml
+    url: "https://fastly.jsdelivr.net/gh/codelabhq/clash-warp-config@main/ruleset/ai.yaml"
+    path: ./ruleset/ai_list.yaml
+    interval: 86400
+  torrent:
+    type: http
+    proxy: BOOT
+    behavior: classical
+    format: yaml
+    url: "https://fastly.jsdelivr.net/gh/codelabhq/clash-warp-config@main/ruleset/torrent.yaml"
+    path: ./ruleset/torrent.yaml
+    interval: 86400
+  games:
+    type: http
+    proxy: BOOT
+    behavior: classical
+    format: yaml
+    url: "https://fastly.jsdelivr.net/gh/codelabhq/clash-warp-config@main/ruleset/games.yaml"
+    path: ./ruleset/games.yaml
+    interval: 86400
+  category-ru:
+    type: http
+    proxy: BOOT
+    behavior: domain
+    format: mrs
+    url: "https://fastly.jsdelivr.net/gh/hydraponique/roscomvpn-geosite@release/mihomo/category-ru.mrs"
+    path: ./ruleset/category-ru.mrs
+    interval: 86400
+  whitelist:
+    type: http
+    proxy: BOOT
+    behavior: domain
+    format: mrs
+    url: "https://fastly.jsdelivr.net/gh/hydraponique/roscomvpn-geosite@release/mihomo/whitelist.mrs"
+    path: ./ruleset/whitelist.mrs
+    interval: 86400
+  private-domains:
+    type: http
+    proxy: BOOT
+    behavior: domain
+    format: mrs
+    url: "https://fastly.jsdelivr.net/gh/hydraponique/roscomvpn-geosite@release/mihomo/private.mrs"
+    path: ./ruleset/geosite-private.mrs
+    interval: 86400
+  private-ips:
+    type: http
+    proxy: BOOT
+    behavior: ipcidr
+    format: mrs
+    url: "https://fastly.jsdelivr.net/gh/hydraponique/roscomvpn-geoip@release/mihomo/private.mrs"
+    path: ./ruleset/geoip-private.mrs
+    interval: 86400
+  direct-ips:
+    type: http
+    proxy: BOOT
+    behavior: ipcidr
+    format: mrs
+    url: "https://fastly.jsdelivr.net/gh/hydraponique/roscomvpn-geoip@release/mihomo/direct.mrs"
+    path: ./ruleset/direct-ips.mrs
+    interval: 86400
+  telegram-ips:
+    type: http
+    proxy: BOOT
+    behavior: ipcidr
+    format: mrs
+    url: "https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geoip/telegram.mrs"
+    path: ./ruleset/telegram-ips.mrs
+    interval: 86400
+  google-play:
+    type: http
+    proxy: BOOT
+    behavior: domain
+    format: mrs
+    url: "https://fastly.jsdelivr.net/gh/hydraponique/roscomvpn-geosite@release/mihomo/google-play.mrs"
+    path: ./ruleset/google-play.mrs
+    interval: 86400
+  github:
+    type: http
+    proxy: BOOT
+    behavior: domain
+    format: mrs
+    url: "https://fastly.jsdelivr.net/gh/hydraponique/roscomvpn-geosite@release/mihomo/github.mrs"
+    path: ./ruleset/github.mrs
+    interval: 86400
+  google-deepmind:
+    type: http
+    proxy: BOOT
+    behavior: domain
+    format: mrs
+    url: "https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/google-gemini.mrs"
+    path: ./ruleset/google-gemini.mrs
+    interval: 86400
+  google-geosite:
+    type: http
+    proxy: BOOT
+    behavior: domain
+    format: mrs
+    url: "https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/google.mrs"
+    path: ./ruleset/google-geosite-meta.mrs
+    interval: 86400
+  google-ips:
+    type: http
+    proxy: BOOT
+    behavior: ipcidr
+    format: mrs
+    url: "https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geoip/google.mrs"
+    path: ./ruleset/google-ips.mrs
+    interval: 86400
+rules:
+- DOMAIN,connectivitycheck.gstatic.com,DIRECT
+- DOMAIN,connectivitycheck.android.com,DIRECT
+- DOMAIN-SUFFIX,clients3.google.com,DIRECT
+- "PROCESS-NAME,ru.pikabu.android,Режим"
+- "PROCESS-NAME,ru.swc.yaplakalcom,Режим"
+- "DOMAIN-SUFFIX,pikabu.ru,Режим"
+- "DOMAIN-SUFFIX,yaplakal.com,Режим"
+- "DOMAIN-SUFFIX,yaplakalcom.ru,Режим"
+- RULE-SET,private-ips,DIRECT,no-resolve
+- IP-CIDR,1.1.1.1/32,Режим,no-resolve
+- IP-CIDR,1.0.0.1/32,Режим,no-resolve
+- IP-CIDR,8.8.8.8/32,Режим,no-resolve
+- IP-CIDR,8.8.4.4/32,Режим,no-resolve
+- DOMAIN-SUFFIX,vk.com,DIRECT
+- DOMAIN-SUFFIX,userapi.com,DIRECT
+- DOMAIN-SUFFIX,vk-portal.net,DIRECT
+- DOMAIN-SUFFIX,yandex.ru,DIRECT
+- DOMAIN-SUFFIX,yandex.net,DIRECT
+- DOMAIN-SUFFIX,wildberries.ru,DIRECT
+- DOMAIN-SUFFIX,dion.vc,DIRECT
+- DOMAIN-SUFFIX,bitrix24.ru,DIRECT
+- IP-CIDR,77.88.8.8/32,DIRECT,no-resolve
+- IP-CIDR,77.88.8.1/32,DIRECT,no-resolve
+- IP-CIDR,95.85.240.254/32,DIRECT,no-resolve
+- IP-CIDR,138.124.254.134/32,DIRECT,no-resolve
+- "RULE-SET,telegram-ips,ТГ,no-resolve"
+- "IP-CIDR,91.108.4.0/22,ТГ,no-resolve"
+- "IP-CIDR,91.108.8.0/22,ТГ,no-resolve"
+- "IP-CIDR,91.108.12.0/22,ТГ,no-resolve"
+- "IP-CIDR,91.108.16.0/22,ТГ,no-resolve"
+- "IP-CIDR,91.108.56.0/22,ТГ,no-resolve"
+- "IP-CIDR,149.154.160.0/20,ТГ,no-resolve"
+- "IP-CIDR,185.76.151.0/24,ТГ,no-resolve"
+- AND,((NETWORK,UDP),(DST-PORT,443)),REJECT
+- "DST-PORT,5223,Режим"
+- "DOMAIN-SUFFIX,push.apple.com,Режим"
+- "DOMAIN-SUFFIX,mtalk.google.com,Режим"
+- "DOMAIN-SUFFIX,identity.apple.com,Режим"
+- "DOMAIN-SUFFIX,deviceenrollment.apple.com,Режим"
+- "DOMAIN-SUFFIX,gemini.google.com,ИИ"
+- "DOMAIN-SUFFIX,aistudio.google.com,ИИ"
+- "DOMAIN-SUFFIX,bard.google.com,ИИ"
+- "DOMAIN-SUFFIX,notebooklm.google.com,ИИ"
+- "DOMAIN-SUFFIX,makersuite.google.com,ИИ"
+- "DOMAIN-SUFFIX,ai.google.dev,ИИ"
+- "DOMAIN-SUFFIX,generativelanguage.googleapis.com,ИИ"
+- "DOMAIN-SUFFIX,alkalimining-pa.googleapis.com,ИИ"
+- "DOMAIN-SUFFIX,proactivebackend-pa.googleapis.com,ИИ"
+- "DOMAIN-SUFFIX,cloudcode-pa.googleapis.com,ИИ"
+- "DOMAIN-SUFFIX,jnn-pa.googleapis.com,ИИ"
+- "DOMAIN-SUFFIX,waa-pa.clients6.google.com,ИИ"
+- "DOMAIN-SUFFIX,aisandbox-pa.googleapis.com,ИИ"
+- "DOMAIN-SUFFIX,autopush-mobile-aiplatform-pa.googleapis.com,ИИ"
+- "DOMAIN-SUFFIX,content-autofill.googleapis.com,ИИ"
+- "RULE-SET,google-deepmind,ИИ"
+- "PROCESS-NAME-REGEX,(?i).*telegram.*,ТГ"
+- "DOMAIN-SUFFIX,googlevideo.com,Режим"
+- "DOMAIN-SUFFIX,ytimg.com,Режим"
+- "DOMAIN-SUFFIX,youtube.com,Режим"
+- "DOMAIN-SUFFIX,youtu.be,Режим"
+- "DOMAIN-SUFFIX,gvt1.com,Режим"
+- "DOMAIN-SUFFIX,gvt2.com,Режим"
+- "RULE-SET,google-play,Режим"
+- "RULE-SET,github,Режим"
+- "DOMAIN-SUFFIX,google.com,Режим"
+- "DOMAIN-SUFFIX,googleapis.com,Режим"
+- "DOMAIN-SUFFIX,gstatic.com,Режим"
+- "DOMAIN-SUFFIX,googleusercontent.com,Режим"
+- "DOMAIN-SUFFIX,ggpht.com,Режим"
+- "DOMAIN-SUFFIX,gmail.com,Режим"
+- "DOMAIN-SUFFIX,withgoogle.com,Режим"
+- "DOMAIN-SUFFIX,1e100.net,Режим"
+- "DOMAIN-SUFFIX,habr.com,Режим"
+- "DOMAIN-SUFFIX,seasonvar.ru,Режим"
+- "DOMAIN-SUFFIX,lib.social,Режим"
+- "DOMAIN-SUFFIX,kemono.su,Режим"
+- "DOMAIN-SUFFIX,jut.su,Режим"
+- "DOMAIN-SUFFIX,kara.su,Режим"
+- "DOMAIN-SUFFIX,theins.ru,Режим"
+- "DOMAIN-SUFFIX,tvrain.ru,Режим"
+- "DOMAIN-SUFFIX,echo.msk.ru,Режим"
+- "DOMAIN-SUFFIX,the-village.ru,Режим"
+- "DOMAIN-SUFFIX,snob.ru,Режим"
+- "DOMAIN-SUFFIX,novayagazeta.ru,Режим"
+- "DOMAIN-SUFFIX,moscowtimes.ru,Режим"
+- "DOMAIN-SUFFIX,natribu.org,Режим"
+- "DOMAIN-KEYWORD,animego,Режим"
+- "DOMAIN-KEYWORD,yummyanime,Режим"
+- "DOMAIN-KEYWORD,yummy-anime,Режим"
+- "DOMAIN-KEYWORD,animeportal,Режим"
+- "DOMAIN-KEYWORD,anime-portal,Режим"
+- "DOMAIN-KEYWORD,animedub,Режим"
+- "DOMAIN-KEYWORD,anidub,Режим"
+- "DOMAIN-KEYWORD,animelib,Режим"
+- "DOMAIN-KEYWORD,ikianime,Режим"
+- "DOMAIN-KEYWORD,anilibria,Режим"
+- "RULE-SET,google-geosite,Режим"
+- "RULE-SET,google-ips,Режим,no-resolve"
+- RULE-SET,private-domains,DIRECT
+- RULE-SET,torrent,DIRECT
+- DOMAIN-SUFFIX,xboxlive.com,DIRECT
+- DOMAIN-SUFFIX,xbox.com,DIRECT
+- DOMAIN-SUFFIX,xboxservices.com,DIRECT
+- DOMAIN,login.live.com,DIRECT
+- RULE-SET,games,DIRECT
+- RULE-SET,category-ru,DIRECT
+- RULE-SET,whitelist,DIRECT
+- RULE-SET,direct-ips,DIRECT,no-resolve
+- "DOMAIN-SUFFIX,deepseek.com,Режим"
+- "DOMAIN-KEYWORD,deepseek,Режим"
+- "RULE-SET,ai,ИИ"
+- "DOMAIN-SUFFIX,openai.com,ИИ"
+- "DOMAIN-SUFFIX,chatgpt.com,ИИ"
+- "DOMAIN-SUFFIX,oaistatic.com,ИИ"
+- "DOMAIN-SUFFIX,oaiusercontent.com,ИИ"
+- "DOMAIN-SUFFIX,claude.ai,ИИ"
+- "DOMAIN-SUFFIX,claude.com,ИИ"
+- "DOMAIN-SUFFIX,claudeusercontent.com,ИИ"
+- "DOMAIN-SUFFIX,anthropic.com,ИИ"
+- "DOMAIN-SUFFIX,x.ai,ИИ"
+- "DOMAIN-SUFFIX,grok.com,ИИ"
+- "DOMAIN-SUFFIX,perplexity.ai,ИИ"
+- "DOMAIN-SUFFIX,suno.com,ИИ"
+- "DOMAIN-SUFFIX,x.com,Режим"
+- "DOMAIN-SUFFIX,twimg.com,Режим"
+- "DOMAIN-SUFFIX,telegram.org,ТГ"
+- "DOMAIN-SUFFIX,t.me,ТГ"
+- "DOMAIN-SUFFIX,telegram.me,ТГ"
+- "DOMAIN-SUFFIX,telegram.dog,ТГ"
+- "DOMAIN-SUFFIX,telegra.ph,ТГ"
+- "DOMAIN-SUFFIX,telesco.pe,ТГ"
+- "DOMAIN-SUFFIX,tg.dev,ТГ"
+- "DOMAIN-SUFFIX,cdn-telegram.org,ТГ"
+- "DOMAIN-SUFFIX,telegram-cdn.org,ТГ"
+- "DOMAIN-SUFFIX,stel.com,ТГ"
+- "DOMAIN-SUFFIX,tdesktop.com,ТГ"
+- "DOMAIN-SUFFIX,fragment.com,ТГ"
+- "DOMAIN-SUFFIX,graph.org,ТГ"
+- "DOMAIN-SUFFIX,tx.me,ТГ"
+- "DOMAIN-SUFFIX,telegram.space,ТГ"
+- "DOMAIN-SUFFIX,whatsapp.com,Режим"
+- "DOMAIN-SUFFIX,whatsapp.net,Режим"
+- "DOMAIN-SUFFIX,wa.me,Режим"
+- DOMAIN-SUFFIX,adserver.twitch.tv,REJECT
+- DOMAIN-SUFFIX,ads.twitch.tv,REJECT
+- DOMAIN-KEYWORD,twitch-ads,REJECT
+- "DOMAIN-SUFFIX,usher.ttvnw.net,Режим"
+- "DOMAIN-SUFFIX,gql.twitch.tv,Режим"
+- "DOMAIN-SUFFIX,twitch.tv,Режим"
+- "DOMAIN-SUFFIX,ttvnw.net,Режим"
+- "DOMAIN-SUFFIX,jtvnw.net,Режим"
+- "DOMAIN-SUFFIX,chess.com,Режим"
+- "DOMAIN-SUFFIX,chesscomfiles.com,Режим"
+- "DOMAIN-SUFFIX,itch.io,Режим"
+- "DOMAIN-SUFFIX,itch.zone,Режим"
+- "DOMAIN-SUFFIX,modrinth.com,Режим"
+- "DOMAIN-SUFFIX,modrinth.gg,Режим"
+- "MATCH,Режим"
+proxy-groups:
+- name: "Режим"
+  type: select
+  proxies:
+  - "Авто"
+  - "Ручной"
+- name: "Авто"
+  type: fallback
+  url: "http://cp.cloudflare.com/generate_204"
+  expected-status: 200/204
+  interval: 330
+  timeout: 4000
+  max-failed-times: 3
+  lazy: false
+  interrupt-exist-connections: false
+  proxies:
+  - "Инно"
+  - "Каскад"
+  - "Каскад WARP"
+  - "Ру"
+  hidden: false
+- name: "Ручной"
+  type: select
+  proxies:
+  - "Инно"
+  - "Каскад"
+  - "Каскад WARP"
+  - "Ру"
+  - Gidroksi
+  - Aetris
+  - ZIENG
+  - Mifa
+  - rjsxrd
+  - WARP
+  use:
+  - reserve
+  hidden: false
+- name: "Инно"
+  type: url-test
+  use:
+  - sub11
+  - rjsxrd
+  - sub10
+  exclude-filter: &ru "(?i)(\U0001F1F7\U0001F1FA|russia|росси|москв|moscow|петербург|питер|petersburg|novosib|новосиб|yekaterin|екатерин|kazan|казан|samara|самар|krasnodar|краснодар|rostov|ростов|sochi|сочи|vladivostok|владивосток|kaliningrad|калининград|selectel|sbercloud|сбер|yandex|яндекс|timeweb|vk ?cloud|mail\\.ru|rostelecom|ростелеком|мтс|мегафон|билайн|(^|[ _\\-\\[\\(|┃,#:/])(ru|rus|spb|msk|рф|спб|мск)($|[ _\\-\\]\\)|┃,#:/0-9]))"
+  url: "http://cp.cloudflare.com/generate_204"
+  expected-status: 200/204
+  interval: 300
+  tolerance: 150
+  timeout: 4000
+  max-failed-times: 3
+  lazy: false
+  interrupt-exist-connections: false
+- name: "Каскад"
+  type: url-test
+  use:
+  - inno-sub6
+  - inno-sub4
+  exclude-filter: *ru
+  url: "http://cp.cloudflare.com/generate_204"
+  expected-status: 200/204
+  interval: 600
+  tolerance: 200
+  timeout: 5000
+  max-failed-times: 3
+  lazy: true
+  interrupt-exist-connections: false
+- name: "Каскад WARP"
+  type: url-test
+  use:
+  - warp-via-inno
+  - warp-via-casc
+  url: "http://cp.cloudflare.com/generate_204"
+  expected-status: 200/204
+  interval: 600
+  tolerance: 500
+  timeout: 10000
+  max-failed-times: 3
+  lazy: true
+  interrupt-exist-connections: false
+- name: "Ру"
+  type: url-test
+  use:
+  - sub6
+  - sub10
+  - sub11
+  - sub4
+  - rjsxrd
+  filter: *ru
+  url: "http://cp.cloudflare.com/generate_204"
+  expected-status: 200/204
+  interval: 480
+  tolerance: 200
+  timeout: 4000
+  max-failed-times: 3
+  lazy: true
+  interrupt-exist-connections: false
+- name: Gidroksi
+  type: url-test
+  use:
+  - sub6
+  exclude-filter: *ru
+  url: "http://cp.cloudflare.com/generate_204"
+  expected-status: 200/204
+  interval: 1620
+  tolerance: 200
+  timeout: 5000
+  max-failed-times: 5
+  lazy: true
+  interrupt-exist-connections: false
+  hidden: false
+- name: Aetris
+  type: url-test
+  use:
+  - sub10
+  exclude-filter: *ru
+  url: "http://cp.cloudflare.com/generate_204"
+  expected-status: 200/204
+  interval: 1740
+  tolerance: 200
+  timeout: 8000
+  max-failed-times: 5
+  lazy: true
+  interrupt-exist-connections: false
+  hidden: false
+- name: ZIENG
+  type: url-test
+  use:
+  - sub11
+  exclude-filter: *ru
+  url: "http://cp.cloudflare.com/generate_204"
+  expected-status: 200/204
+  interval: 1500
+  tolerance: 200
+  timeout: 10000
+  max-failed-times: 5
+  lazy: true
+  interrupt-exist-connections: false
+  hidden: false
+- name: Mifa
+  type: url-test
+  use:
+  - sub4
+  exclude-filter: *ru
+  url: "http://cp.cloudflare.com/generate_204"
+  expected-status: 200/204
+  interval: 1380
+  tolerance: 150
+  timeout: 8000
+  max-failed-times: 5
+  lazy: true
+  interrupt-exist-connections: false
+  hidden: false
+- name: rjsxrd
+  type: url-test
+  use:
+  - rjsxrd
+  exclude-filter: *ru
+  url: "http://cp.cloudflare.com/generate_204"
+  expected-status: 200/204
+  interval: 1500
+  tolerance: 200
+  timeout: 8000
+  max-failed-times: 5
+  lazy: true
+  interrupt-exist-connections: false
+  hidden: false
+- name: BOOT
+  type: select
+  proxies:
+  - DIRECT
+  hidden: true
+- name: WARP
+  hidden: true
+  type: url-test
+  use:
+  - warp-direct
+  url: "http://cp.cloudflare.com/generate_204"
+  expected-status: 200/204
+  interval: 4020
+  tolerance: 200
+  timeout: 6000
+  max-failed-times: 3
+  lazy: true
+- name: "ВХОД ИННО"
+  hidden: true
+  type: url-test
+  use:
+  - sub11
+  filter: "(?i)(\U0001F1E9\U0001F1EA|\U0001F1F3\U0001F1F1|\U0001F1EB\U0001F1EE|\U0001F1F8\U0001F1EA|\U0001F1F5\U0001F1F1|\U0001F1EB\
+    \U0001F1F7|\U0001F1E8\U0001F1FF|\U0001F1EA\U0001F1EA|\U0001F1E6\U0001F1F9|(^|[ _\\-\\[\\(|┃,#:/])(DE|NL|NLD|FI|SE|PL|FR|CZ|EE|AT|DEU|FIN|SWE|POL|FRA|CZE|EST|AUT|Germany|Netherlands|Finland|Sweden|Poland|France|Czech|Estonia|Austria)($|[\
+    \ _\\-\\]\\)\\(|┃,#:/0-9]))"
+  exclude-filter: *ru
+  url: "http://cp.cloudflare.com/generate_204"
+  expected-status: 200/204
+  interval: 300
+  tolerance: 150
+  timeout: 4000
+  max-failed-times: 3
+  lazy: true
+- name: "ВХОД КАСКАД"
+  hidden: true
+  type: url-test
+  use:
+  - inno-sub6
+  - inno-sub4
+  filter: "(?i)(\U0001F1E9\U0001F1EA|\U0001F1F3\U0001F1F1|\U0001F1EB\U0001F1EE|\U0001F1F8\U0001F1EA|\U0001F1F5\U0001F1F1|\U0001F1EB\
+    \U0001F1F7|\U0001F1E8\U0001F1FF|\U0001F1EA\U0001F1EA|\U0001F1E6\U0001F1F9|(^|[ _\\-\\[\\(|┃,#:/])(DE|NL|NLD|FI|SE|PL|FR|CZ|EE|AT|DEU|FIN|SWE|POL|FRA|CZE|EST|AUT|Germany|Netherlands|Finland|Sweden|Poland|France|Czech|Estonia|Austria)($|[\
+    \ _\\-\\]\\)\\(|┃,#:/0-9]))"
+  url: "http://cp.cloudflare.com/generate_204"
+  expected-status: 200/204
+  interval: 300
+  tolerance: 400
+  timeout: 5000
+  max-failed-times: 3
+  lazy: true
+- name: "ВХОД РУ"
+  hidden: true
+  type: url-test
+  use:
+  - sub6
+  - sub10
+  - sub11
+  - sub4
+  - rjsxrd
+  filter: *ru
+  url: "http://cp.cloudflare.com/generate_204"
+  expected-status: 200/204
+  interval: 480
+  tolerance: 200
+  timeout: 4000
+  max-failed-times: 3
+  lazy: false
+  interrupt-exist-connections: false
+- name: "ТГ"
+  hidden: true
+  type: fallback
+  url: "https://core.telegram.org"
+  expected-status: 200/301/302
+  interval: 420
+  timeout: 5000
+  max-failed-times: 3
+  lazy: false
+  proxies:
+  - "Инно"
+  - "Каскад"
+  - "Ру"
+  - "Каскад WARP"
+- name: Youtube
+  hidden: true
+  type: select
+  proxies:
+  - "Режим"
+- name: Discord
+  hidden: true
+  type: select
+  proxies:
+  - "Режим"
+- name: LWWL
+  hidden: true
+  type: url-test
+  use:
+  - lwwl
+  url: "http://cp.cloudflare.com/generate_204"
+  expected-status: 200/204
+  interval: 360
+  tolerance: 150
+  timeout: 4000
+  max-failed-times: 3
+  lazy: false
+  interrupt-exist-connections: false
+- name: "ИИ"
+  hidden: true
+  type: fallback
+  url: "https://api.openai.com/v1/models"
+  expected-status: 200/401
+  interval: 540
+  timeout: 6000
+  max-failed-times: 3
+  lazy: false
+  proxies:
+  - LWWL
+  - "Инно"
+  - "Каскад WARP"
+  - "Каскад"
