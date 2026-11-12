@@ -29,7 +29,6 @@ import 'subscriptions_screen.dart';
 import 'home/widgets/progress_banner.dart';
 import 'home/widgets/nodes_header.dart';
 import 'home/source_lookup.dart';
-import '../services/node_identity.dart';
 import '../services/tag_resolver.dart';
 import 'subscriptions_screen/folder_picker.dart';
 import 'home/widgets/home_drawer.dart';
@@ -890,7 +889,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
           final list = entry.list as SubscriptionServers;
           final node = list.nodes.where((n) => n.tag == TagResolver.stripPrefix(tag, list.tagPrefix)).firstOrNull;
           if (node != null) {
-            await _subController.disableNodesAt(entryIndex, [nodeIdentityHash(node)]);
+            await _subController.setSubscriptionNodesEnabled(entryIndex, [node], enabled: false);
           }
         }
       }
