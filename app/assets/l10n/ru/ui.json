@@ -4833,9 +4833,6 @@
   "Remove all items in %s?": {
     "value": "Удалить все элементы в %s?"
   },
-  "Gosuslugi, Banks, Ozon and WB go DIRECT — VPN does not block them.": {
-    "value": "ГосУслуги, Банки, Ozon и WB идут напрямую — VPN им не мешает."
-  },
   "expires: %s": {
     "value": "Истекает: %s"
   },
@@ -4865,5 +4862,8 @@
   },
   "Anti-blocking Comss DNS proxy": {
     "value": "Прокси DNS обхода блокировок Comss"
+  },
+  "Copy link": {
+    "value": "Скопировать ссылку"
   }
 }
