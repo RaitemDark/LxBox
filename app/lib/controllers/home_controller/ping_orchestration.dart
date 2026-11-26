@@ -9,6 +9,7 @@ mixin _PingMixin on ChangeNotifier {
   // --- surface, предоставляемая HomeController / другими частями ---
   HomeState get _state;
   CcChannel get _cc;
+  SubscriptionController get _subController;
   Timer? get _autoPingTimer;
   set _autoPingTimer(Timer? value);
   void _emit(HomeState next);
@@ -272,6 +273,27 @@ mixin _PingMixin on ChangeNotifier {
   /// время running — cancel.
   ///
   /// §078: [order] — optional explicit порядок тэгов для пинга. Если не
+  Future<void> _autoDisableDeadNodeExcludingBrawl(String tag) async {
+    final owner = ownerOfTag(tag, _subController.entries);
+    if (owner == null) return;
+    final entryIndex = owner.entryIndex;
+    if (entryIndex < 0 || entryIndex >= _subController.entries.length) return;
+    final entry = _subController.entries[entryIndex];
+    final name = entry.name.toLowerCase();
+    final dispName = entry.displayName.toLowerCase();
+    if (name.contains('brawl') || dispName.contains('brawl')) {
+      return; // Do NOT auto-disable Brawl servers!
+    }
+    final list = entry.list;
+    if (list is SubscriptionServers) {
+      final bareTag = TagResolver.stripPrefix(tag, list.tagPrefix);
+      final node = list.nodes.where((n) => n.tag == bareTag).firstOrNull;
+      if (node != null) {
+        await _subController.setSubscriptionNodesEnabled(entryIndex, [node], enabled: false);
+      }
+    }
+  }
+
   /// §325 — полная очистка кэша задержек (при нажатии Обновить/Перезапуск на главном экране).
   void clearAllPingCache() {
     _massPingEpoch++;
@@ -373,10 +395,14 @@ mixin _PingMixin on ChangeNotifier {
           // §4.6 — ok → delay (вкл. 0мс); fail (error непустой) → -1.
           pendingDelay[tag] = r.lastDelayValue;
           pendingBusy[tag] = '';
+          if (r.lastDelayValue < 0) {
+            unawaited(_autoDisableDeadNodeExcludingBrawl(tag));
+          }
         } catch (_) {
           if (_massPingEpoch != epoch) break;
           pendingDelay[tag] = -1;
           pendingBusy[tag] = '';
+          unawaited(_autoDisableDeadNodeExcludingBrawl(tag));
         }
       }
     }
