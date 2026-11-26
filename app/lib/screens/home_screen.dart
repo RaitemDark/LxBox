@@ -9,6 +9,7 @@ import '../models/home_state.dart';
 import '../models/validation.dart';
 import '../models/server_list.dart';
 import '../services/app_log.dart';
+import '../services/direction_mutations.dart';
 import '../services/error_humanize.dart';
 import '../services/support/active_time_tracker.dart';
 import '../services/support/support_message.dart';
@@ -520,7 +521,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
     if (dirs.length > 1) {
       for (final d in dirs) {
         if (d.tag != 'vpn-1' && d.enabled) {
-          await SettingsStorage.updateDirection(d.copyWith(enabled: false));
+          await DirectionMutations.update(d.copyWith(enabled: false));
         }
       }
     }
