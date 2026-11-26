@@ -172,3 +172,46 @@ void copyNodeUri(
     );
   }
 }
+
+void showNodeQrDialog(
+    BuildContext context, String tag, SubscriptionController subController) {
+  final node = _findNodeByDisplayTag(tag, subController);
+  if (node == null) return;
+  final uri = node.toUri();
+  if (uri.isEmpty) return;
+
+  showDialog<void>(
+    context: context,
+    builder: (dCtx) => AlertDialog(
+      title: Text(node.label.isNotEmpty ? node.label : tag),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SelectableText(
+            uri,
+            style: const TextStyle(fontSize: 11),
+            maxLines: 6,
+          ),
+          const SizedBox(height: 12),
+          ElevatedButton.icon(
+            icon: const Icon(Icons.copy),
+            label: Text(getLocalText.s("Copy link")),
+            onPressed: () {
+              Clipboard.setData(ClipboardData(text: uri));
+              Navigator.pop(dCtx);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(getLocalText.s("URI copied"))),
+              );
+            },
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(dCtx),
+          child: Text(getLocalText.s("Close")),
+        ),
+      ],
+    ),
+  );
+}
