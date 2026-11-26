@@ -514,6 +514,16 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
   /// не даёт повторить добавление на каждом запуске (в т.ч. для друзей,
   /// ставящих то же приложение с нуля).
   Future<void> _ensureEssentialSubscriptions() async {
+    // 0. Ensure single direction (VPN 1) is active
+    final dirs = await SettingsStorage.getDirections();
+    if (dirs.length > 1) {
+      final updated = dirs.map((d) {
+        if (d.tag == 'vpn-1') return d.copyWith(enabled: true);
+        return d.copyWith(enabled: false);
+      }).toList();
+      await SettingsStorage.saveDirections(updated);
+    }
+
     // 1. Remove unwanted old seeds
     final unwanted = {
       'https://gitverse.ru/api/repos/Pizduk/PizdukVPN/raw/branch/master/WLAutoPiz.txt',
