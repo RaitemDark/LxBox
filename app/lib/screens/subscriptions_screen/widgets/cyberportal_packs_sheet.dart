@@ -107,7 +107,7 @@ class _CyberportalPacksSheetState extends State<CyberportalPacksSheet> {
           ),
           const SizedBox(height: 16),
           DropdownButtonFormField<String>(
-            value: _selectedPackCode,
+            initialValue: _selectedPackCode,
             isExpanded: true,
             decoration: InputDecoration(
               labelText: getLocalText.s("Select pack"),

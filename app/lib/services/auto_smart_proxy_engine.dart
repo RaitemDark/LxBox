@@ -1,6 +1,4 @@
-import 'package:flutter/foundation.dart';
 import '../controllers/subscription_controller.dart';
-import '../models/node_spec.dart';
 import 'app_log.dart';
 
 /// §400 — Автоматический умный движок авто-генерации прокси без участия юзера.

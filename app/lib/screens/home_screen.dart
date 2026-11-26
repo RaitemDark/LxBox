@@ -522,7 +522,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
         if (d.tag == 'vpn-1') return d.copyWith(enabled: true);
         return d.copyWith(enabled: false);
       }).toList();
-      await SettingsStorage.saveDirections(updated);
+      await SettingsStorage.setDirections(updated);
     }
 
     // 1. Remove unwanted old seeds
@@ -1153,7 +1153,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
                 icon: const Icon(Icons.dns_outlined),
                 tooltip: getLocalText.s("Quick DNS Proxy"),
                 onPressed: () => QuickDnsSheet.show(context, () async {
-                  _controller.markConfigDirty();
+                  SettingsStorage.markConfigDirty();
                   await _rebuildAndClearDirty();
                 }),
               ),
