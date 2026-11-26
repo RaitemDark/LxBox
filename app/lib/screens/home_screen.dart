@@ -521,7 +521,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
     if (dirs.length > 1) {
       for (final d in dirs) {
         if (d.tag != 'vpn-1' && d.enabled) {
-          await DirectionMutations.update(d.copyWith(enabled: false));
+          await DirectionMutations.update(d.copyWith(enabled: false), _subController);
         }
       }
     }
