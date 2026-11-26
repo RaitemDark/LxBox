@@ -316,7 +316,9 @@ class HomeNodeList extends StatelessWidget {
             ),
           ),
           child: InkWell(
-            onLongPress: onLongPressServer != null ? () => onLongPressServer!(tag) : null,
+            onLongPress: onLongPressServer != null
+                ? () => onLongPressServer!(tag)
+                : () => showServerRowContextMenu(ctx, tag, subController),
             child: NodeRow(
             item: NodeViewItem(
               tag: tag,

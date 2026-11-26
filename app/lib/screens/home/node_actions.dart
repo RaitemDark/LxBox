@@ -215,3 +215,85 @@ void showNodeQrDialog(
     ),
   );
 }
+
+Future<void> addToFavorites(
+    BuildContext context, String tag, SubscriptionController subController) async {
+  final owner = ownerOfTag(tag, subController.entries);
+  if (owner == null) return;
+  final entryIndex = owner.entryIndex;
+  if (entryIndex < 0 || entryIndex >= subController.entries.length) return;
+
+  var favIdx = subController.entries.indexWhere((e) =>
+      e.name.toLowerCase().contains('избранное') || e.displayName.toLowerCase().contains('избранное'));
+  if (favIdx < 0) {
+    await subController.addFolder('⭐ Избранное');
+    favIdx = subController.entries.length - 1;
+  }
+
+  final entry = subController.entries[entryIndex];
+  if (entry.list is UserServer) {
+    await subController.moveServerToFolder(entryIndex, favIdx);
+  } else if (entry.list is FolderServers && owner.memberIndex != null) {
+    await subController.moveMemberToFolder(entryIndex, owner.memberIndex!, favIdx);
+  } else if (entry.list is SubscriptionServers) {
+    final list = entry.list as SubscriptionServers;
+    final bare = TagResolver.stripPrefix(tag, list.tagPrefix);
+    final node = list.nodes.where((n) => n.tag == bare).firstOrNull;
+    if (node != null) {
+      await subController.addMembersToFolder(favIdx, node.toUri());
+    }
+  }
+
+  if (context.mounted) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(getLocalText.s("Added to Favorites ⭐"))),
+    );
+  }
+}
+
+void showServerRowContextMenu(
+  BuildContext context,
+  String tag,
+  SubscriptionController subController,
+) {
+  final cs = Theme.of(context).colorScheme;
+  showModalBottomSheet<void>(
+    context: context,
+    backgroundColor: cs.surface,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    ),
+    builder: (bCtx) => Padding(
+      padding: EdgeInsets.fromLTRB(16, 16, 16, MediaQuery.of(bCtx).padding.bottom + 16),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ListTile(
+            leading: const Icon(Icons.star_outline, color: Colors.amber),
+            title: Text(getLocalText.s("Add to Favorites")),
+            onTap: () {
+              Navigator.pop(bCtx);
+              unawaited(addToFavorites(context, tag, subController));
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.copy_outlined),
+            title: Text(getLocalText.s("Copy link")),
+            onTap: () {
+              Navigator.pop(bCtx);
+              copyNodeUri(context, tag, subController);
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.qr_code_outlined),
+            title: Text(getLocalText.s("Show QR code")),
+            onTap: () {
+              Navigator.pop(bCtx);
+              showNodeQrDialog(context, tag, subController);
+            },
+          ),
+        ],
+      ),
+    ),
+  );
+}

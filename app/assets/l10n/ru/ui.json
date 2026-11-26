@@ -4865,5 +4865,14 @@
   },
   "Copy link": {
     "value": "Скопировать ссылку"
+  },
+  "Add to Favorites": {
+    "value": "Добавить в Избранное"
+  },
+  "Added to Favorites ⭐": {
+    "value": "Добавлено в Избранное ⭐"
+  },
+  "Show QR code": {
+    "value": "Показать QR-код"
   }
 }
