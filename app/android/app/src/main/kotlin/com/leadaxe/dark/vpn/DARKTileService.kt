@@ -159,7 +159,7 @@ class DARKTileService : TileService() {
                 Tile.STATE_INACTIVE to L10n.str(this, R.string.tile_status_disconnected)
         }
         tile.state = state
-        tile.label = L10n.str(this, R.string.app_name)
+        tile.label = "DARK"
         // Tile.setSubtitle добавлен в API 29 (Android 10). Извлечено в
         // @RequiresApi-helper чтобы ART class verifier на API < 29 не
         // встретил ссылку на отсутствующий метод и не отказался грузить
