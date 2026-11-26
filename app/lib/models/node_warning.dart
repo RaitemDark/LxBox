@@ -175,7 +175,7 @@ final class UnknownFingerprintWarning extends NodeWarning {
   String messageWith(GetLocalText t) => t.s("Unknown uTLS fingerprint \"%s\" replaced with \"chrome\" (would otherwise break the whole config).", value);
 
   @override
-  WarningSeverity get severity => WarningSeverity.warning;
+  WarningSeverity get severity => WarningSeverity.info;
 }
 
 /// §217 — причина сброса XHTTP-параметра (§279: enum вместо free-text —
@@ -225,7 +225,7 @@ final class XhttpParamResetWarning extends NodeWarning {
   }
 
   @override
-  WarningSeverity get severity => WarningSeverity.warning;
+  WarningSeverity get severity => WarningSeverity.info;
 }
 
 /// §320 — `ech` из подписки проигнорирован. Xray-форма `ech=<name>+<resolver>`
