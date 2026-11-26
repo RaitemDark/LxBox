@@ -29,6 +29,7 @@ import 'owner_navigation.dart';
 import 'subscriptions_screen.dart';
 import 'home/widgets/progress_banner.dart';
 import 'home/widgets/nodes_header.dart';
+import 'home/widgets/quick_dns_sheet.dart';
 import 'home/source_lookup.dart';
 import '../services/tag_resolver.dart';
 import 'subscriptions_screen/folder_picker.dart';
@@ -1139,6 +1140,14 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
                       )
                     : Text(_activeTab, style: const TextStyle(fontWeight: FontWeight.bold))),
             actions: [
+              IconButton(
+                icon: const Icon(Icons.dns_outlined),
+                tooltip: getLocalText.s("Quick DNS Proxy"),
+                onPressed: () => QuickDnsSheet.show(context, () async {
+                  _controller.markConfigDirty();
+                  await _rebuildAndClearDirty();
+                }),
+              ),
               if (!isMainTab && _tabSelectedTags.isNotEmpty) ...[
                 IconButton(
                   icon: const Icon(Icons.drive_file_move_outline),

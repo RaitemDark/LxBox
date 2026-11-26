@@ -4850,5 +4850,20 @@
   },
   "Import selected pack": {
     "value": "Забрать пак"
+  },
+  "Quick DNS Proxy": {
+    "value": "Быстрый DNS Прокси"
+  },
+  "Standard DNS": {
+    "value": "Стандартный DNS"
+  },
+  "Default system resolvers": {
+    "value": "Системные резолверы по умолчанию"
+  },
+  "Brawl Stars & Null's games proxy DNS": {
+    "value": "Прокси DNS специально для Null's Brawl и игр"
+  },
+  "Anti-blocking Comss DNS proxy": {
+    "value": "Прокси DNS обхода блокировок Comss"
   }
 }
