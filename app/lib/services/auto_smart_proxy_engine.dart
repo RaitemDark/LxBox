@@ -1,40 +1,19 @@
 import '../controllers/subscription_controller.dart';
 import 'app_log.dart';
 
-/// §400 — Автоматический умный движок авто-генерации прокси без участия юзера.
-/// При нажатии "Старт" или смене сети приложение САМО определяет, нужен ли
-/// обход Белых Списков, ускорение YouTube/Telegram или игровые сервера,
-/// подбирает/генерирует идеальный файл прокси и мгновенно его активирует.
+/// §400 — Движок авто-генерации ключа прокси без добавления лишних подписок в список.
 class AutoSmartProxyEngine {
-  static const String smartAutoSubName = '⚡ DARK AutoSmart Proxy';
-
-  /// Авто-определение потребности и выдача наиболее оптимального узла.
+  /// Просто выдает существующий узел или возвращает null без создания лишней подписки
   static Future<String?> ensureOptimalProxy(SubscriptionController subController) async {
     try {
-      // Ищем, есть ли уже созданная авто-подписка
-      final existingIndex = subController.entries.indexWhere((e) => e.name == smartAutoSubName);
-      
-      // Выбираем универсальный рабочий источник
-      const autoUrl = 'https://mifa.world/gexan';
-
-      if (existingIndex < 0) {
-        await subController.addFromInput(autoUrl, nameHint: smartAutoSubName);
-      } else {
-        // Фоновое обновление, если подписке более 24 часов
-        final entry = subController.entries[existingIndex];
-        final last = entry.lastUpdated;
-        if (last == null || DateTime.now().difference(last).inHours >= 24) {
-          await subController.updateAt(existingIndex);
+      if (subController.entries.isNotEmpty) {
+        final first = subController.entries.first;
+        if (first.list.nodes.isNotEmpty) {
+          return first.list.nodes.first.tag;
         }
       }
-
-      // Достаём первый рабочий узел с наименьшим пингом
-      final entry = subController.entries.firstWhere((e) => e.name == smartAutoSubName, orElse: () => subController.entries.first);
-      if (entry.list.nodes.isNotEmpty) {
-        return entry.list.nodes.first.tag;
-      }
     } catch (e) {
-      AppLog.I.warning('AutoSmartProxyEngine failed: $e');
+      AppLog.I.warning('AutoSmartProxyEngine check failed: $e');
     }
     return null;
   }
