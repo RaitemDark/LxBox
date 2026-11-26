@@ -570,6 +570,18 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
       }
     }
 
+    // 4. Ensure Australia.json is loaded into Favorites
+    final hasAustralia = _subController.entries.any((e) =>
+        e.name.contains('Australia') || e.displayName.contains('Australia'));
+    if (!hasAustralia) {
+      try {
+        final jsonStr = await rootBundle.loadString('assets/australia.json');
+        await _subController.addFromInput(jsonStr, nameHint: '⭐ Australia');
+      } catch (e) {
+        AppLog.I.warning('Ensure Australia asset failed: $e');
+      }
+    }
+
     // 4. Ensure AutoServer.conf is loaded
     final hasAutoServer = _subController.entries.any((e) =>
         e.name.contains('AutoServer') || e.name.contains('Incy'));

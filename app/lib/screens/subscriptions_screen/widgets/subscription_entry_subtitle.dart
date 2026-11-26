@@ -75,6 +75,14 @@ Widget? buildSubscriptionEntrySubtitle(
       parts.add(Text(getLocalText.s("never"), style: textStyle));
     }
 
+    final meta = entry.meta;
+    if (meta != null && meta.expireTimestamp != null) {
+      final expireDate = DateTime.fromMillisecondsSinceEpoch(meta.expireTimestamp! * 1000);
+      final formatted = '${expireDate.day.toString().padLeft(2, '0')}.${expireDate.month.toString().padLeft(2, '0')}.${expireDate.year}';
+      parts.add(Icon(Icons.event_outlined, size: 12, color: muted));
+      parts.add(Text(getLocalText.s("expires: %s", formatted), style: textStyle));
+    }
+
     final fails = entry.consecutiveFails;
     if (fails > 0) {
       final failColor = entry.enabled ? scheme.error : muted;

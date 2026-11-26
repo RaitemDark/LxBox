@@ -4835,5 +4835,8 @@
   },
   "Gosuslugi, Banks, Ozon and WB go DIRECT — VPN does not block them.": {
     "value": "ГосУслуги, Банки, Ozon и WB идут напрямую — VPN им не мешает."
+  },
+  "expires: %s": {
+    "value": "Истекает: %s"
   }
 }
