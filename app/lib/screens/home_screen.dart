@@ -550,7 +550,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
       ('🏳️', 'Подписка БС', 'https://github.com/PizdukMod/PizdukVPN/raw/refs/heads/main/wl'),
       ('🏳️', 'Aetris БС', 'https://raw.githubusercontent.com/flaafix/AetrisVPN/refs/heads/main/AetrisVPN.txt'),
       ('✨', 'Aetris БС Лайт', 'https://raw.githubusercontent.com/flaafix/AetrisVPN-white-list-lite/refs/heads/main/AetrisVPN.txt'),
-      ('🎮', 'Brawl', 'https://s3.twcstorage.ru/cd58536-mhand-bucket/vless/vless_mhand.txt'),
+      ('🎮', 'Brawl', 'https://mifa.world/gexan'),
       ('⚡', 'MIFA Telegram', 'https://gist.githubusercontent.com/Diman331/8c868070c0b5a5ec0c7d94507717b67b/raw/subscription.txt'),
     ];
 
@@ -627,7 +627,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
       ('🏳️', 'Подписка БС', 'https://github.com/PizdukMod/PizdukVPN/raw/refs/heads/main/wl'),
       ('🏳️', 'Aetris БС', 'https://raw.githubusercontent.com/flaafix/AetrisVPN/refs/heads/main/AetrisVPN.txt'),
       ('✨', 'Aetris БС Лайт', 'https://raw.githubusercontent.com/flaafix/AetrisVPN-white-list-lite/refs/heads/main/AetrisVPN.txt'),
-      ('🎮', 'Brawl', 'https://s3.twcstorage.ru/cd58536-mhand-bucket/vless/vless_mhand.txt'),
+      ('🎮', 'Brawl', 'https://mifa.world/gexan'),
       ('⚡', 'MIFA Telegram', 'https://gist.githubusercontent.com/Diman331/8c868070c0b5a5ec0c7d94507717b67b/raw/subscription.txt'),
     ];
     for (final (emoji, label, url) in seeds) {
