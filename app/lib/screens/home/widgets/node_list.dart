@@ -293,6 +293,20 @@ class HomeNodeList extends StatelessWidget {
         final protoType = protoSrc != null ? cache.protocolOf(protoSrc) : null;
         final transport = protoSrcNode?.transportLabel;
         final security = protoSrcNode?.securityLabel;
+
+        // Lazy real-time pinging as servers scroll into the visible viewport
+        if (state.tunnelUp &&
+            state.delayOf(tag) == null &&
+            state.pingBusy[tag] != '…' &&
+            !state.isSystemControlTag(tag) &&
+            !isDirectionAuto) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (state.delayOf(tag) == null && state.pingBusy[tag] != '…') {
+              unawaited(controller.runNodeUrltest(tag));
+            }
+          });
+        }
+
         final isSelected = selectedTags.contains(tag);
         final row = DecoratedBox(
           decoration: BoxDecoration(

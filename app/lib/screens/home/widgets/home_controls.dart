@@ -84,7 +84,7 @@ class HomeControls extends StatelessWidget {
     final toggleEnabled = canToggle && (state.tunnelUp || state.configRaw.isNotEmpty);
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+      padding: const EdgeInsets.fromLTRB(12, 4, 12, 0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -140,7 +140,7 @@ class HomeControls extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 6),
           // ── Направление + пинг — та же логика, оформлена карточкой ──
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
@@ -227,8 +227,8 @@ class HomeControls extends StatelessWidget {
       button: true,
       label: connected ? getLocalText.s("Stop") : getLocalText.s("Start"),
       child: SizedBox(
-        width: 130,
-        height: 130,
+        width: 86,
+        height: 86,
         child: Stack(
           alignment: Alignment.center,
           children: [
@@ -241,8 +241,8 @@ class HomeControls extends StatelessWidget {
                   return Transform.scale(
                     scale: scale,
                     child: Container(
-                      width: 130,
-                      height: 130,
+                      width: 86,
+                      height: 86,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: cs.primary.withValues(alpha: 0.15),
@@ -253,8 +253,8 @@ class HomeControls extends StatelessWidget {
               ),
             AnimatedContainer(
               duration: const Duration(milliseconds: 300),
-              width: connected ? 104 : 96,
-              height: connected ? 104 : 96,
+              width: connected ? 72 : 64,
+              height: connected ? 72 : 64,
               decoration: BoxDecoration(
                 color: cs.surface,
                 shape: BoxShape.circle,

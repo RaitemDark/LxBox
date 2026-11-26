@@ -1103,25 +1103,25 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
                     ? Row(
                         children: [
                           Container(
-                            padding: const EdgeInsets.all(6),
+                            padding: const EdgeInsets.all(4),
                             decoration: BoxDecoration(
                               color: state.tunnelUp ? cs.primary.withValues(alpha: 0.15) : cs.surfaceContainerHighest.withValues(alpha: 0.5),
                               shape: BoxShape.circle,
                               border: Border.all(
                                 color: state.tunnelUp ? cs.primary : cs.outlineVariant.withValues(alpha: 0.3),
-                                width: 1.5,
+                                width: 1.0,
                               ),
                             ),
-                            child: Icon(Icons.shield, size: 18, color: state.tunnelUp ? cs.primary : cs.onSurfaceVariant),
+                            child: Icon(Icons.shield, size: 14, color: state.tunnelUp ? cs.primary : cs.onSurfaceVariant),
                           ),
-                          const SizedBox(width: 10),
+                          const SizedBox(width: 8),
                           Text(
                             // l10n-exempt: brand name
                             'DARK',
                             style: TextStyle(
-                              fontSize: 20,
+                              fontSize: 16,
                               fontWeight: FontWeight.w900,
-                              letterSpacing: 3.0,
+                              letterSpacing: 2.0,
                               color: state.tunnelUp ? cs.primary : null,
                             ),
                           ),
