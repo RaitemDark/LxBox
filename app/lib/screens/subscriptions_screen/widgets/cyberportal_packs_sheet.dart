@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../controllers/subscription_controller.dart';
 import '../../../services/app_log.dart';
+import '../../../services/error_format.dart';
 import '../../../services/l10n/locale_controller.dart';
 
 /// Диалог выбора пака Киберпортал (CP-001 ... CP-043)
@@ -70,7 +71,7 @@ class _CyberportalPacksSheetState extends State<CyberportalPacksSheet> {
       AppLog.I.warning('Import pack error: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e')),
+          SnackBar(content: Text(getLocalText.s("Error: %s", formatUserError(e).render()))),
         );
       }
     } finally {

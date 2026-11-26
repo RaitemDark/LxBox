@@ -84,7 +84,10 @@ class _QuickDnsSheetState extends State<QuickDnsSheet> {
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             tileColor: _activeDns == 'nulls' ? cs.primaryContainer.withValues(alpha: 0.3) : null,
             leading: const Icon(Icons.sports_esports_outlined, color: Colors.amber),
-            title: const Text("Null's Brawl DNS (dns.nullsproxy.com)"),
+            title: const Text(
+              // l10n-exempt: brand name
+              "Null's Brawl DNS (dns.nullsproxy.com)",
+            ),
             subtitle: Text(getLocalText.s("Brawl Stars & Null's games proxy DNS"), style: const TextStyle(fontSize: 12)),
             trailing: _activeDns == 'nulls' ? Icon(Icons.check_circle, color: cs.primary) : null,
             onTap: () => _selectDns('nulls', 'https://dns.nullsproxy.com/dns-query'),
@@ -94,7 +97,10 @@ class _QuickDnsSheetState extends State<QuickDnsSheet> {
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             tileColor: _activeDns == 'comss' ? cs.primaryContainer.withValues(alpha: 0.3) : null,
             leading: const Icon(Icons.speed_outlined, color: Colors.cyan),
-            title: const Text("Comss DNS (router.comss.one)"),
+            title: const Text(
+              // l10n-exempt: brand name
+              "Comss DNS (router.comss.one)",
+            ),
             subtitle: Text(getLocalText.s("Anti-blocking Comss DNS proxy"), style: const TextStyle(fontSize: 12)),
             trailing: _activeDns == 'comss' ? Icon(Icons.check_circle, color: cs.primary) : null,
             onTap: () => _selectDns('comss', 'https://router.comss.one/dns-query'),
