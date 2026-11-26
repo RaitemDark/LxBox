@@ -4838,5 +4838,17 @@
   },
   "expires: %s": {
     "value": "Истекает: %s"
+  },
+  "Cyberportal Pack Selector": {
+    "value": "Выбор пака Киберпортал"
+  },
+  "Select a pack to automatically generate and import servers for Telegram, YouTube and White Lists.": {
+    "value": "Выберите пак для автоматической генерации и импорта серверов для Telegram, YouTube и Белых списков."
+  },
+  "Select pack": {
+    "value": "Выберите пак"
+  },
+  "Import selected pack": {
+    "value": "Забрать пак"
   }
 }

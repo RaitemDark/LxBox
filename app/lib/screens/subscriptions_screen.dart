@@ -31,6 +31,7 @@ import 'subscriptions_screen/widgets/add_icon_button.dart';
 import 'subscriptions_screen/widgets/chains_section.dart';
 import 'subscriptions_screen/widgets/subscription_entry_tile.dart';
 import 'subscriptions_screen/widgets/subscriptions_empty_state.dart';
+import 'subscriptions_screen/widgets/cyberportal_packs_sheet.dart';
 import '../services/l10n/locale_controller.dart';
 import '../services/file_import.dart';
 
@@ -746,6 +747,7 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
             // (long-press на «+» — discoverability через accidental,
             // overflow menu — explicit affordance).
             if (v == 'auto_warp') unawaited(_autoGenerateWarpTelegram());
+            if (v == 'cp_packs') CyberportalPacksSheet.show(context, widget.subController, _regenerateAndSave);
             if (v == 'wizard') _openAddServerWizard();
             if (v == 'warp') _openWarpWizard();
             if (v == 'paste') unawaited(_pasteFromClipboard());
@@ -760,6 +762,7 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
             // Раскладка утверждена оператором 24.08: четыре смысловые
             // секции — создать / получить готовое / импортировать / подписки.
             PopupMenuItem(value: 'auto_warp', child: Text(getLocalText.s("⚡ Автогенерация WARP/Telegram"))),
+            PopupMenuItem(value: 'cp_packs', child: Text(getLocalText.s("Cyberportal Pack Selector"))),
             const PopupMenuDivider(),
             PopupMenuItem(value: 'wizard', child: Text(getLocalText.s("Add server…"))),
             // §393 C7 — цепочка это ТРЕТИЙ ТИП ИСТОЧНИКА (маршрут через
