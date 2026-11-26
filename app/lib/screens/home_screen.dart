@@ -518,11 +518,11 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
     // 0. Ensure single direction (VPN 1) is active
     final dirs = await SettingsStorage.getDirections();
     if (dirs.length > 1) {
-      final updated = dirs.map((d) {
-        if (d.tag == 'vpn-1') return d.copyWith(enabled: true);
-        return d.copyWith(enabled: false);
-      }).toList();
-      await SettingsStorage.setDirections(updated);
+      for (final d in dirs) {
+        if (d.tag != 'vpn-1' && d.enabled) {
+          await SettingsStorage.updateDirection(d.copyWith(enabled: false));
+        }
+      }
     }
 
     // 1. Remove unwanted old seeds

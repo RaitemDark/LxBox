@@ -11,8 +11,6 @@ import '../vpn/cc_channel.dart';
 import '../config/config_parse.dart';
 import '../models/direction.dart' show UrltestMode;
 import '../models/home_state.dart';
-import '../models/server_list.dart';
-import '../controllers/subscription_controller.dart';
 import '../services/app_log.dart';
 import '../services/automation/event_emitter.dart';
 import '../services/config_staleness.dart';
@@ -27,9 +25,6 @@ import '../services/template_loader.dart';
 import '../services/haptic_service.dart';
 import '../services/rule_set_auto_updater.dart';
 import '../services/subscription/auto_updater.dart';
-import '../services/auto_smart_proxy_engine.dart';
-import '../screens/home/source_lookup.dart';
-import '../services/tag_resolver.dart';
 
 part 'home_controller/config_io.dart';
 part 'home_controller/heartbeat.dart';
