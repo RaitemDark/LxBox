@@ -9,6 +9,7 @@ import '../../models/subscription_meta.dart';
 import '../parser/body_decoder.dart';
 import '../parser/parse_all.dart';
 import 'subscription_identity.dart';
+import 'telegram_link_extractor.dart';
 import 'user_agent.dart';
 
 /// Источник подписки/узлов (§3.1 спеки 026). Sealed — топ-функция `fetch`
@@ -209,6 +210,14 @@ Future<FetchResult> _fetch(SubscriptionSource source, http.Client client) async 
             (override.isNotEmpty ? override : resolveSubscriptionUserAgent());
         idHeaders = SubscriptionIdentity.fetchHeaders();
       }
+      var targetUrl = u;
+      if (u.contains('t.me/')) {
+        final extracted = await extractSubscriptionUrlFromTelegram(u);
+        if (extracted != null && extracted.isNotEmpty) {
+          targetUrl = extracted;
+        }
+      }
+
       final reqHeaders = <String, String>{
         'User-Agent': effectiveUa,
         ...idHeaders,
@@ -222,7 +231,7 @@ Future<FetchResult> _fetch(SubscriptionSource source, http.Client client) async 
       for (var attempt = 0; attempt < 3; attempt++) {
         try {
           final resp = await client
-              .get(Uri.parse(u), headers: reqHeaders)
+              .get(Uri.parse(targetUrl), headers: reqHeaders)
               .timeout(t);
           if (resp.statusCode >= 400 && resp.statusCode < 500) {
             throw HttpException('HTTP ${resp.statusCode} for $u');
