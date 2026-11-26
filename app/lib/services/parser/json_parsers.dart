@@ -540,6 +540,9 @@ NodeSpec? _xrayToSpec(Map<String, dynamic> o, String remarks) {
       return _xraySsToSpec(o, remarks);
     case 'hysteria':
       return _xrayHy2ToSpec(o, remarks);
+    case 'wireguard':
+    case 'wg':
+      return _xrayWireguardToSpec(o, remarks);
     default:
       return null;
   }
@@ -609,6 +612,94 @@ VmessSpec? _xrayVmessToSpec(Map<String, dynamic> o, String remarks) {
     tls: tls,
     transport: _xrayTransportFromStream(stream),
     warnings: warnings,
+  );
+}
+
+WireguardSpec? _xrayWireguardToSpec(Map<String, dynamic> o, String remarks) {
+  final s = o['settings'] as Map? ?? const {};
+  final peers = (s['peers'] as List?)?.cast<Map>() ?? const [];
+  if (peers.isEmpty) return null;
+  final p = peers.first;
+
+  var peerServer = p['address']?.toString() ?? p['server']?.toString() ?? '';
+  var peerPort = (p['port'] as num?)?.toInt() ?? 51820;
+
+  final endpointStr = p['endpoint']?.toString() ?? '';
+  if (endpointStr.isNotEmpty) {
+    if (endpointStr.startsWith('[')) {
+      final close = endpointStr.indexOf(']');
+      if (close > 0) {
+        peerServer = endpointStr.substring(1, close);
+        final tail = endpointStr.substring(close + 1);
+        if (tail.startsWith(':')) {
+          peerPort = int.tryParse(tail.substring(1)) ?? peerPort;
+        }
+      }
+    } else {
+      final lastColon = endpointStr.lastIndexOf(':');
+      if (lastColon > 0) {
+        peerServer = endpointStr.substring(0, lastColon);
+        peerPort = int.tryParse(endpointStr.substring(lastColon + 1)) ?? peerPort;
+      } else {
+        peerServer = endpointStr;
+      }
+    }
+  }
+
+  if (peerServer.isEmpty) return null;
+
+  final wgPriv = normalizeWGKey(
+    s['secretKey']?.toString() ??
+    s['secret_key']?.toString() ??
+    s['privateKey']?.toString() ??
+    s['private_key']?.toString() ??
+    '',
+  );
+  final wgPub = normalizeWGKey(
+    p['publicKey']?.toString() ??
+    p['public_key']?.toString() ??
+    '',
+  );
+
+  if (wgPriv == null || wgPub == null) return null;
+
+  final addr = (s['address'] as List?)
+          ?.map((e) => ensureCidr(e.toString()))
+          .toList() ??
+      const <String>[];
+
+  final allowedIpsRaw = p['allowedIPs'] ?? p['allowed_ips'];
+  final allowedIps = (allowedIpsRaw as List?)
+          ?.map((e) => ensureCidr(e.toString()))
+          .toList() ??
+      const ['0.0.0.0/0', '::/0'];
+
+  final mtu = (s['mtu'] as num?)?.toInt();
+  final reserved = _reservedFromJson(p['reserved'] ?? s['reserved']);
+
+  final label = remarks.isNotEmpty ? remarks : (o['tag']?.toString() ?? 'WireGuard');
+  final tag = tagFromLabel(label, 'wireguard', peerServer, peerPort);
+
+  return WireguardSpec(
+    id: newUuidV4(),
+    tag: tag,
+    label: label,
+    server: peerServer,
+    port: peerPort,
+    rawUri: '',
+    privateKey: wgPriv,
+    localAddresses: addr,
+    peers: [
+      WireguardPeer(
+        publicKey: wgPub,
+        preSharedKey: p['preSharedKey']?.toString() ?? p['pre_shared_key']?.toString() ?? '',
+        endpointHost: peerServer,
+        endpointPort: peerPort,
+        allowedIps: allowedIps,
+        reserved: reserved,
+      ),
+    ],
+    mtu: mtu,
   );
 }
 
@@ -1044,11 +1135,35 @@ NodeSpec? parseSingboxEntry(Map<String, dynamic> entry) {
       final peers = (entry['peers'] as List?)?.cast<Map>() ?? const [];
       if (peers.isEmpty) return null;
       final p = peers.first;
-      final peerServer = p['address']?.toString() ?? server;
-      final peerPort = (p['port'] as num?)?.toInt() ?? port;
+      var peerServer = p['address']?.toString() ?? p['server']?.toString() ?? server;
+      var peerPort = (p['port'] as num?)?.toInt() ?? port;
+
+      final endpointStr = p['endpoint']?.toString() ?? '';
+      if (endpointStr.isNotEmpty) {
+        if (endpointStr.startsWith('[')) {
+          final close = endpointStr.indexOf(']');
+          if (close > 0) {
+            peerServer = endpointStr.substring(1, close);
+            final tail = endpointStr.substring(close + 1);
+            if (tail.startsWith(':')) {
+              peerPort = int.tryParse(tail.substring(1)) ?? peerPort;
+            }
+          }
+        } else {
+          final lastColon = endpointStr.lastIndexOf(':');
+          if (lastColon > 0) {
+            peerServer = endpointStr.substring(0, lastColon);
+            peerPort = int.tryParse(endpointStr.substring(lastColon + 1)) ?? peerPort;
+          } else {
+            peerServer = endpointStr;
+          }
+        }
+      }
+
       if (peerServer.isEmpty) return null;
+      final allowedIpsRaw = p['allowed_ips'] ?? p['allowedIPs'];
       final allowedIps =
-          (p['allowed_ips'] as List?)
+          (allowedIpsRaw as List?)
               ?.map((e) => ensureCidr(e.toString()))
               .toList() ??
           const ['0.0.0.0/0', '::/0'];
@@ -1072,10 +1187,20 @@ NodeSpec? parseSingboxEntry(Map<String, dynamic> entry) {
       // SPEC 103 D-023/D-030 — та же проверка ключей, что на URI/INI-путях:
       // мусорный ключ из импортированного конфига валит `sing-box check`
       // целиком, а неканоническая форма даёт другой identity-хеш той же ноде.
-      final wgPriv = normalizeWGKey(entry['private_key']?.toString() ?? '');
-      final wgPub = normalizeWGKey(p['public_key']?.toString() ?? '');
+      final wgPriv = normalizeWGKey(
+        entry['private_key']?.toString() ??
+        entry['privateKey']?.toString() ??
+        entry['secretKey']?.toString() ??
+        entry['secret_key']?.toString() ??
+        '',
+      );
+      final wgPub = normalizeWGKey(
+        p['public_key']?.toString() ??
+        p['publicKey']?.toString() ??
+        '',
+      );
       if (wgPriv == null || wgPub == null) return null;
-      final wgPskRaw = p['pre_shared_key']?.toString() ?? '';
+      final wgPskRaw = p['pre_shared_key']?.toString() ?? p['preSharedKey']?.toString() ?? '';
       final String wgPsk;
       if (wgPskRaw.isEmpty) {
         wgPsk = '';
