@@ -1007,7 +1007,16 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
       final name = entry.name.toLowerCase();
       final dispName = entry.displayName.toLowerCase();
       if (name.contains(target) || dispName.contains(target)) {
-        await _subController.removeAt(i);
+        if (entry.list is FolderServers) {
+          final folder = entry.list as FolderServers;
+          final allIndexes = Set<int>.from(List.generate(folder.members.length, (idx) => idx));
+          await _subController.removeMembersAt(i, allIndexes);
+        } else if (entry.list is SubscriptionServers) {
+          final sub = entry.list as SubscriptionServers;
+          await _subController.setSubscriptionNodesEnabled(i, sub.nodes, enabled: false);
+        } else if (entry.list is UserServer) {
+          await _subController.removeAt(i);
+        }
       }
     }
 
