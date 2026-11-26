@@ -1,17 +1,10 @@
 import 'package:flutter/material.dart';
 
 import '../../../models/home_state.dart';
+import '../../../services/real_ip_lookup_service.dart';
 
-/// Статус-чип VPN-туннеля в connect-controls на главном экране: иконка щита +
-/// label текущего [TunnelStatus]. Во время connecting иконка вращается
-/// ([connectingAnim], которым управляет `_HomeScreenState` вне build-фазы).
-///
-/// UI-маппинг: revoked и `unknown` показываются как disconnected (нейтральный
-/// off-state — факт revoke юзер получает через SnackBar, не алармирующий чип).
-///
-/// Внешний вид — под фирменный дизайн DARK (крупнее, с акцентной подложкой),
-/// логика и источники данных не изменены.
-class StatusChip extends StatelessWidget {
+/// Статус-чип VPN-туннеля в connect-controls на главном экране
+class StatusChip extends StatefulWidget {
   const StatusChip({
     super.key,
     required this.state,
@@ -26,24 +19,59 @@ class StatusChip extends StatelessWidget {
   final Animation<double> connectingAnim;
 
   @override
+  State<StatusChip> createState() => _StatusChipState();
+}
+
+class _StatusChipState extends State<StatusChip> {
+  @override
+  void initState() {
+    super.initState();
+    _checkIpIfNeeded();
+  }
+
+  @override
+  void didUpdateWidget(covariant StatusChip oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.state.tunnelUp && !oldWidget.state.tunnelUp) {
+      _checkIpIfNeeded();
+    }
+  }
+
+  Future<void> _checkIpIfNeeded() async {
+    if (widget.state.tunnelUp) {
+      final info = await RealIpLookupService.lookupRealIp();
+      if (mounted && info != null) {
+        setState(() {});
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
-    final icon = state.tunnelUp
+    final icon = widget.state.tunnelUp
         ? Icons.shield
-        : isConnecting
+        : widget.isConnecting
             ? Icons.sync
             : Icons.shield_outlined;
-    final color = state.tunnelUp ? cs.primary : cs.onSurfaceVariant;
-    final label = (isRevoked || state.tunnel == TunnelStatus.unknown)
-        ? TunnelStatus.disconnected.label()
-        : state.tunnel.label();
+    final color = widget.state.tunnelUp ? cs.primary : cs.onSurfaceVariant;
+    
+    final ipInfo = widget.state.tunnelUp ? RealIpLookupService.cachedInfo : null;
+    String label;
+    if (widget.state.tunnelUp && ipInfo != null) {
+      label = '${ipInfo.flagEmoji} ${ipInfo.ip} (${ipInfo.countryName})';
+    } else {
+      label = (widget.isRevoked || widget.state.tunnel == TunnelStatus.unknown)
+          ? TunnelStatus.disconnected.label()
+          : widget.state.tunnel.label();
+    }
 
     Widget iconWidget = Icon(icon, size: 16, color: color);
-    if (isConnecting) {
+    if (widget.isConnecting) {
       iconWidget = AnimatedBuilder(
-        animation: connectingAnim,
+        animation: widget.connectingAnim,
         builder: (_, child) => Transform.rotate(
-          angle: connectingAnim.value * 2 * 3.14159,
+          angle: widget.connectingAnim.value * 2 * 3.14159,
           child: child,
         ),
         child: iconWidget,
@@ -53,12 +81,12 @@ class StatusChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       decoration: BoxDecoration(
-        color: state.tunnelUp
+        color: widget.state.tunnelUp
             ? cs.primary.withValues(alpha: 0.15)
             : cs.surfaceContainerHighest.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: state.tunnelUp ? cs.primary.withValues(alpha: 0.4) : cs.outlineVariant.withValues(alpha: 0.3),
+          color: widget.state.tunnelUp ? cs.primary.withValues(alpha: 0.4) : cs.outlineVariant.withValues(alpha: 0.3),
           width: 1,
         ),
       ),
@@ -67,8 +95,6 @@ class StatusChip extends StatelessWidget {
         children: [
           iconWidget,
           const SizedBox(width: 8),
-          // Длинные локализованные статусы («Подключено») сжимаются вместо
-          // того, чтобы выдавливать соседей.
           Flexible(
             child: Text(
               label,
