@@ -541,6 +541,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
       ('🏳️', 'Aetris БС', 'https://raw.githubusercontent.com/flaafix/AetrisVPN/refs/heads/main/AetrisVPN.txt'),
       ('✨', 'Aetris БС Лайт', 'https://raw.githubusercontent.com/flaafix/AetrisVPN-white-list-lite/refs/heads/main/AetrisVPN.txt'),
       ('🎮', 'Brawl', 'https://s3.twcstorage.ru/cd58536-mhand-bucket/vless/vless_mhand.txt'),
+      ('⚡', 'MIFA Telegram', 'https://gist.githubusercontent.com/Diman331/8c868070c0b5a5ec0c7d94507717b67b/raw/subscription.txt'),
     ];
 
     for (final (emoji, label, url) in essentialSeeds) {
@@ -569,6 +570,18 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
       }
     }
 
+    // 4. Ensure AutoServer.conf is loaded
+    final hasAutoServer = _subController.entries.any((e) =>
+        e.name.contains('AutoServer') || e.name.contains('Incy'));
+    if (!hasAutoServer) {
+      try {
+        final confStr = await rootBundle.loadString('assets/autoserver.conf');
+        await _subController.addFromInput(confStr, nameHint: '⚡ WARP Incy AutoServer');
+      } catch (e) {
+        AppLog.I.warning('Ensure AutoServer asset failed: $e');
+      }
+    }
+
     // 4. Remove empty default folders named 'Brawl' or 'БС' or 'Белые списки' if subscriptions exist
     for (var i = _subController.entries.length - 1; i >= 0; i--) {
       final entry = _subController.entries[i];
@@ -593,6 +606,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
       ('🏳️', 'Aetris БС', 'https://raw.githubusercontent.com/flaafix/AetrisVPN/refs/heads/main/AetrisVPN.txt'),
       ('✨', 'Aetris БС Лайт', 'https://raw.githubusercontent.com/flaafix/AetrisVPN-white-list-lite/refs/heads/main/AetrisVPN.txt'),
       ('🎮', 'Brawl', 'https://s3.twcstorage.ru/cd58536-mhand-bucket/vless/vless_mhand.txt'),
+      ('⚡', 'MIFA Telegram', 'https://gist.githubusercontent.com/Diman331/8c868070c0b5a5ec0c7d94507717b67b/raw/subscription.txt'),
     ];
     for (final (emoji, label, url) in seeds) {
       try {
