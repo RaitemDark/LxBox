@@ -105,17 +105,6 @@ mixin _PingMixin on ChangeNotifier {
     }
   }
 
-  /// Человекочитаемое сообщение для UI banner / debug log на ошибку
-  /// ping/URLTest операции. Формат: `<target> → <host> — <reason>`.
-  /// Reason формируется через [formatUserError] — общий §041 helper.
-  ///
-  ///   "direct-out → ya.ru — timeout 5.8s"
-  ///   "vpn-2 → ya.ru — HTTP 503"
-  ///   "direct-out → ya.ru — connection refused"
-  static ProbeErrorMsg _formatProbeError(String target, String url, Object e) {
-    return ProbeErrorMsg(target, _probeHost(url), formatUserError(e));
-  }
-
   /// Host из ping-URL для `<target> → <host>`-метки; '' если URL невалиден.
   static String _probeHost(String url) {
     if (url.isEmpty) return '';
