@@ -105,16 +105,6 @@ mixin _PingMixin on ChangeNotifier {
     }
   }
 
-  /// Host из ping-URL для `<target> → <host>`-метки; '' если URL невалиден.
-  static String _probeHost(String url) {
-    if (url.isEmpty) return '';
-    try {
-      return Uri.parse(url).host;
-    } catch (_) {
-      return '';
-    }
-  }
-
   bool _massPingRunning = false;
   bool get massPingRunning => _massPingRunning;
   int _massPingEpoch = 0;
