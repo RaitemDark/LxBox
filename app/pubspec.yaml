@@ -62,6 +62,7 @@ flutter:
     - assets/kiberportal_v1240.yaml
     - assets/autoserver.conf
     - assets/australia.json
+    - assets/usa.json
     - assets/l10n/ru/ # §285 — русская локализация (ui.json + template.json; английский базовый, в коде)
     - assets/donate.json # §362 — способы поддержки (донат-попап в About)
     - assets/warp_endpoints.json # §136 — WARP endpoint/SNI random pools

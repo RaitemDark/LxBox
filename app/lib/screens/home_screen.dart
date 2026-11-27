@@ -568,7 +568,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
       }
     }
 
-    // 4. Ensure Australia.json is loaded into Favorites
+    // 4. Ensure Australia.json and USA.json are loaded into Favorites
     final hasAustralia = _subController.entries.any((e) =>
         e.name.contains('Australia') || e.displayName.contains('Australia'));
     if (!hasAustralia) {
@@ -577,6 +577,17 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
         await _subController.addFromInput(jsonStr, nameHint: '⭐ Australia');
       } catch (e) {
         AppLog.I.warning('Ensure Australia asset failed: $e');
+      }
+    }
+
+    final hasUsa = _subController.entries.any((e) =>
+        e.name.contains('USA') || e.displayName.contains('USA'));
+    if (!hasUsa) {
+      try {
+        final jsonStr = await rootBundle.loadString('assets/usa.json');
+        await _subController.addFromInput(jsonStr, nameHint: '⭐ USA');
+      } catch (e) {
+        AppLog.I.warning('Ensure USA asset failed: $e');
       }
     }
 

@@ -80,9 +80,16 @@ DecodedBody decode(String body) {
   final original = body.trimRight();
   if (original.isEmpty) return const DecodeFailure('empty body');
 
-  // Step 0: Amnezia vpn:// (§110). База64-эвристика ниже её не зацепит
-  // (`:` вне base64-алфавита), но явная ветка должна идти первой.
-  if (original.trimLeft().startsWith('vpn://')) {
+  final trimmedLeft = original.trimLeft();
+
+  // Step 0: JSON direct check (must run before base64 to avoid false positive base64 matches on JSON strings)
+  if (trimmedLeft.startsWith('{') || trimmedLeft.startsWith('[')) {
+    final plainRes = _classifyPlain(original);
+    if (plainRes is! DecodeFailure) return plainRes;
+  }
+
+  // Step 0.1: Amnezia vpn:// (§110).
+  if (trimmedLeft.startsWith('vpn://')) {
     return decodeAmneziaLink(original);
   }
 
