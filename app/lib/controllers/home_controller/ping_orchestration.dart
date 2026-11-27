@@ -45,19 +45,15 @@ mixin _PingMixin on ChangeNotifier {
         _emit(_state.copyWith(delayByDirection: nextDelay, pingBusy: nextBusy));
         _addDebug(DebugSource.app, 'URLTest $nodeTag → $url: ${ms}ms');
       } else {
-        final msg = ProbeErrorMsg(nodeTag, _probeHost(url), RawMsg(r.error));
-        _emit(_state.copyWith(
-            delayByDirection: nextDelay, pingBusy: nextBusy, lastError: msg));
-        _addDebug(DebugSource.app, msg.renderEn());
+        _emit(_state.copyWith(delayByDirection: nextDelay, pingBusy: nextBusy));
+        _addDebug(DebugSource.app, 'URLTest fail $nodeTag: ${r.error}');
         _rescueGroupsSelecting(nodeTag);
       }
     } catch (e) {
       final nextDelay = _delaysWith({nodeTag: -1}, direction: directionKey);
       final nextBusy = Map<String, String>.from(_state.pingBusy)..[nodeTag] = '';
-      final msg = _formatProbeError(nodeTag, url, e);
-      _emit(_state.copyWith(
-          delayByDirection: nextDelay, pingBusy: nextBusy, lastError: msg));
-      _addDebug(DebugSource.app, msg.renderEn());
+      _emit(_state.copyWith(delayByDirection: nextDelay, pingBusy: nextBusy));
+      _addDebug(DebugSource.app, 'URLTest error $nodeTag: $e');
       _rescueGroupsSelecting(nodeTag);
     }
     // §355 — одиночный замер мог убить/оживить корень беды.

@@ -257,8 +257,9 @@ Future<void> addToFavorites(
 void showServerRowContextMenu(
   BuildContext context,
   String tag,
-  SubscriptionController subController,
-) {
+  SubscriptionController subController, {
+  HomeController? homeController,
+}) {
   final cs = Theme.of(context).colorScheme;
   showModalBottomSheet<void>(
     context: context,
@@ -279,6 +280,33 @@ void showServerRowContextMenu(
               unawaited(addToFavorites(context, tag, subController));
             },
           ),
+          if (homeController != null) ...[
+            ListTile(
+              leading: const Icon(Icons.play_circle_outline, color: Colors.green),
+              title: Text(getLocalText.s("Use this node")),
+              onTap: () {
+                Navigator.pop(bCtx);
+                unawaited(homeController.switchNode(tag));
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.speed),
+              title: Text(getLocalText.s("Ping")),
+              onTap: () {
+                Navigator.pop(bCtx);
+                unawaited(homeController.runNodeUrltest(tag));
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.info_outline),
+              title: Text(getLocalText.s("Details")),
+              onTap: () {
+                Navigator.pop(bCtx);
+                viewOutboundJson(context, tag, homeController.state,
+                    subController: subController, homeController: homeController);
+              },
+            ),
+          ],
           ListTile(
             leading: const Icon(Icons.copy_outlined),
             title: Text(getLocalText.s("Copy link")),

@@ -299,9 +299,18 @@ class NodeListPresenter {
   /// `runMassUrltest(order:)` в порядке отображения).
   List<String> computeDisplayList(HomeState state) {
     final (matching, nonMatching) = splitNodes(viewSortedNodes(state), state);
-    return filter.showNonMatching
+    final rawList = filter.showNonMatching
         ? [...matching, ...nonMatching]
         : matching;
+
+    final seen = <String>{};
+    final deduplicated = <String>[];
+    for (final tag in rawList) {
+      if (seen.add(tag)) {
+        deduplicated.add(tag);
+      }
+    }
+    return deduplicated;
   }
 
   /// §070 — frozen sort при `resortOnManualPing == false`. Cache hit ↔
