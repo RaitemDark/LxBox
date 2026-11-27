@@ -377,25 +377,11 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Ti
         _permissionDialogShowing = false;
       });
     }
-    // §166 — обычные ошибки показываем ВСПЛЫВАШКОЙ СНИЗУ (SnackBar), не красным
-    // баннером сверху. Новая lastError (не location-alert, тот обработан выше) →
-    // snackbar + clearError, чтобы верхний banner не зажёгся. Location-alert и
-    // config_load_error идут своими путями (dialog / отдельный banner-ключ).
+    // §166 — ошибки зачищаются тихо без всплывашек, чтобы не отвлекать и не лагать UI.
     if (nowError != _prevError &&
         nowError != null &&
         nowReason is! StopPermissionLocation) {
-      final msg = nowError;
       _controller.clearError();
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!mounted) return;
-        ScaffoldMessenger.of(context)
-          ..hideCurrentSnackBar()
-          ..showSnackBar(SnackBar(
-            content: Text(msg.render()),
-            behavior: SnackBarBehavior.floating,
-            duration: const Duration(seconds: 5),
-          ));
-      });
     }
 
     // §083 — per-direction match-filter memory. Направление сменилось → save старого
